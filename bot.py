@@ -26,7 +26,7 @@ class Bot(Ntbots):
         await super().start()
         me = await self.get_me()
         self.username = '@' + me.username
-        print(f"{me.first_name} with for Pyrogram v{self.version} (Layer {layer}) started on {me.username}.")
+        print(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
 
     async def stop(self, *args):
         await super().stop()
