@@ -1,13 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# (c) Shrimadhav U K
-
-# the logging things
 import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
 import asyncio
 import json
 import math
@@ -19,12 +10,15 @@ from pyrogram import enums
 from plugins.config import Config
 from plugins.script import Translation
 from plugins.thumbnail import *
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
 from pyrogram.types import InputMediaPhoto
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
 from plugins.database.database import db
 from PIL import Image
 from plugins.functions.ran_text import random_char
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
+
 
 async def youtube_dl_call_back(bot, update):
     cb_data = update.data
