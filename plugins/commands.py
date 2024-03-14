@@ -1,12 +1,10 @@
-
-
-
 import os
 import time
 import psutil
 import shutil
 import string
 import asyncio
+import logging
 from pyrogram import Client, filters
 from asyncio import TimeoutError
 from pyrogram.errors import MessageNotModified
@@ -17,6 +15,8 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from plugins.database.add import add_user_to_database
 from plugins.functions.forcesub import handle_force_subscribe
+
+logger = logging.getLogger(__name__)
 
 @Client.on_message(filters.command(["start"]) & filters.private)
 async def start(bot, update):
@@ -39,3 +39,10 @@ async def start(bot, update):
     )
 
 
+@Client.on_message(filters.command('logs') & filters.user(Config.OWNER_ID))
+async def log_file(bot, message):
+    """Send log file"""
+    try:
+        await message.reply_document('TelegramBot.log')
+    except Exception as e:
+        await message.reply(str(e))
