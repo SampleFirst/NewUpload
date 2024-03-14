@@ -11,7 +11,8 @@
 <a href="https://github.com/LISA-KOREA"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=47000&size=40&pause=1000&color=063EFF&random=false&width=750&lines=WELCOME+TO+URL+UPLOADER+BOT+V4+%F0%9F%9A%80;MADE+BY+%40NT_BOT_CHANNEL+;FOLLOW+ME+%E2%9D%A4%EF%B8%8F" alt="Typing SVG" /></a>
 #
 
-<a target="_blank" href="https://app.koyeb.com/deploy?type=git&repository=github.com/LISA-KOREA/UPLOADER-BOT-V4&branch=main&name=uploader"><img alt="Deploy to Koyeb" src="https://binbashbanana.github.io/deploy-buttons/buttons/remade/koyeb.svg"></a>
+<a target="_blank" href="https://app.koyeb.com/deploy?type=git&repository=github.com/SampleFirst/NewUpload&branch=main&name=uploader"><img alt="Deploy to Koyeb" src="https://binbashbanana.github.io/deploy-buttons/buttons/remade/koyeb.svg"></a>
+
 #
 <a href="https://github.com/LISA-KOREA"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=47000&size=40&pause=1000&color=FF0000&random=false&width=500&height=55&lines=GIVE+ME+A+STAR" alt="Typing SVG" /></a>
 ## How To Deploy
