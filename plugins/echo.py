@@ -1,17 +1,9 @@
-# ©️ LISA-KOREA | @LISA_FAN_LK | NT_BOT_CHANNEL
-
-
-
 import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 import requests, urllib.parse, filetype, os, time, shutil, tldextract, asyncio, json, math
 from PIL import Image
 from plugins.config import Config
 import time
 from plugins.script import Translation
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
 from pyrogram import filters
 from pyrogram import Client, enums
 from plugins.functions.forcesub import handle_force_subscribe
@@ -25,6 +17,9 @@ from pyrogram.errors import UserNotParticipant
 from plugins.functions.ran_text import random_char
 from plugins.database.add import add_user_to_database
 from pyrogram.types import Thumbnail
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 @Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
 async def echo(bot, update):
