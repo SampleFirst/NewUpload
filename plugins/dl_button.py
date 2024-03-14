@@ -1,10 +1,4 @@
-# @Shrimadhav Uk
-
-
 import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 import asyncio
 import aiohttp
 import json
@@ -17,14 +11,14 @@ from plugins.config import Config
 from plugins.script import Translation
 from plugins.thumbnail import *
 from plugins.database.database import db
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
 from pyrogram import enums 
 
-
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.ERROR)
 
 async def ddl_call_back(bot, update):
     logger.info(update)
