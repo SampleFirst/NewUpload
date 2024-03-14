@@ -1,16 +1,11 @@
-
-import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-
-
-import asyncio
 import os
 import time
+import logging
+import asyncio
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 
+logger = logging.getLogger(__name__)
 
 async def place_water_mark(input_file, output_file, water_mark_file):
     watermarked_file = output_file + ".watermark.png"
@@ -149,4 +144,4 @@ async def generate_screen_shots(
     else:
         return None
 
-
+  
