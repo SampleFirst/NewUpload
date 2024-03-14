@@ -1,4 +1,0 @@
-#Thank you Zoro for helping me in this journey ! 
-#please check run cmd in procfile of your repository !
-
-gunicorn app:app & python3 bot.py
