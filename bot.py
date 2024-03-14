@@ -1,14 +1,15 @@
 import os
 import logging
+import logging.config
 from plugins.config import Config
 from pyrogram import Client as Ntbots
 from pyrogram import filters, __version__
 from pyrogram.raw.all import layer
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
+# Get logging configurations
+logging.config.fileConfig('logging.conf')
+logging.getLogger().setLevel(logging.INFO)
+logging.getLogger("pyrogram").setLevel(logging.ERROR)
 
 class Bot(Ntbots):
     def __init__(self):
