@@ -112,7 +112,7 @@ async def get_thumbnail(bot, update):
         thumbnail = None
     return thumbnail
 
-async def get_thumbnail_with_screen_shot(bot, update, duration, download_directory):
+async def get_thumbnail_with_screenshot(bot, update, duration, download_directory):
     thumb_image_path = Config.DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg"
     db_thumbnail = await db.get_thumbnail(update.from_user.id)
     if db_thumbnail is not None:
