@@ -2,7 +2,8 @@ import logging
 import asyncio
 import json
 import time
-from pyrogram import Client, filters, InlineKeyboardButton, InlineKeyboardMarkup, enums
+from pyrogram import Client, enums, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from plugins.config import Config
 from plugins.script import Translation
 from plugins.functions.forcesub import handle_force_subscribe
