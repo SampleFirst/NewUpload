@@ -1,27 +1,22 @@
 import logging
-import requests, urllib.parse, filetype, os, time, shutil, tldextract, asyncio, json, math
-from PIL import Image
-from plugins.config import Config
+import asyncio
+import json
 import time
+from pyrogram import Client, filters, InlineKeyboardButton, InlineKeyboardMarkup, enums
+from plugins.config import Config
 from plugins.script import Translation
-from pyrogram import filters
-from pyrogram import Client, enums
 from plugins.functions.forcesub import handle_force_subscribe
 from plugins.functions.display_progress import humanbytes
 from plugins.functions.help_uploadbot import DownLoadFile
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from pyrogram.errors import UserNotParticipant
 from plugins.functions.ran_text import random_char
-from plugins.database.add import add_user_to_database
-from pyrogram.types import Thumbnail
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-@Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
+@Client.on_message(filters.private & filters.regex(pattern=".*https.*"))
 async def echo(bot, update):
     if Config.LOG_CHANNEL:
         try:
@@ -40,12 +35,12 @@ async def echo(bot, update):
             print(error)
     if not update.from_user:
         return await update.reply_text("I don't know about you sar :(")
-    await add_user_to_database(bot, update)
 
     if Config.UPDATES_CHANNEL:
-      fsub = await handle_force_subscribe(bot, update)
-      if fsub == 400:
-        return
+        fsub = await handle_force_subscribe(bot, update)
+        if fsub == 400:
+            return
+
     logger.info(update.from_user)
     url = update.text
     youtube_dl_username = None
@@ -116,9 +111,9 @@ async def echo(bot, update):
     logger.info(command_to_exec)
     chk = await bot.send_message(
             chat_id=update.chat.id,
-            text=f'ᴘʀᴏᴄᴇssɪɴɢ ʏᴏᴜʀ ʟɪɴᴋ ⌛',
+            text=f'Processing your link ⌛',
             disable_web_page_preview=True,
-            reply_to_message_id=update.id,
+            reply_to_message_id=update.message_id,
             parse_mode=enums.ParseMode.HTML
           )
     process = await asyncio.create_subprocess_exec(
@@ -133,7 +128,6 @@ async def echo(bot, update):
     logger.info(e_response)
     t_response = stdout.decode().strip()
     if e_response and "nonnumeric port" not in e_response:
-        # logger.warn("Status : FAIL", exc.returncode, exc.output)
         error_message = e_response.replace("please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output.", "")
         if "This video is only available for registered users." in error_message:
             error_message += Translation.SET_CUSTOM_USERNAME_PASSWORD
@@ -142,13 +136,12 @@ async def echo(bot, update):
         await bot.send_message(
             chat_id=update.chat.id,
             text=Translation.NO_VOID_FORMAT_FOUND.format(str(error_message)),
-            reply_to_message_id=update.id,
+            reply_to_message_id=update.message_id,
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
         return False
     if t_response:
-        # logger.info(t_response)
         x_reponse = t_response
         if "\n" in x_reponse:
             x_reponse, _ = x_reponse.split("\n")
@@ -158,7 +151,6 @@ async def echo(bot, update):
             "/" + str(update.from_user.id) + f'{randem}' + ".json"
         with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
             json.dump(response_json, outfile, ensure_ascii=False)
-        # logger.info(response_json)
         inline_keyboard = []
         duration = None
         if "duration" in response_json:
@@ -184,18 +176,7 @@ async def echo(bot, update):
                             callback_data=(cb_string_video).encode("UTF-8")
                         )
                     ]
-                    """if duration is not None:
-                        cb_string_video_message = "{}|{}|{}|{}|{}".format(
-                            "vm", format_id, format_ext, ran, randem)
-                        ikeyboard.append(
-                            InlineKeyboardButton(
-                                "VM",
-                                callback_data=(
-                                    cb_string_video_message).encode("UTF-8")
-                            )
-                        )"""
                 else:
-                    # special weird case :\
                     ikeyboard = [
                         InlineKeyboardButton(
                             "🎬 [" +
@@ -226,10 +207,10 @@ async def echo(bot, update):
         else:
             format_id = response_json["format_id"]
             format_ext = response_json["ext"]
-            cb_string_file = "{}|{}|{}|{}".format(
-                "file", format_id, format_ext, randem)
-            cb_string_video = "{}|{}|{}|{}".format(
-                "video", format_id, format_ext, randem)
+            cb_string_file = "{}={}={}".format(
+                "file", format_id, format_ext)
+            cb_string_video = "{}={}={}".format(
+                "video", format_id, format_ext)
             inline_keyboard.append([
                 InlineKeyboardButton(
                     "🎬 sᴍᴇᴅɪᴀ",
@@ -253,10 +234,9 @@ async def echo(bot, update):
             text=Translation.FORMAT_SELECTION.format(Thumbnail) + "\n" + Translation.SET_CUSTOM_USERNAME_PASSWORD,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.id
+            reply_to_message_id=update.message_id
         )
     else:
-        # ©️ LISA-KOREA | @LISA_FAN_LK | NT_BOT_CHANNEL
         inline_keyboard = []
         cb_string_file = "{}={}={}".format(
             "file", "LFO", "NONE")
@@ -275,6 +255,5 @@ async def echo(bot, update):
             text=Translation.FORMAT_SELECTION,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.id
+            reply_to_message_id=update.message_id
         )
-
