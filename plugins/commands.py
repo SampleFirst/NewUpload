@@ -2,6 +2,7 @@ import logging
 from pyrogram import Client, filters
 from plugins.config import Config
 from plugins.script import Translation
+from plugins.database.database import db
 from plugins.functions.forcesub import handle_force_subscribe
 
 logger = logging.getLogger(__name__)
