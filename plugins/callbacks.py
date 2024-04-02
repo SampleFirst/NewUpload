@@ -4,7 +4,8 @@ from pyrogram import Client, types
 from plugins.database.database import db
 from plugins.script import Translation
 from plugins.settings.settings import OpenSettings
-from plugins.button import youtube_dl_call_back, ddl_call_back
+from plugins.dl_button import ddl_call_back
+from plugins.button import youtube_dl_call_back
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
