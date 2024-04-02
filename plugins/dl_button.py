@@ -1,24 +1,22 @@
 import logging
-import asyncio
 import aiohttp
-import json
-import math
 import os
 import shutil
 import time
 from datetime import datetime
+from pyrogram import enums 
+from pyrogram.types import Message
 from plugins.config import Config
 from plugins.script import Translation
-from plugins.thumbnail import *
+from plugins.thumbnail import get_thumbnail, get_thumbnail_with_screenshot, get_metadata, get_width_and_duration, get_duration
 from plugins.database.database import db
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
-from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
-from pyrogram import enums 
 
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
+
 
 async def ddl_call_back(bot, update):
     logger.info(update)
@@ -82,7 +80,7 @@ async def ddl_call_back(bot, update):
                 update.id,
                 c_time
             )
-        except asyncio.TimeOutError:
+        except asyncio.TimeoutError:
             await update.message.edit_caption(
                 caption=Translation.SLOW_URL_DECED,
                 parse_mode=enums.ParseMode.HTML
@@ -103,22 +101,18 @@ async def ddl_call_back(bot, update):
             file_size = os.stat(download_directory).st_size
         if file_size > Config.TG_MAX_FILE_SIZE:
             await update.message.edit_caption(
-                
                 caption=Translation.RCHD_TG_API_LIMIT,
                 parse_mode=enums.ParseMode.HTML
             )
         else:
-            
             start_time = time.time()
             if (await db.get_upload_as_doc(update.from_user.id)) is False:
-                thumbnail = await Gthumb01(bot, update)
+                thumbnail = await get_thumbnail(bot, update)
                 await update.message.reply_document(
-                    #chat_id=update.message.chat.id,
                     document=download_directory,
                     thumb=thumbnail,
                     caption=description,
                     parse_mode=enums.ParseMode.HTML,
-                    #reply_to_message_id=update.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         Translation.UPLOAD_START,
@@ -127,10 +121,9 @@ async def ddl_call_back(bot, update):
                     )
                 )
             else:
-                 width, height, duration = await Mdata01(download_directory)
-                 thumb_image_path = await Gthumb02(bot, update, duration, download_directory)
+                 width, height, duration = await get_metadata(download_directory)
+                 thumb_image_path = await get_thumbnail_with_screenshot(bot, update, duration, download_directory)
                  await update.message.reply_video(
-                    #chat_id=update.message.chat.id,
                     video=download_directory,
                     caption=description,
                     duration=duration,
@@ -139,7 +132,6 @@ async def ddl_call_back(bot, update):
                     supports_streaming=True,
                     parse_mode=enums.ParseMode.HTML,
                     thumb=thumb_image_path,
-                    #reply_to_message_id=update.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         Translation.UPLOAD_START,
@@ -148,16 +140,14 @@ async def ddl_call_back(bot, update):
                     )
                 )
             if tg_send_type == "audio":
-                duration = await Mdata03(download_directory)
-                thumbnail = await Gthumb01(bot, update)
+                duration = await get_duration(download_directory)
+                thumbnail = await get_thumbnail(bot, update)
                 await update.message.reply_audio(
-                    #chat_id=update.message.chat.id,
                     audio=download_directory,
                     caption=description,
                     parse_mode=enums.ParseMode.HTML,
                     duration=duration,
                     thumb=thumbnail,
-                    #reply_to_message_id=update.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         Translation.UPLOAD_START,
@@ -166,15 +156,13 @@ async def ddl_call_back(bot, update):
                     )
                 )
             elif tg_send_type == "vm":
-                width, duration = await Mdata02(download_directory)
-                thumbnail = await Gthumb02(bot, update, duration, download_directory)
+                width, duration = await get_width_and_duration(download_directory)
+                thumbnail = await get_thumbnail_with_screenshot(bot, update, duration, download_directory)
                 await update.message.reply_video_note(
-                    #chat_id=update.message.chat.id,
                     video_note=download_directory,
                     duration=duration,
                     length=width,
                     thumb=thumbnail,
-                    #reply_to_message_id=update.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         Translation.UPLOAD_START,
@@ -194,14 +182,11 @@ async def ddl_call_back(bot, update):
             time_taken_for_upload = (end_two - end_one).seconds
             await update.message.edit_caption(
                 caption=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload),
-               
                 parse_mode=enums.ParseMode.HTML
             )
     else:
         await update.message.edit_caption(
             caption=Translation.NO_VOID_FORMAT_FOUND.format("Incorrect Link"),
-            
-            
             parse_mode=enums.ParseMode.HTML
         )
 
@@ -213,13 +198,13 @@ async def download_coroutine(bot, session, url, file_name, chat_id, message_id, 
         content_type = response.headers["Content-Type"]
         if "text" in content_type and total_length < 500:
             return await response.release()
-        await update.message.edit_caption(
-         
-      
-            caption="""Initiating Download
-**🔗 Uʀʟ :** `{}`
-**🗂️ Sɪᴢᴇ :** {}""".format(url, humanbytes(total_length)),
-            parse_mode=enums.ParseMode.HTML
+        await bot.edit_message_caption(
+            chat_id,
+            message_id,
+            caption=f"""Initiating Download
+🔗 Uʀʟ : `{url}`
+🗂️ Sɪᴢᴇ : {humanbytes(total_length)}""",
+            parse_mode=enums.ParseMode.MARKDOWN
         )
         with open(file_name, "wb") as f_handle:
             while True:
@@ -238,26 +223,24 @@ async def download_coroutine(bot, session, url, file_name, chat_id, message_id, 
                         (total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
-                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**
-**🔗 Uʀʟ :** `{}`
+                        current_message = f"""DᴏᴡɴʟᴏᴀᴅɪɴG
+🔗 Uʀʟ : `{url}`
 
-**🗂️ Sɪᴢᴇ :** {}
+🗂️ Sɪᴢᴇ : {humanbytes(total_length)}
 
-**✅ Dᴏɴᴇ :** {}
+✅ Dᴏɴᴇ : {humanbytes(downloaded)}
 
-**⏱️ Eᴛᴀ :** {}""".format(
-    url,
-    humanbytes(total_length),
-    humanbytes(downloaded),
-    TimeFormatter(estimated_total_time)
-)
+⏱️ Eᴛᴀ : {TimeFormatter(estimated_total_time)}"""
                         if current_message != display_message:
-                            await update.message.edit_caption(
+                            await bot.edit_message_caption(
+                                chat_id,
+                                message_id,
                                 caption=current_message,
-                                parse_mode=enums.ParseMode.HTML
-            )
+                                parse_mode=enums.ParseMode.MARKDOWN
+                            )
                             display_message = current_message
                     except Exception as e:
                         logger.info(str(e))
                         pass
         return await response.release()
+
