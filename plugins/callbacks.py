@@ -1,14 +1,10 @@
 import os
 import logging
-from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
-from plugins.config import Config
-from plugins.dl_button import ddl_call_back
-from plugins.button import youtube_dl_call_back
-from plugins.settings.settings import OpenSettings
-from plugins.script import Translation
 from pyrogram import Client, types
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from plugins.database.database import db
+from plugins.script import Translation
+from plugins.settings.settings import OpenSettings
+from plugins.button import youtube_dl_call_back, ddl_call_back
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -44,7 +40,7 @@ async def button(bot, update):
         else:
             await update.answer()
             await bot.send_photo(
-                update.message.chat.id, 
+                update.message.chat.id,
                 thumbnail, "Custom Thumbnail",
                 reply_markup=types.InlineKeyboardMarkup(
                     [
@@ -83,4 +79,3 @@ async def button(bot, update):
 
     else:
         await update.message.delete()
-
