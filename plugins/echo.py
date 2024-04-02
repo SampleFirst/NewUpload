@@ -114,7 +114,7 @@ async def echo(bot, update):
             chat_id=update.chat.id,
             text=f'Processing your link ⌛',
             disable_web_page_preview=True,
-            reply_to_message_id=update.message_id,
+            reply_to_message_id=update.id,
             parse_mode=enums.ParseMode.HTML
           )
     process = await asyncio.create_subprocess_exec(
@@ -137,7 +137,7 @@ async def echo(bot, update):
         await bot.send_message(
             chat_id=update.chat.id,
             text=Translation.NO_VOID_FORMAT_FOUND.format(str(error_message)),
-            reply_to_message_id=update.message_id,
+            reply_to_message_id=update.id,
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
@@ -235,7 +235,7 @@ async def echo(bot, update):
             text=Translation.FORMAT_SELECTION.format(Thumbnail) + "\n" + Translation.SET_CUSTOM_USERNAME_PASSWORD,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.message_id
+            reply_to_message_id=update.id
         )
     else:
         inline_keyboard = []
@@ -256,5 +256,5 @@ async def echo(bot, update):
             text=Translation.FORMAT_SELECTION,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.message_id
+            reply_to_message_id=update.id
         )
