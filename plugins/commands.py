@@ -1,56 +1,53 @@
 import logging
 from pyrogram import Client, filters
-from plugins.config import Config
-from plugins.script import Translation
-from plugins.database.database import db
-from plugins.functions.forcesub import handle_force_subscribe
+from info import *
+from Script import script
+from database.database import db
+from utils import *
 
 logger = logging.getLogger(__name__)
 
 @Client.on_message(filters.command(["start"]) & filters.private)
-async def start(bot, update):
-    if not update.from_user:
-        return await update.reply_text("I don't know about you sar :(")
-    
-    if not await db.is_user_exist(update.from_user.id):
-        await db.add_user(update.from_user.id)
-        await bot.send_message(
-            Config.LOG_CHANNEL,
-               f"#NewUser\n\nUser ID: {update.from_user.id}\nUsername: {update.from_user.username}"
+async def start(client, message):
+    if not await db.is_user_exist(message.from_user.id):
+        await db.add_user(message.from_user.id)
+        await client.send_message(
+            LOG_CHANNEL,
+               f"#NewUser\n\nUser ID: {message.from_user.id}\nUsername: {message.from_user.username}"
         )
     
-    if Config.UPDATES_CHANNEL:
-        fsub = await handle_force_subscribe(bot, update)
+    if AUTH_CHANNEL:
+        fsub = await handle_force_subscribe(client, message)
         if fsub == 400:
             return
     
-    await update.reply_text(
-        text=Translation.START_TEXT.format(update.from_user.mention),
+    await message.reply_text(
+        text=script.START_TEXT.format(message.from_user.mention),
         disable_web_page_preview=True,
-        reply_markup=Translation.START_BUTTONS
+        reply_markup=script.START_BUTTONS
     )
     
-    if data.split("-", 1)[0] == "verify":
-        userid = data.split("-", 2)[1]
-        token = data.split("-", 3)[2]
+    if data := message.text.split("-", 1)[0] == "verify":
+        userid = message.text.split("-", 2)[1]
+        token = message.text.split("-", 3)[2]
         if str(message.from_user.id) != str(userid):
             return await message.reply_text(
-                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>",
+                text="<b>Invalid or expired link!</b>",
             )
-        is_valid = await check_token(bot, userid, token)
-        if is_valid == True:
+        is_valid = await check_token(client, userid, token)
+        if is_valid:
             await message.reply_text(
-                text=f"<b>Hᴇʏ User, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nNᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ғᴏʀ ᴀʟʟ ᴍᴏᴠɪᴇs ᴛɪʟʟ ᴛʜᴇ ɴᴇxᴛ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ᴡʜɪᴄʜ ɪs ᴀғᴛᴇʀ 6 ʜᴏᴜʀs ғʀᴏᴍ ɴᴏᴡ.</b>",
+                text=f"<b>Hey User, You are successfully verified! Now you have unlimited access for all movies till the next verification, which is after 6 hours from now.</b>",
             )
-            await verify_user(bot, userid, token)
+            await verify_user(client, userid, token)
             return
         else:
             return await message.reply_text(
-                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>",
+                text="<b>Invalid or expired link!</b>",
             )
 
-@Client.on_message(filters.command('logs') & filters.user(Config.OWNER_ID))
-async def log_file(bot, message):
+@Client.on_message(filters.command('logs') & filters.user(OWNER_ID))
+async def log_file(client, message):
     """Send log file"""
     try:
         await message.reply_document('TelegramBot.log')
