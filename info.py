@@ -46,3 +46,4 @@ DEF_WATER_MARK_FILE = "UploadLinkToFileBot"
 DATABASE_URL = environ.get("DATABASE_URL", "")
 TG_MIN_FILE_SIZE = 2097152000
 BOT_USERNAME = environ.get("BOT_USERNAME", "")
+PORT = int(environ.get("PORT", "8080"))
