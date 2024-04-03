@@ -181,7 +181,7 @@ async def echo(bot, update):
                 else:
                     ikeyboard = [
                         InlineKeyboardButton(
-                            "🎬 [" +
+                            "😀 [" +
                             "] ( " +
                             approx_file_size + " )",
                             callback_data=(cb_string_video).encode("UTF-8")
@@ -215,7 +215,7 @@ async def echo(bot, update):
                 "video", format_id, format_ext)
             inline_keyboard.append([
                 InlineKeyboardButton(
-                    "🎬 sᴍᴇᴅɪᴀ",
+                    "😂 sᴍᴇᴅɪᴀ",
                     callback_data=(cb_string_video).encode("UTF-8")
                 )
             ])
@@ -225,7 +225,7 @@ async def echo(bot, update):
                 "video", format_id, format_ext)
             inline_keyboard.append([
                 InlineKeyboardButton(
-                    "🎥 ᴠɪᴅᴇᴏ",
+                    "☺ ᴠɪᴅᴇᴏ",
                     callback_data=(cb_string_video).encode("UTF-8")
                 )
             ])
@@ -246,7 +246,7 @@ async def echo(bot, update):
             "video", "OFL", "ENON")
         inline_keyboard.append([
             InlineKeyboardButton(
-                "🎬 ᴍᴇᴅɪᴀ",
+                "😍 ᴍᴇᴅɪᴀ",
                 callback_data=(cb_string_video).encode("UTF-8")
             )
         ])
