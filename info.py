@@ -30,6 +30,7 @@ VERIFY2_API = environ.get('VERIFY2_API', "b773b7f2ae617656e8c417464724ceb6cc978e
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'mdisklink.link')
 SHORTLINK_API = environ.get('SHORTLINK_API', 'a9710a537139aae48410ec2d414acf3f29d52345')
 
+LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
 BANNED_USERS = set(int(x) for x in environ.get("BANNED_USERS", "").split())
 DOWNLOAD_LOCATION = "./DOWNLOADS"
 UPDATE_CHANNEL = environ.get("UPDATE_CHANNEL", "")
