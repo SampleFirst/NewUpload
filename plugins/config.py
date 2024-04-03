@@ -53,8 +53,8 @@ class Config(object):
     
     BOT_USERNAME = os.environ.get("BOT_USERNAME", "")
 
-    VERIFY2_URL = environ.get('VERIFY2_URL', "mdisklink.link")
-    VERIFY2_API = environ.get('VERIFY2_API', "a9710a537139aae48410ec2d414acf3f29d52345")
-    SHORTLINK_URL = environ.get('SHORTLINK_URL', 'clicksfly.com')
-    SHORTLINK_API = environ.get('SHORTLINK_API', 'b773b7f2ae617656e8c417464724ceb6cc978ee1')
+    VERIFY2_URL = os.environ.get('VERIFY2_URL', "mdisklink.link")
+    VERIFY2_API = os.environ.get('VERIFY2_API', "a9710a537139aae48410ec2d414acf3f29d52345")
+    SHORTLINK_URL = os.environ.get('SHORTLINK_URL', 'clicksfly.com')
+    SHORTLINK_API = os.environ.get('SHORTLINK_API', 'b773b7f2ae617656e8c417464724ceb6cc978ee1')
     
