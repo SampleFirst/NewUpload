@@ -6,7 +6,6 @@ from pyrogram import Client, enums, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from info import *
 from Script import script 
-from plugins.functions.forcesub import handle_force_subscribe
 from plugins.functions.display_progress import humanbytes
 from plugins.functions.help_uploadbot import DownLoadFile
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
