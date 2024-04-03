@@ -10,6 +10,7 @@ import aiohttp
 from database.database import db
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import enums
+from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid, ChatAdminRequired
 from info import *
 
 
@@ -18,12 +19,28 @@ logger.setLevel(logging.INFO)
 
 TOKENS = {}
 VERIFIED = {}
+BANNED = {}
 
 # temp db for banned 
 class temp(object):
     VERIFY = {}
     
+async def is_subscribed(bot, query=None, userid=None):
+    try:
+        if userid == None and query != None:
+            user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
+        else:
+            user = await bot.get_chat_member(AUTH_CHANNEL, int(userid))
+    except UserNotParticipant:
+        pass
+    except Exception as e:
+        logger.exception(e)
+    else:
+        if user.status != enums.ChatMemberStatus.BANNED:
+            return True
 
+    return False
+    
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
         API = SHORTLINK_API
