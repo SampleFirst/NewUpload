@@ -151,12 +151,6 @@ async def youtube_dl_call_back(bot, update):
         return False
 
     if t_response:
-        logger.info(t_response)
-        try:
-            os.remove(save_ytdl_json_path)
-        except FileNotFoundError:
-            pass
-
         end_one = datetime.now()
         time_taken_for_download = (end_one - start).seconds
         file_size = Config.TG_MAX_FILE_SIZE + 1
@@ -249,9 +243,17 @@ async def youtube_dl_call_back(bot, update):
                 os.remove(thumb_image_path)
             except:
                 pass
+                
+            logger.info(t_response)
+            try:
+                os.remove(save_ytdl_json_path)
+            except FileNotFoundError:
+                pass
+                
             await update.message.edit_caption(
                 caption=Translation.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
             )
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
+
