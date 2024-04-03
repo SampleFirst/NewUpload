@@ -10,6 +10,7 @@ yt-dlp
 olefile
 motor
 pymongo
+ffmpeg
 dnspython
 psutil
 loggers
