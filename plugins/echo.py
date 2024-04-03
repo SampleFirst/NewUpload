@@ -13,6 +13,7 @@ from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from plugins.functions.ran_text import random_char
+from pyrogram.types import Thumbnail
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
