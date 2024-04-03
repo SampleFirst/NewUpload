@@ -2,8 +2,7 @@ import math
 import time
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import enums
-from plugins.script import Translation
-
+from Script import script 
 
 async def progress_for_pyrogram(current, total, ud_type, message, start):
     now = time.time()
@@ -21,7 +20,7 @@ async def progress_for_pyrogram(current, total, ud_type, message, start):
         progress_bar = "[" + ''.join(["█" for _ in range(math.floor(percentage / 5))]) + \
                        ''.join(["" for _ in range(20 - math.floor(percentage / 5))]) + "]"
 
-        progress_text = Translation.PROGRESS.format(
+        progress_text = script.PROGRESS.format(
             round(percentage, 2),
             humanbytes(current),
             humanbytes(total),
