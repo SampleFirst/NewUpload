@@ -1,9 +1,9 @@
 import os
 import logging
 from pyrogram import Client, types
-from plugins.database.database import db
-from plugins.script import Translation
-from plugins.settings.settings import OpenSettings
+from database.database import db
+from Script import script 
+from plugins.settings.settings import opensettings
 from plugins.dl_button import ddl_call_back
 from plugins.button import youtube_dl_call_back
 
@@ -15,25 +15,25 @@ logger.setLevel(logging.ERROR)
 async def button(bot, update):
     if update.data == "home":
         await update.message.edit_text(
-            text=Translation.START_TEXT.format(update.from_user.mention),
-            reply_markup=Translation.START_BUTTONS,
+            text=script.START_TEXT.format(update.from_user.mention),
+            reply_markup=script.START_BUTTONS,
             disable_web_page_preview=True
         )
     elif update.data == "help":
         await update.message.edit_text(
-            text=Translation.HELP_TEXT,
-            reply_markup=Translation.HELP_BUTTONS,
+            text=script.HELP_TEXT,
+            reply_markup=script.HELP_BUTTONS,
             disable_web_page_preview=True
         )
     elif update.data == "about":
         await update.message.edit_text(
-            text=Translation.ABOUT_TEXT,
-            reply_markup=Translation.ABOUT_BUTTONS,
+            text=script.ABOUT_TEXT,
+            reply_markup=script.ABOUT_BUTTONS,
             disable_web_page_preview=True
         )
-    elif update.data == "OpenSettings":
+    elif update.data == "opensettings":
         await update.answer()
-        await OpenSettings(update.message)
+        await opensettings(update.message)
     elif update.data == "showThumbnail":
         thumbnail = await db.get_thumbnail(update.from_user.id)
         if not thumbnail:
@@ -57,8 +57,8 @@ async def button(bot, update):
         await update.message.delete(True)
     elif update.data == "setThumbnail":
         await update.message.edit_text(
-            text=Translation.TEXT,
-            reply_markup=Translation.BUTTONS,
+            text=script.TEXT,
+            reply_markup=script.BUTTONS,
             disable_web_page_preview=True
         )
 
@@ -69,7 +69,7 @@ async def button(bot, update):
             await db.set_upload_as_doc(update.from_user.id, False)
         else:
             await db.set_upload_as_doc(update.from_user.id, True)
-        await OpenSettings(update.message)
+        await opensettings(update.message)
     elif "close" in update.data:
         await update.message.delete(True)
 
