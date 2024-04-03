@@ -62,10 +62,10 @@ async def start(client, message):
                 protect_content=True if PROTECT_CONTENT else False
             )
 
-@Client.on_message(filters.command('logs') & filters.user(OWNER_ID))
-async def log_file(client, message):
+@Client.on_message(filters.command('logs') & filters.user(ADMINS))
+async def log_file(bot, message):
     """Send log file"""
     try:
-        await message.reply_document('TelegramBot.log')
+        await message.reply_document('Logs.txt')
     except Exception as e:
         await message.reply(str(e))
