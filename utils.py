@@ -12,7 +12,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from plugins.config import Config
 from pyrogram import enums
 
-# AUTH_CHANNEL, Config.IS_VERIFY, Config.VERIFY2_URL, Config.VERIFY2_API, Config.Config.SHORTLINK_API, SHORTLINK_API, Config.LOG_CHANNEL
+# AUTH_CHANNEL, Config.IS_VERIFY, Config.VERIFY2_URL, Config.VERIFY2_API, Config.SHORTLINK_API, SHORTLINK_API, Config.LOG_CHANNEL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,8 +27,8 @@ class temp(object):
 
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
-        API = SHORTLINK_API
-        URL = Config.Config.SHORTLINK_API
+        API = Config.SHORTLINK_API
+        URL = Config.SHORTLINK_API
     else:
         API = Config.VERIFY2_API
         URL = Config.VERIFY2_URL
