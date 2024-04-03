@@ -58,8 +58,6 @@ async def echo(client, message):
         await client.send_message(
             chat_id=message.from_user.id,
             text="<b>You are not verified!\nKindly verify to continue so that you can get access to unlimited movies until 24 hours from now!</b>",
-            protect_content=True if ident == 'checksubp' else False,
-            disable_web_page_preview=True,
             parse_mode=enums.ParseMode.HTML,
             reply_markup=InlineKeyboardMarkup(btn)
         )
