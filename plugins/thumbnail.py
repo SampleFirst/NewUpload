@@ -2,16 +2,15 @@ import logging
 import random
 import os
 from PIL import Image
-from plugins.script import Translation
+from Script import script 
 from pyrogram import Client, filters
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from plugins.functions.help_Nekmo_ffmpeg import take_screen_shot
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from plugins.functions.forcesub import handle_force_subscribe
-from plugins.database.database import db
-from plugins.config import Config
+from database.database import db
+from info import *
 from plugins.settings.settings import *
 
 logger = logging.getLogger(__name__)
@@ -24,14 +23,14 @@ async def save_photo(bot, update):
     
     if not await db.is_user_exist(update.from_user.id):
         await db.add_user(update.from_user.id)
-        if Config.UPDATES_CHANNEL:
+        if AUTH_CHANNEL:
             fsub = await handle_force_subscribe(bot, update)
             if fsub == 400:
                 return
 
     # received single photo
     download_location = os.path.join(
-        Config.DOWNLOAD_LOCATION,
+        DOWNLOAD_LOCATION,
         str(update.from_user.id) + ".jpg"
     )
     await bot.download_media(
@@ -40,7 +39,7 @@ async def save_photo(bot, update):
     )
     await bot.send_message(
         chat_id=update.chat.id,
-        text=Translation.SAVED_CUSTOM_THUMB_NAIL,
+        text=script.SAVED_CUSTOM_THUMB_NAIL,
         reply_to_message_id=update.id
     )
     await db.set_thumbnail(update.from_user.id, thumbnail=update.photo.file_id)
@@ -52,7 +51,7 @@ async def delete_thumbnail(bot, update):
     
     if not await db.is_user_exist(update.from_user.id):
         await db.add_user(update.from_user.id)
-        if Config.UPDATES_CHANNEL:
+        if AUTH_CHANNEL:
             fsub = await handle_force_subscribe(bot, update)
             if fsub == 400:
                 return
@@ -67,7 +66,7 @@ async def delete_thumbnail(bot, update):
         pass
     await bot.send_message(
         chat_id=update.chat.id,
-        text=Translation.DEL_ETED_CUSTOM_THUMB_NAIL,
+        text=script.DEL_ETED_CUSTOM_THUMB_NAIL,
         reply_to_message_id=update.id
     )
     await db.set_thumbnail(update.from_user.id, thumbnail=None)
@@ -79,7 +78,7 @@ async def view_thumbnail(bot, update):
     
     if not await db.is_user_exist(update.from_user.id):
         await db.add_user(update.from_user.id)
-        if Config.UPDATES_CHANNEL:
+        if AUTH_CHANNEL:
             fsub = await handle_force_subscribe(bot, update)
             if fsub == 400:
                 return   
@@ -103,7 +102,7 @@ async def view_thumbnail(bot, update):
         await update.reply_text(text="No thumbnail found.")
 
 async def get_thumbnail(bot, update):
-    thumb_image_path = Config.DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg"
+    thumb_image_path = DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg"
     db_thumbnail = await db.get_thumbnail(update.from_user.id)
     if db_thumbnail is not None:
         thumbnail = await bot.download_media(message=db_thumbnail, file_name=thumb_image_path)
@@ -115,7 +114,7 @@ async def get_thumbnail(bot, update):
     return thumbnail
 
 async def get_thumbnail_with_screenshot(bot, update, duration, download_directory):
-    thumb_image_path = Config.DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg"
+    thumb_image_path = DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + ".jpg"
     db_thumbnail = await db.get_thumbnail(update.from_user.id)
     if db_thumbnail is not None:
         thumbnail = await bot.download_media(message=db_thumbnail, file_name=thumb_image_path)
