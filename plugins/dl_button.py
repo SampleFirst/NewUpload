@@ -223,14 +223,14 @@ async def download_coroutine(bot, session, url, file_name, chat_id, message_id, 
                         (total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
-                        current_message = f"""DᴏᴡɴʟᴏᴀᴅɪɴG
-🔗 Uʀʟ : `{url}`
-
-🗂️ Sɪᴢᴇ : {humanbytes(total_length)}
-
-✅ Dᴏɴᴇ : {humanbytes(downloaded)}
-
-⏱️ Eᴛᴀ : {TimeFormatter(estimated_total_time)}"""
+                        progress_bar = "[{:<50}] {:.2f}%".format(
+                            '=' * int(percentage / 2), percentage)
+                        current_message = f"""Downloading...
+🔗 URL: `{url}`
+🗂️ Size: {humanbytes(total_length)}
+⏳ Progress: {progress_bar}
+✅ Done: {humanbytes(downloaded)}
+⏱️ ETA: {TimeFormatter(estimated_total_time)}"""
                         if current_message != display_message:
                             await bot.edit_message_caption(
                                 chat_id,
@@ -243,4 +243,3 @@ async def download_coroutine(bot, session, url, file_name, chat_id, message_id, 
                         logger.info(str(e))
                         pass
         return await response.release()
-
