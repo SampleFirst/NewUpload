@@ -124,7 +124,7 @@ async def get_token(bot, userid, link):
     last_datetime = tz.localize(last_datetime)  # Make last_datetime timezone-aware
     curr_datetime = datetime.now(tz)  # Current datetime with timezone information   
     diff = curr_datetime - last_datetime
-    if diff.total_seconds() > 43200:  # 12 hours in seconds
+    if diff.total_seconds() > 10800:  # 3 hours in seconds
         vr_num = 2 # ziplinker 
     else:
         vr_num = 1 # clickfly
@@ -155,7 +155,7 @@ async def verify_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
     tz = pytz.timezone('Asia/Kolkata')
-    date_var = datetime.now(tz)+timedelta(hours=6)
+    date_var = datetime.now(tz)+timedelta(hours=3)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     await update_verify_status(bot, user.id, token, date_var, temp_time)
