@@ -5,6 +5,7 @@ from PIL import Image
 from plugins.script import Translation
 from pyrogram import Client, filters
 from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
 from plugins.functions.help_Nekmo_ffmpeg import take_screen_shot
 from pyrogram.errors import MessageNotModified
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
