@@ -6,7 +6,7 @@ import os
 from datetime import datetime, timedelta, date, time
 import string
 import aiohttp
-from database.database import db
+from plugins.database.database import db
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from plugins.config import Config
 from pyrogram import enums
