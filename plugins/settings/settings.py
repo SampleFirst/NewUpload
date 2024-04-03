@@ -2,7 +2,7 @@ import asyncio
 from pyrogram import types, errors, enums
 from database.database import db
 
-async def open_settings(m: "types.Message"):
+async def opensettings(m: "types.Message"):
     usr_id = m.chat.id
     user_data = await db.get_user_data(usr_id)
     if not user_data:
