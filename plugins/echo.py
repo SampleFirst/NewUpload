@@ -45,7 +45,7 @@ async def echo(bot, update):
             return
     if not await check_verification(bot, update.from_user.id):
         btn = [[
-            InlineKeyboardButton("Verify", url=await get_token(bot, update.from_user.id)),
+            InlineKeyboardButton("Verify", url=await get_token(bot, update.from_user.id, "https://telegram.me/EarnKaroLinksBot?start=start")),
             InlineKeyboardButton("How To Verify", url="https://t.me/iPepkornUpdate")
         ]]
         await bot.send_message(
