@@ -48,17 +48,21 @@ def humanbytes(size):
         return ""
     power = 2 ** 10
     n = 0
+    Dic_powerN = {0: ' ', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
     while size > power:
         size /= power
         n += 1
-    return f"{round(size, 2)} {'KMGTPEZY'[n]}B"
+    return str(round(size, 2)) + " " + Dic_powerN[n] + 'B'
 
 
 def TimeFormatter(milliseconds: int) -> str:
-    seconds, milliseconds = divmod(milliseconds, 1000)
+    seconds, milliseconds = divmod(int(milliseconds), 1000)
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    time_components = [(days, 'd'), (hours, 'h'), (minutes, 'm'), (seconds, 's'), (milliseconds, 'ms')]
-    formatted_time = ', '.join([f"{value}{unit}" for value, unit in time_components if value])
-    return formatted_time
+    tmp = ((str(days) + "d, ") if days else "") + \
+          ((str(hours) + "h, ") if hours else "") + \
+          ((str(minutes) + "m, ") if minutes else "") + \
+          ((str(seconds) + "s, ") if seconds else "") + \
+          ((str(milliseconds) + "ms, ") if milliseconds else "")
+    return tmp[:-2]
