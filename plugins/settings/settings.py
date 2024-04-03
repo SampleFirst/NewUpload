@@ -1,9 +1,8 @@
 import asyncio
 from pyrogram import types, errors, enums
-from plugins.config import Config
-from plugins.database.database import db
+from database.database import db
 
-async def OpenSettings(m: "types.Message"):
+async def open_settings(m: "types.Message"):
     usr_id = m.chat.id
     user_data = await db.get_user_data(usr_id)
     if not user_data:
@@ -16,22 +15,22 @@ async def OpenSettings(m: "types.Message"):
     thumbnail = user_data.get("thumbnail", None)
 
     buttons_markup = [
-        [types.InlineKeyboardButton(f"ᴜᴘʟᴏᴀᴅ ᴀs {'🎥 ᴠɪᴅᴇᴏ' if upload_as_doc else '🗃️ Fɪʟᴇ'}",
+        [types.InlineKeyboardButton(f"Upload as {'🎥 Video' if upload_as_doc else '🗃️ File'}",
                                     callback_data="triggerUploadMode")],
-        [types.InlineKeyboardButton(f"{'ᴄʜᴀɴɢᴇ' if thumbnail else '🌃 sᴇᴛ'} ᴛʜᴜᴍʙɴᴀɪʟ",
+        [types.InlineKeyboardButton(f"{'Change' if thumbnail else 'Set'} Thumbnail",
                                     callback_data="setThumbnail")]
     ]
 
     if thumbnail:
-        buttons_markup.append([types.InlineKeyboardButton("🌆 sʜᴏᴡ ᴛʜᴜᴍʙɴᴀɪʟ",
+        buttons_markup.append([types.InlineKeyboardButton("Show Thumbnail",
                                                           callback_data="showThumbnail")])
 
-    buttons_markup.append([types.InlineKeyboardButton("♨️ ᴄʟᴏsᴇ",
+    buttons_markup.append([types.InlineKeyboardButton("Close",
                                                       callback_data="close")])
 
     try:
         await m.edit(
-            text="**ʜᴇʀᴇ ʏᴏᴜ ᴄᴀɴ sᴇᴛᴜᴘ ʏᴏᴜʀ sᴇᴛᴛɪɴɢs**",
+            text="**Here you can setup your settings**",
             reply_markup=types.InlineKeyboardMarkup(buttons_markup),
             disable_web_page_preview=True,
             parse_mode=enums.ParseMode.MARKDOWN
@@ -40,6 +39,8 @@ async def OpenSettings(m: "types.Message"):
         pass
     except errors.FloodWait as e:
         await asyncio.sleep(e.x)
-        await OpenSettings(m)
+        await open_settings(m)
     except Exception as err:
-        Config.LOGGER.getLogger(__name__).error(err)
+        print(f"An error occurred: {err}")
+
+# Note: I've made some variable names lowercase for consistency and PEP 8 compliance.
