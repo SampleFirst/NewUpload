@@ -29,6 +29,25 @@ async def start(bot, update):
         disable_web_page_preview=True,
         reply_markup=Translation.START_BUTTONS
     )
+    
+    elif data.split("-", 1)[0] == "verify":
+        userid = data.split("-", 2)[1]
+        token = data.split("-", 3)[2]
+        if str(message.from_user.id) != str(userid):
+            return await message.reply_text(
+                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>",
+            )
+        is_valid = await check_token(bot, userid, token)
+        if is_valid == True:
+            await message.reply_text(
+                text=f"<b>Hᴇʏ User, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nNᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ғᴏʀ ᴀʟʟ ᴍᴏᴠɪᴇs ᴛɪʟʟ ᴛʜᴇ ɴᴇxᴛ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ᴡʜɪᴄʜ ɪs ᴀғᴛᴇʀ 6 ʜᴏᴜʀs ғʀᴏᴍ ɴᴏᴡ.</b>",
+            )
+            await verify_user(bot, userid, token)
+            return
+        else:
+            return await message.reply_text(
+                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>",
+            )
 
 @Client.on_message(filters.command('logs') & filters.user(Config.OWNER_ID))
 async def log_file(bot, message):
