@@ -19,15 +19,15 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
 @Client.on_message(filters.private & filters.regex(pattern=".*https.*"))
-async def echo(bot, update):
+async def echo(client, message):
     if LOG_CHANNEL:
         try:
-            log_message = await update.forward(LOG_CHANNEL)
+            log_message = await message.forward(LOG_CHANNEL)
             log_info = "Message Sender Information\n"
-            log_info += "\nFirst Name: " + update.from_user.first_name
-            log_info += "\nUser ID: " + str(update.from_user.id)
-            log_info += "\nUsername: @" + update.from_user.username if update.from_user.username else ""
-            log_info += "\nUser Link: " + update.from_user.mention
+            log_info += "\nFirst Name: " + message.from_user.first_name
+            log_info += "\nUser ID: " + str(message.from_user.id)
+            log_info += "\nUsername: @" + message.from_user.username if message.from_user.username else ""
+            log_info += "\nUser Link: " + message.from_user.mention
             await log_message.reply_text(
                 text=log_info,
                 disable_web_page_preview=True,
@@ -74,8 +74,8 @@ async def echo(bot, update):
                 protect_content=True if PROTECT_CONTENT else False
             )
         
-    logger.info(update.from_user)
-    url = update.text
+    logger.info(message.from_user)
+    url = message.text
     youtube_dl_username = None
     youtube_dl_password = None
     file_name = None
@@ -92,7 +92,7 @@ async def echo(bot, update):
             youtube_dl_username = url_parts[2]
             youtube_dl_password = url_parts[3]
         else:
-            for entity in update.entities:
+            for entity in message.entities:
                 if entity.type == "text_link":
                     url = entity.url
                 elif entity.type == "url":
@@ -111,7 +111,7 @@ async def echo(bot, update):
         logger.info(url)
         logger.info(file_name)
     else:
-        for entity in update.entities:
+        for entity in message.entities:
             if entity.type == "text_link":
                 url = entity.url
             elif entity.type == "url":
@@ -142,11 +142,11 @@ async def echo(bot, update):
         command_to_exec.append("--password")
         command_to_exec.append(youtube_dl_password)
     logger.info(command_to_exec)
-    chk = await bot.send_message(
-            chat_id=update.chat.id,
+    chk = await client.send_message(
+            chat_id=message.chat.id,
             text=f'Processing your link ⌛',
             disable_web_page_preview=True,
-            reply_to_message_id=update.id,
+            reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML
           )
     process = await asyncio.create_subprocess_exec(
@@ -161,15 +161,15 @@ async def echo(bot, update):
     logger.info(e_response)
     t_response = stdout.decode().strip()
     if e_response and "nonnumeric port" not in e_response:
-        error_message = e_response.replace("please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output.", "")
+        error_message = e_response.replace("please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to message. Be sure to call youtube-dl with the --verbose flag and include its complete output.", "")
         if "This video is only available for registered users." in error_message:
             error_message += script.SET_CUSTOM_USERNAME_PASSWORD
         await chk.delete()
         time.sleep(1)
-        await bot.send_message(
-            chat_id=update.chat.id,
+        await client.send_message(
+            chat_id=message.chat.id,
             text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
-            reply_to_message_id=update.id,
+            reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
@@ -181,7 +181,7 @@ async def echo(bot, update):
         response_json = json.loads(x_reponse)
         randem = random_char(5)
         save_ytdl_json_path = DOWNLOAD_LOCATION + \
-            "/" + str(update.from_user.id) + f'{randem}' + ".json"
+            "/" + str(message.from_user.id) + f'{randem}' + ".json"
         with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
             json.dump(response_json, outfile, ensure_ascii=False)
         inline_keyboard = []
@@ -254,12 +254,12 @@ async def echo(bot, update):
             )
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
         await chk.delete()
-        await bot.send_message(
-            chat_id=update.chat.id,
+        await client.send_message(
+            chat_id=message.chat.id,
             text=script.FORMAT_SELECTION.format(Thumbnail) + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.id
+            reply_to_message_id=message.id
         )
     else:
         inline_keyboard = []
@@ -274,10 +274,10 @@ async def echo(bot, update):
         )
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
         await chk.delete(True)
-        await bot.send_message(
-            chat_id=update.chat.id,
+        await client.send_message(
+            chat_id=message.chat.id,
             text=script.FORMAT_SELECTION,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=update.id
+            reply_to_message_id=message.id
         )
