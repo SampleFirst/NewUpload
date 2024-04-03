@@ -4,8 +4,8 @@ import json
 import time
 from pyrogram import Client, enums, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from plugins.config import Config
-from plugins.script import Translation
+from info import *
+from Script import script 
 from plugins.functions.forcesub import handle_force_subscribe
 from plugins.functions.display_progress import humanbytes
 from plugins.functions.help_uploadbot import DownLoadFile
@@ -21,9 +21,9 @@ logger.setLevel(logging.ERROR)
 
 @Client.on_message(filters.private & filters.regex(pattern=".*https.*"))
 async def echo(bot, update):
-    if Config.LOG_CHANNEL:
+    if LOG_CHANNEL:
         try:
-            log_message = await update.forward(Config.LOG_CHANNEL)
+            log_message = await update.forward(LOG_CHANNEL)
             log_info = "Message Sender Information\n"
             log_info += "\nFirst Name: " + update.from_user.first_name
             log_info += "\nUser ID: " + str(update.from_user.id)
@@ -39,7 +39,7 @@ async def echo(bot, update):
     if not update.from_user:
         return await update.reply_text("I don't know about you sar :(")
 
-    if Config.UPDATES_CHANNEL:
+    if AUTH_CHANNEL:
         fsub = await handle_force_subscribe(bot, update)
         if fsub == 400:
             return
@@ -100,14 +100,14 @@ async def echo(bot, update):
                 o = entity.offset
                 l = entity.length
                 url = url[o:o + l]
-    if Config.HTTP_PROXY != "":
+    if HTTP_PROXY != "":
         command_to_exec = [
             "yt-dlp",
             "--no-warnings",
             "--youtube-skip-hls-manifest",
             "-j",
             url,
-            "--proxy", Config.HTTP_PROXY
+            "--proxy", HTTP_PROXY
         ]
     else:
         command_to_exec = [
@@ -145,12 +145,12 @@ async def echo(bot, update):
     if e_response and "nonnumeric port" not in e_response:
         error_message = e_response.replace("please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to update. Be sure to call youtube-dl with the --verbose flag and include its complete output.", "")
         if "This video is only available for registered users." in error_message:
-            error_message += Translation.SET_CUSTOM_USERNAME_PASSWORD
+            error_message += script.SET_CUSTOM_USERNAME_PASSWORD
         await chk.delete()
         time.sleep(1)
         await bot.send_message(
             chat_id=update.chat.id,
-            text=Translation.NO_VOID_FORMAT_FOUND.format(str(error_message)),
+            text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
             reply_to_message_id=update.id,
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
@@ -162,7 +162,7 @@ async def echo(bot, update):
             x_reponse, _ = x_reponse.split("\n")
         response_json = json.loads(x_reponse)
         randem = random_char(5)
-        save_ytdl_json_path = Config.DOWNLOAD_LOCATION + \
+        save_ytdl_json_path = DOWNLOAD_LOCATION + \
             "/" + str(update.from_user.id) + f'{randem}' + ".json"
         with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
             json.dump(response_json, outfile, ensure_ascii=False)
@@ -238,7 +238,7 @@ async def echo(bot, update):
         await chk.delete()
         await bot.send_message(
             chat_id=update.chat.id,
-            text=Translation.FORMAT_SELECTION.format(Thumbnail) + "\n" + Translation.SET_CUSTOM_USERNAME_PASSWORD,
+            text=script.FORMAT_SELECTION.format(Thumbnail) + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
             reply_to_message_id=update.id
@@ -258,7 +258,7 @@ async def echo(bot, update):
         await chk.delete(True)
         await bot.send_message(
             chat_id=update.chat.id,
-            text=Translation.FORMAT_SELECTION,
+            text=script.FORMAT_SELECTION,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML,
             reply_to_message_id=update.id
