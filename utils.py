@@ -11,7 +11,7 @@ from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from plugins.config import Config
 from pyrogram import enums
 
-# AUTH_CHANNEL, IS_VERIFY, VERIFY2_URL, VERIFY2_API, SHORTLINK_URL, SHORTLINK_API, LOG_CHANNEL
+# AUTH_CHANNEL, Config.IS_VERIFY, Config.VERIFY2_URL, Config.VERIFY2_API, Config.Config.SHORTLINK_API, SHORTLINK_API, Config.LOG_CHANNEL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,10 +27,10 @@ class temp(object):
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
         API = SHORTLINK_API
-        URL = SHORTLINK_URL
+        URL = Config.Config.SHORTLINK_API
     else:
-        API = VERIFY2_API
-        URL = VERIFY2_URL
+        API = Config.VERIFY2_API
+        URL = Config.VERIFY2_URL
     https = link.split(":")[0]
     if "http" == https:
         https = "https"
@@ -117,7 +117,7 @@ async def get_token(bot, userid):
 async def send_verification_log(bot, userid, token, date_temp, time_temp):
     user = await bot.get_users(int(userid))
     log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}\nToken: {token}"
-    await bot.send_message(LOG_CHANNEL, log_message)
+    await bot.send_message(Config.LOG_CHANNEL, log_message)
     
 async def get_verify_status(userid):
     status = temp.VERIFY.get(userid)
@@ -138,7 +138,7 @@ async def verify_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
     tz = pytz.timezone('Asia/Kolkata')
-    date_var = datetime.now(tz)+timedelta(hours=12)
+    date_var = datetime.now(tz)+timedelta(hours=6)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     await update_verify_status(bot, user.id, token, date_var, temp_time)
