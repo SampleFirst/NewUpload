@@ -39,7 +39,7 @@ async def start(client, message):
         disable_web_page_preview=True,
         reply_markup=script.START_BUTTONS
     )
-    
+    data = message.command[1]
     if data.split("-", 1)[0] == "verify":
         userid = data.split("-", 2)[1]
         token = data.split("-", 3)[2]
