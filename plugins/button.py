@@ -125,34 +125,38 @@ async def youtube_dl_call_back(bot, update):
         command_to_exec.append("--password")
         command_to_exec.append(youtube_dl_password)
     command_to_exec.append("--no-warnings")
-
+    #command_to_exec.append("--geo-bypass-country")
+    # command_to_exec.append("--quiet")
     logger.info(command_to_exec)
     start = datetime.now()
-
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
+        # stdout must a pipe to be accessible as process.stdout
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-
+    # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
-
     logger.info(e_response)
     logger.info(t_response)
-
     ad_string_to_replace = "**Invalid link !**"
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
         await update.message.edit_caption(
+            
             text=error_message
         )
         return False
 
     if t_response:
-        # logger.info(t_response)
-        os.remove(save_ytdl_json_path)
+        logger.info(t_response)
+        try:
+            os.remove(save_ytdl_json_path)
+        except FileNotFoundError as exc:
+            pass
+        
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
         file_size = Config.TG_MAX_FILE_SIZE + 1
@@ -162,15 +166,31 @@ async def youtube_dl_call_back(bot, update):
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
             # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
-        if file_size > Config.TG_MAX_FILE_SIZE:
+        if ((file_size > Config.TG_MAX_FILE_SIZE)):
             await update.message.edit_caption(
+                
                 caption=Translation.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size))
+                
             )
         else:
+
+        
+            is_w_f = False
+            '''images = await generate_screen_shots(
+                download_directory,
+                tmp_directory_for_each_user,
+                is_w_f,
+                Config.DEF_WATER_MARK_FILE,
+                300,
+                9
+            )
+            logger.info(images)'''
             await update.message.edit_caption(
                 caption=Translation.UPLOAD_START.format(custom_file_name)
+                
             )
 
+            # ref: message from @Sources_codes
             start_time = time.time()
             if not await db.get_upload_as_doc(update.from_user.id):
                 thumbnail = await get_thumbnail(bot, update)
