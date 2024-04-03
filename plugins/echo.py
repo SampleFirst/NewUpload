@@ -14,6 +14,7 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from plugins.functions.ran_text import random_char
 from pyrogram.types import Thumbnail
+from utils import check_verification
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -42,7 +43,19 @@ async def echo(bot, update):
         fsub = await handle_force_subscribe(bot, update)
         if fsub == 400:
             return
-
+    if not await check_verification(bot, update.from_user.id):
+        btn = [[
+            InlineKeyboardButton("Verify", url=await get_token(bot, update.from_user.id)),
+            InlineKeyboardButton("How To Verify", url="https://t.me/iPepkornUpdate")
+        ]]
+        await bot.send_message(
+            chat_id=update.chat.id,
+            text="<b>You are not verified!\nKindly verify to continue so that you can get access to unlimited movies until 24 hours from now!</b>",
+            disable_web_page_preview=True,
+            parse_mode=enums.ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup(btn)
+        )
+        
     logger.info(update.from_user)
     url = update.text
     youtube_dl_username = None
