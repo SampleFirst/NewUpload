@@ -7,12 +7,11 @@ import pytz
 from datetime import datetime, timedelta, date, time
 import string
 import aiohttp
-from plugins.database.database import db
+from database.database import db
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from plugins.config import Config
 from pyrogram import enums
+from info import *
 
-# AUTH_CHANNEL, Config.IS_VERIFY, Config.VERIFY2_URL, Config.VERIFY2_API, Config.SHORTLINK_API, SHORTLINK_API, Config.LOG_CHANNEL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -27,11 +26,11 @@ class temp(object):
 
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
-        API = Config.SHORTLINK_API
-        URL = Config.SHORTLINK_API
+        API = SHORTLINK_API
+        URL = SHORTLINK_API
     else:
-        API = Config.VERIFY2_API
-        URL = Config.VERIFY2_URL
+        API = VERIFY2_API
+        URL = VERIFY2_URL
     https = link.split(":")[0]
     if "http" == https:
         https = "https"
@@ -118,7 +117,7 @@ async def get_token(bot, userid, link):
 async def send_verification_log(bot, userid, token, date_temp, time_temp):
     user = await bot.get_users(int(userid))
     log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}\nToken: {token}"
-    await bot.send_message(Config.LOG_CHANNEL, log_message)
+    await bot.send_message(LOG_CHANNEL, log_message)
     
 async def get_verify_status(userid):
     status = temp.VERIFY.get(userid)
