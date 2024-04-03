@@ -1,9 +1,7 @@
-# (c) @AbirHasan2005
-
-import datetime
+import pytz
+from datetime import date, datetime
 import motor.motor_asyncio
 from plugins.config import Config
-
 
 class Database:
     def __init__(self, uri, database_name):
@@ -21,6 +19,23 @@ class Database:
             caption=None
         )
 
+    async def update_verification(self, id, date, time):
+        status = {
+            'date': str(date),
+            'time': str(time)
+        }
+        await self.col.update_one({'id': int(id)}, {'$set': {'verification_status': status}})
+    
+    async def get_verified(self, id):
+        default = {
+            'date': "1999-12-31",
+            'time': "23:59:59"
+        }
+        user = await self.col.find_one({'id': int(id)})
+        if user:
+            return user.get("verification_status", default)
+        return default
+        
     async def add_user(self, id):
         user = self.new_user(id)
         await self.col.insert_one(user)
