@@ -254,4 +254,4 @@ async def youtube_dl_call_back(bot, update):
             )
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
-            logger.info("✅ Uploaded in: " + str(time_taken_for_upload)))
+            logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
