@@ -165,16 +165,18 @@ async def send_remove_premium_log(bot, userid, date_temp, time_temp):
     await bot.send_message(user.id, text=f"Hey {user.mention}, I Apologise 🤐,\n\nYou are Now Not a Premium User! Check Your Plan /myplan")
 
 async def remove_premium_status(bot, userid, date_temp, time_temp):
-    date_var = date_temp
-    temp_time = time_temp
+    status = await get_verify_status(userid)
+    status["date"] = date_temp
+    status["time"] = time_temp
     temp.VERIFY[userid] = status
     await db.update_verification(userid, date_temp, time_temp)
     await send_remove_premium_log(bot, userid, date_temp, time_temp)
     
 async def remove_premium_user(bot, userid):
     user = await bot.get_users(int(userid))
-    date_var = "1999-12-31"
-    temp_time = "23:59:59"
+    tz = pytz.timezone('Asia/Kolkata')
+    date_var = datetime.now(tz)+timedelta(seconds=0)
+    temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     await remove_premium_status(bot, user.id, date_var, temp_time)
 
