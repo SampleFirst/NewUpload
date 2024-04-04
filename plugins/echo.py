@@ -151,7 +151,7 @@ async def echo(client, message):
             if "This video is only available for registered users." in error_message:
                 error_message += script.SET_CUSTOM_USERNAME_PASSWORD
             await chk.delete()
-            time.sleep(1)
+            await asyncio.sleep(2)
             await client.send_message(
                 chat_id=message.chat.id,
                 text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
