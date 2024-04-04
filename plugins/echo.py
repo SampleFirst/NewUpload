@@ -56,7 +56,7 @@ async def echo(client, message):
 
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         btn = [[
-            InlineKeyboardButton("Upgrade 💳", url="https://telegram.me/BraveLinkToFileBot?start=buy"))
+            InlineKeyboardButton("Upgrade 💳", url="https://telegram.me/BraveLinkToFileBot?start=buy")
         ]]
         await client.send_message(
             chat_id=message.from_user.id,
