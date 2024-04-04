@@ -158,6 +158,26 @@ async def premium_user(bot, userid):
     date_var, time_var = str(date_var).split(" ")
     await update_premium_status(bot, user.id, date_var, temp_time)
 
+async def send_remove_premium_log(bot, userid, date_temp, time_temp):
+    user = await bot.get_users(int(userid))
+    log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}"
+    await bot.send_message(LOG_CHANNEL, log_message)
+    await bot.send_message(user.id, text=f"Hey {user.mention}, I Apologise 🤐,\n\nYou are Now Not a Premium User! Check Your Plan /myplan"
+
+async def remove_premium_status(bot, userid, date_temp, time_temp):
+    date_var = date_temp
+    temp_time = time_temp
+    temp.VERIFY[userid] = status
+    await db.update_verification(userid, date_temp, time_temp)
+    await send_remove_premium_log(bot, userid, date_temp, time_temp)
+    
+async def remove_premium_user(bot, userid):
+    user = await bot.get_users(int(userid))
+    date_var = "1999-12-31"
+    temp_time = "23:59:59"
+    date_var, time_var = str(date_var).split(" ")
+    await remove_premium_status(bot, user.id, date_var, temp_time)
+
 async def get_verify_status(userid):
     status = temp.VERIFY.get(userid)
     if not status:
