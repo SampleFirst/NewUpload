@@ -13,7 +13,7 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from plugins.functions.ran_text import random_char
 from pyrogram.types import Thumbnail
-from utils import *
+from utils import is_subscribed, check_verification
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
