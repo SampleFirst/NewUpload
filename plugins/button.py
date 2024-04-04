@@ -150,16 +150,13 @@ async def youtube_dl_call_back(client, message):
         )
         return False
 
-    if t_response:
-        logger.info(t_response)
-        try:
-            os.remove(save_ytdl_json_path)
-        except FileNotFoundError as exc:
-            pass
-        
     if os.path.exists(download_directory):
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
+        await message.message.edit_caption(
+            caption=script.UPLOAD_START,
+            parse_mode=enums.ParseMode.HTML
+        )
         file_size = TG_MAX_FILE_SIZE + 1
         try:
             file_size = os.stat(download_directory).st_size
@@ -167,10 +164,10 @@ async def youtube_dl_call_back(client, message):
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
             # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
-        if ((file_size > TG_MAX_FILE_SIZE)):
+        if file_size > TG_MAX_FILE_SIZE:
             await message.message.edit_caption(
-                caption=script.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size))
-                
+                caption=script.RCHD_TG_API_LIMIT,
+                parse_mode=enums.ParseMode.HTML
             )
         else:
             is_w_f = False
