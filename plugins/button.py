@@ -157,6 +157,7 @@ async def youtube_dl_call_back(client, message):
         except FileNotFoundError as exc:
             pass
         
+    if os.path.exists(download_directory):
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
         file_size = TG_MAX_FILE_SIZE + 1
@@ -168,13 +169,10 @@ async def youtube_dl_call_back(client, message):
             file_size = os.stat(download_directory).st_size
         if ((file_size > TG_MAX_FILE_SIZE)):
             await message.message.edit_caption(
-                
                 caption=script.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size))
                 
             )
         else:
-
-        
             is_w_f = False
             '''images = await generate_screen_shots(
                 download_directory,
