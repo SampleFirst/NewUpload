@@ -1,4 +1,5 @@
 from pyrogram import Client, filters 
+from database.database import db
 from info import *
 
 @Client.on_message(filters.command("send"))
