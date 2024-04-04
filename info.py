@@ -26,9 +26,9 @@ AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_chan
 IS_VERIFY = is_enabled(environ.get('IS_VERIFY', 'True'), True)
 HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', "https://t.me/c/2020858146/4")
 VERIFY2_URL = environ.get('VERIFY2_URL', "clicksfly.com")
-VERIFY2_API = environ.get('VERIFY2_API', "b773b7f2ae617656e8c417464724ceb6cc978ee1")
-SHORTLINK_URL = environ.get('SHORTLINK_URL', "clicksfly.com")
-SHORTLINK_API = environ.get('SHORTLINK_API', "b773b7f2ae617656e8c417464724ceb6cc978ee1")
+VERIFY2_API = environ.get('VERIFY2_API', "c2150e28189cefefd05f8a9c5c5770cc462033e3")
+SHORTLINK_URL = environ.get('SHORTLINK_URL', "mdisklink.link")
+SHORTLINK_API = environ.get('SHORTLINK_API', "4fa150d44b4bf6579c24b33bbbb786dbfb4fc673")
 
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
 BANNED_USERS = set(int(x) for x in environ.get("BANNED_USERS", "").split())
