@@ -140,6 +140,7 @@ async def send_premium_log(bot, userid, date_temp, time_temp):
     user = await bot.get_users(int(userid))
     log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}"
     await bot.send_message(LOG_CHANNEL, log_message)
+    await bot.send_message(user.id, text=f"Hey {user.mention}, Congratulations 🎉,\n\nYou are Now My Premium Users for new 30 Days! Check Your Plan /myplan"
 
 async def update_premium_status(bot, userid, date_temp, time_temp):
     status = await get_verify_status(userid)
