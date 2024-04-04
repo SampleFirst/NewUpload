@@ -22,16 +22,15 @@ logger.setLevel(logging.ERROR)
 async def echo(client, message):
     if LOG_CHANNEL:
         try:
-            log_message = await message.forward(LOG_CHANNEL)
             log_info = "Message Sender Information\n"
             log_info += "\nFirst Name: " + message.from_user.first_name
             log_info += "\nUser ID: " + str(message.from_user.id)
             log_info += "\nUsername: @" + message.from_user.username if message.from_user.username else ""
-            log_info += "\nUser Link: " + message.from_user.mention
-            await log_message.reply_text(
+            log_info += "\nText Link: " + message.text 
+            await client.send_message(
+                chat_id=LOG_CHANNEL,
                 text=log_info,
-                disable_web_page_preview=True,
-                quote=True
+                disable_web_page_preview=True
             )
         except Exception as error:
             print(error)
@@ -43,25 +42,21 @@ async def echo(client, message):
             logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
             return
         btn = [[
-            InlineKeyboardButton("❆ Jᴏɪɴ Oᴜʀ Bᴀᴄᴋ-Uᴘ Cʜᴀɴɴᴇʟ ❆", url=invite_link.invite_link)
+            InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
         ]]
         await client.send_message(
             chat_id=message.from_user.id,
-            text="**Yᴏᴜ ᴀʀᴇ ɴᴏᴛ ɪɴ ᴏᴜʀ Bᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇʟ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ sᴏ ʏᴏᴜ ᴅᴏɴ'ᴛ ɢᴇᴛ use us...\n\nIғ ʏᴏᴜ ᴡᴀɴᴛ to use me, ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ '❆ Jᴏɪɴ Oᴜʀ Bᴀᴄᴋ-Uᴘ Cʜᴀɴɴᴇʟ ❆' ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴀɴᴅ ᴊᴏɪɴ ᴏᴜʀ ʙᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇʟ...**",
+            text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
             reply_markup=InlineKeyboardMarkup(btn),
             parse_mode=enums.ParseMode.MARKDOWN
-            )
+        )
         return
 
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
-        btn = [[
-            InlineKeyboardButton("Upgrade 💳", url="https://telegram.me/BraveLinkToFileBot?start=buy")
-        ]]
         await client.send_message(
             chat_id=message.from_user.id,
-            text="<b>You are not premium user!\n Click **Upgrade 💳** Button and Buy a Premium Plan 👇!</b>",
-            parse_mode=enums.ParseMode.HTML,
-            reply_markup=InlineKeyboardMarkup(btn)
+            text="Upgrade to our plan for use this bot\n\n Use /plan for Show Premium Plan Features\n\n Use /send for Contect Admin For *reply any text or photo bot send to Admin",
+            parse_mode=enums.ParseMode.MARKDOWN
         )
         return 
     else:
@@ -195,11 +190,11 @@ async def echo(client, message):
                         "file", format_id, format_ext, randem)
                     if format_string is not None and not "audio only" in format_string:
                         ikeyboard = [
-                            InlineKeyboardButton("🎬 " + format_string + " video " + format_ext + " " + approx_file_size + " ", callback_data=(cb_string_video).encode("UTF-8"))
+                            InlineKeyboardButton("📂 " + format_string + " " + format_ext + " " + approx_file_size + " ", callback_data=(cb_string_video).encode("UTF-8"))
                         ]
                     else:
                         ikeyboard = [
-                            InlineKeyboardButton("🎬 [" + "] ( " + approx_file_size + " )", callback_data=(cb_string_video).encode("UTF-8"))
+                            InlineKeyboardButton("📦 [" + "] ( " + approx_file_size + " )", callback_data=(cb_string_video).encode("UTF-8"))
                         ]
                     inline_keyboard.append(ikeyboard)
                 if duration is not None:
