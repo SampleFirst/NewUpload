@@ -170,22 +170,6 @@ async def youtube_dl_call_back(client, message):
                 parse_mode=enums.ParseMode.HTML
             )
         else:
-            is_w_f = False
-            '''images = await generate_screen_shots(
-                download_directory,
-                tmp_directory_for_each_user,
-                is_w_f,
-                DEF_WATER_MARK_FILE,
-                300,
-                9
-            )
-            logger.info(images)'''
-            await message.message.edit_caption(
-                caption=script.UPLOAD_START.format(custom_file_name)
-                
-            )
-
-            # ref: message from @Sources_codes
             start_time = time.time()
             if not await db.get_upload_as_doc(message.from_user.id):
                 thumbnail = await get_thumbnail(client, message)
