@@ -171,7 +171,7 @@ async def youtube_dl_call_back(client, message):
             )
         else:
             start_time = time.time()
-            if not await db.get_upload_as_doc(message.from_user.id):
+            if (await db.get_upload_as_doc(message.from_user.id)) is False:
                 thumbnail = await get_thumbnail(client, message)
                 await message.message.reply_document(
                     document=download_directory,
