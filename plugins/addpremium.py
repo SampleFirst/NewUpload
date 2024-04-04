@@ -25,7 +25,7 @@ async def remove_premium(client, message):
         await message.reply_text("User's premium status remove successfully!")
     elif len(message.command) > 1:  # Check if command has additional parameters
         user_id = int(message.command[1])
-        await premium_user(client, user_id)
+        await remove_premium_user(client, user_id)
         await message.reply_text("User's premium status remove successfully!")
     else:
         await message.reply_text("Please reply to the user or specify the user ID whose premium status you want to remove.")
