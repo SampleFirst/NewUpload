@@ -135,7 +135,28 @@ async def send_verification_log(bot, userid, token, date_temp, time_temp):
     user = await bot.get_users(int(userid))
     log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}\nToken: {token}"
     await bot.send_message(LOG_CHANNEL, log_message)
+
+async def send_premium_log(bot, userid, date_temp, time_temp):
+    user = await bot.get_users(int(userid))
+    log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}"
+    await bot.send_message(LOG_CHANNEL, log_message)
+
+async def update_premium_status(bot, userid, date_temp, time_temp):
+    status = await get_verify_status(userid)
+    status["date"] = date_temp
+    status["time"] = time_temp
+    temp.VERIFY[userid] = status
+    await db.update_verification(userid, date_temp, time_temp)
+    await send_premium_log(bot, userid, date_temp, time_temp)
     
+async def premium_user(bot, userid):
+    user = await bot.get_users(int(userid))
+    tz = pytz.timezone('Asia/Kolkata')
+    date_var = datetime.now(tz)+timedelta(days=30)
+    temp_time = date_var.strftime("%H:%M:%S")
+    date_var, time_var = str(date_var).split(" ")
+    await update_premium_status(bot, user.id, date_var, temp_time)
+
 async def get_verify_status(userid):
     status = temp.VERIFY.get(userid)
     if not status:
