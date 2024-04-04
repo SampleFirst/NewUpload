@@ -176,7 +176,7 @@ async def remove_premium_user(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
     date_var = "1999-12-31"
-    time_var = "23:59:59"
+    temp_time = "23:59:59"
     await remove_premium_status(bot, user.id, date_var, temp_time)
 
 async def get_verify_status(userid):
