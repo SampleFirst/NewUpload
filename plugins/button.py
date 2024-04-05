@@ -5,6 +5,7 @@ import os
 import shutil
 import time
 import requests
+from urllib.parse import urlparse
 from datetime import datetime
 from pyrogram import enums
 from info import *
