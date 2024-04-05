@@ -73,12 +73,13 @@ async def ddl_call_back(client, query):
     except Exception as e:
         logger.error(f"Something went wrong in the code =>::: {e}")
 
-    description = script.CUSTOM_CAPTION_UL_FILE
     start = datetime.now()
-    
     description = script.CUSTOM_CAPTION_UL_FILE
-    if "fulltitle" in response_json:
+    if custom_file_name:
+        description = custom_file_name
+    elif "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
+
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
