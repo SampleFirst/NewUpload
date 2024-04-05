@@ -76,7 +76,7 @@ async def youtube_dl_call_back(client, query):
     logger.info(custom_file_name)
 
     await query.message.edit_caption(
-        caption=script.DOWNLOAD_START.format(custom_file_name)
+        caption=script.DOWNLOAD_START.format(a=custom_file_name)
     )
 
     description = script.CUSTOM_CAPTION_UL_FILE
