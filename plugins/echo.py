@@ -3,17 +3,17 @@ import asyncio
 import json
 import time
 from pyrogram import Client, enums, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.errors import ChatAdminRequired
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Thumbnail
+from hachoir.metadata import extractMetadata
+from hachoir.parser import createParser
+from utils import is_subscribed, check_verification
 from info import *
 from Script import script 
 from plugins.functions.display_progress import humanbytes
 from plugins.functions.help_uploadbot import DownLoadFile
 from plugins.functions.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
-from hachoir.metadata import extractMetadata
-from hachoir.parser import createParser
 from plugins.functions.ran_text import random_char
-from pyrogram.types import Thumbnail
-from utils import is_subscribed, check_verification
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -161,83 +161,45 @@ async def echo(client, message):
             )
             return False
         if t_response:
-            x_reponse = t_response
-            if "\n" in x_reponse:
-                x_reponse, _ = x_reponse.split("\n")
-            response_json = json.loads(x_reponse)
+            x_response_parts = t_response.split("\n")
+            x_response = x_response_parts[0] if x_response_parts else ""
+            response_json = json.loads(x_response)
             randem = random_char(5)
             save_ytdl_json_path = DOWNLOAD_LOCATION + \
                 "/" + str(message.from_user.id) + f'{randem}' + ".json"
             with open(save_ytdl_json_path, "w", encoding="utf8") as outfile:
                 json.dump(response_json, outfile, ensure_ascii=False)
             inline_keyboard = []
-            duration = None
-            if "duration" in response_json:
-                duration = response_json["duration"]
+            duration = response_json.get("duration")
             if "formats" in response_json:
                 for formats in response_json["formats"]:
                     format_id = formats.get("format_id")
-                    format_string = formats.get("format_note")
-                    if format_string is None:
-                        format_string = formats.get("format")
+                    format_string = formats.get("format_note") or formats.get("format")
                     format_ext = formats.get("ext")
-                    approx_file_size = ""
-                    if "filesize" in formats:
-                        approx_file_size = humanbytes(formats["filesize"])
+                    approx_file_size = humanbytes(formats.get("filesize", 0))
                     cb_string_video = "{}|{}|{}|{}".format(
                         "video", format_id, format_ext, randem)
                     cb_string_file = "{}|{}|{}|{}".format(
                         "file", format_id, format_ext, randem)
-                    if format_string is not None and not "audio only" in format_string:
-                        ikeyboard = [
-                            InlineKeyboardButton("📂 " + format_string + " " + format_ext + " " + approx_file_size + " ", callback_data=(cb_string_video).encode("UTF-8"))
-                        ]
-                    else:
-                        ikeyboard = [
-                            InlineKeyboardButton("📦 [" + "] ( " + approx_file_size + " )", callback_data=(cb_string_video).encode("UTF-8"))
-                        ]
+                    ikeyboard = [
+                        InlineKeyboardButton("📂 " + format_string + " " + format_ext + " " + approx_file_size + " ", callback_data=(cb_string_video).encode("UTF-8"))
+                    ] if "audio only" not in format_string else [
+                        InlineKeyboardButton("📦 [" + "] ( " + approx_file_size + " )", callback_data=(cb_string_video).encode("UTF-8"))
+                    ]
                     inline_keyboard.append(ikeyboard)
                 if duration is not None:
-                    cb_string_64 = "{}|{}|{}|{}".format("audio", "64k", "mp3", randem)
-                    cb_string_128 = "{}|{}|{}|{}".format("audio", "128k", "mp3", randem)
-                    cb_string = "{}|{}|{}|{}".format("audio", "320k", "mp3", randem)
-                    inline_keyboard.append(
+                    inline_keyboard.extend([
                         [
-                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
-                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=cb_string_128.encode("UTF-8"))
-                        ]
-                    )
-                    inline_keyboard.append(
+                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=("audio|64k|mp3|" + randem).encode("UTF-8")),
+                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=("audio|128k|mp3|" + randem).encode("UTF-8"))
+                        ],
                         [
-                        InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=cb_string.encode("UTF-8"))
-                        ]
-                    )
-                    inline_keyboard.append(
+                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=("audio|320k|mp3|" + randem).encode("UTF-8"))
+                        ],
                         [
-                        InlineKeyboardButton("⛔️ ᴄʟᴏsᴇ", callback_data='close')               
+                            InlineKeyboardButton("⛔️ ᴄʟᴏsᴇ", callback_data='close'.encode("UTF-8"))               
                         ]
-                    )
-            else:
-                format_id = response_json["format_id"]
-                format_ext = response_json["ext"]
-                cb_string_file = "{}={}={}".format(
-                    "file", format_id, format_ext)
-                cb_string_video = "{}={}={}".format(
-                    "video", format_id, format_ext)
-                inline_keyboard.append(
-                    [
-                        InlineKeyboardButton("🎬 sᴍᴇᴅɪᴀ", callback_data=(cb_string_video).encode("UTF-8"))
-                    ]
-                )
-                cb_string_file = "{}={}={}".format(
-                    "file", format_id, format_ext)
-                cb_string_video = "{}={}={}".format(
-                    "video", format_id, format_ext)
-                inline_keyboard.append(
-                    [
-                        InlineKeyboardButton("🎥 ᴠɪᴅᴇᴏ", callback_data=(cb_string_video).encode("UTF-8"))
-                    ]
-                )
+                    ])
             reply_markup = InlineKeyboardMarkup(inline_keyboard)
             await chk.delete()
             await client.send_message(
@@ -248,16 +210,11 @@ async def echo(client, message):
                 reply_to_message_id=message.id
             )
         else:
-            inline_keyboard = []
-            cb_string_file = "{}={}={}".format(
-                "file", "LFO", "NONE")
-            cb_string_video = "{}={}={}".format(
-                "video", "OFL", "ENON")
-            inline_keyboard.append(
+            inline_keyboard = [
                 [
-                    InlineKeyboardButton("🎬 ᴍᴇᴅɪᴀ", callback_data=(cb_string_video).encode("UTF-8"))
+                    InlineKeyboardButton("🎬 ᴍᴇᴅɪᴀ", callback_data=("video|LFO|NONE|" + randem).encode("UTF-8"))
                 ]
-            )
+            ]
             reply_markup = InlineKeyboardMarkup(inline_keyboard)
             await chk.delete(True)
             await client.send_message(
@@ -267,4 +224,3 @@ async def echo(client, message):
                 parse_mode=enums.ParseMode.HTML,
                 reply_to_message_id=message.id
             )
-    
