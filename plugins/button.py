@@ -77,7 +77,7 @@ async def youtube_dl_call_back(client, query):
 
     await query.message.edit_caption(
         progress=progress_for_pyrogram,
-        progress_args=(caption=script.UPLOAD_START.format(custom_file_name)
+        progress_args=(caption=script.UPLOAD_START.format(custom_file_name)))
         
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
