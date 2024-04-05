@@ -18,14 +18,14 @@ logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 
-async def ddl_call_back(client, message):
-    logger.info(message)
-    cb_data = message.data
+async def ddl_call_back(client, query):
+    logger.info(query)
+    cb_data = query.data
     # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext = cb_data.split("=")
     thumb_image_path = DOWNLOAD_LOCATION + \
-        "/" + str(message.from_user.id) + ".jpg"
-    youtube_dl_url = message.message.reply_to_message.text
+        "/" + str(query.from_user.id) + ".jpg"
+    youtube_dl_url = query.message.reply_to_message.text
     custom_file_name = os.path.basename(youtube_dl_url)
     if "|" in youtube_dl_url:
         url_parts = youtube_dl_url.split("|")
@@ -33,7 +33,7 @@ async def ddl_call_back(client, message):
             youtube_dl_url = url_parts[0]
             custom_file_name = url_parts[1]
         else:
-            for entity in message.message.reply_to_message.entities:
+            for entity in query.message.reply_to_message.entities:
                 if entity.type == "text_link":
                     youtube_dl_url = entity.url
                 elif entity.type == "url":
@@ -48,7 +48,7 @@ async def ddl_call_back(client, message):
         logger.info(youtube_dl_url)
         logger.info(custom_file_name)
     else:
-        for entity in message.message.reply_to_message.entities:
+        for entity in query.message.reply_to_message.entities:
             if entity.type == "text_link":
                 youtube_dl_url = entity.url
             elif entity.type == "url":
@@ -77,7 +77,7 @@ async def ddl_call_back(client, message):
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
-    tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(message.from_user.id)
+    tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
     download_directory = tmp_directory_for_each_user + "/" + custom_file_name
@@ -91,19 +91,19 @@ async def ddl_call_back(client, message):
                 custom_file_name,
                 youtube_dl_url,
                 download_directory,
-                query.message.chat.id,
-                query.message.id,
+                query.query.chat.id,
+                query.query.id,
                 c_time,
             )
         except asyncio.TimeoutError:
-            await message.message.edit_caption(
+            await query.message.edit_caption(
                 caption=script.SLOW_URL_DECED,
                 parse_mode=enums.ParseMode.HTML
             )
             return False
     if os.path.exists(download_directory):
         end_one = datetime.now()
-        await message.message.edit_caption(
+        await query.message.edit_caption(
             caption=script.UPLOAD_START,
             parse_mode=enums.ParseMode.HTML
         )
@@ -115,15 +115,15 @@ async def ddl_call_back(client, message):
             # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
         if file_size > TG_MAX_FILE_SIZE:
-            await message.message.edit_caption(
+            await query.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT,
                 parse_mode=enums.ParseMode.HTML
             )
         else:
             start_time = time.time()
-            if (await db.get_upload_as_doc(message.from_user.id)) is False:
-                thumbnail = await get_thumbnail(client, message)
-                await message.message.reply_document(
+            if (await db.get_upload_as_doc(query.from_user.id)) is False:
+                thumbnail = await get_thumbnail(client, query)
+                await query.message.reply_document(
                     document=download_directory,
                     thumb=thumbnail,
                     caption=description,
@@ -131,14 +131,14 @@ async def ddl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
             else:
                  width, height, duration = await get_metadata(download_directory)
-                 thumb_image_path = await get_thumbnail_with_screenshot(client, message, duration, download_directory)
-                 await message.message.reply_video(
+                 thumb_image_path = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
+                 await query.message.reply_video(
                     video=download_directory,
                     caption=description,
                     duration=duration,
@@ -150,14 +150,14 @@ async def ddl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
             if tg_send_type == "audio":
                 duration = await get_duration(download_directory)
-                thumbnail = await get_thumbnail(client, message)
-                await message.message.reply_audio(
+                thumbnail = await get_thumbnail(client, query)
+                await query.message.reply_audio(
                     audio=download_directory,
                     caption=description,
                     parse_mode=enums.ParseMode.HTML,
@@ -166,14 +166,14 @@ async def ddl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
             elif tg_send_type == "vm":
                 width, duration = await get_width_and_duration(download_directory)
-                thumbnail = await get_thumbnail_with_screenshot(client, message, duration, download_directory)
-                await message.message.reply_video_note(
+                thumbnail = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
+                await query.message.reply_video_note(
                     video_note=download_directory,
                     duration=duration,
                     length=width,
@@ -181,7 +181,7 @@ async def ddl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
@@ -195,17 +195,17 @@ async def ddl_call_back(client, message):
                 pass
             time_taken_for_download = (end_one - start).seconds
             time_taken_for_upload = (end_two - end_one).seconds
-            await message.message.edit_caption(
+            await query.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload),
                 parse_mode=enums.ParseMode.HTML
             )
     else:
-        await message.message.edit_caption(
+        await query.message.edit_caption(
             caption=script.NO_VOID_FORMAT_FOUND.format("Incorrect Link"),
             parse_mode=enums.ParseMode.HTML
         )
 
-async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
+async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, query_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
