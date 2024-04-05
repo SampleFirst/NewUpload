@@ -4,7 +4,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import enums
 from Script import script 
 
-async def progress_for_pyrogram(current, total, ud_type, message, start):
+async def progress_for_pyrogram(current, total, ud_type, query, start):
     now = time.time()
     diff = now - start
     if round(diff % 10.00) == 0 or current == total:
@@ -29,7 +29,7 @@ async def progress_for_pyrogram(current, total, ud_type, message, start):
         )
 
         try:
-            await message.edit(
+            await query.edit(
                 text=f"**{ud_type}**\n\n{progress_bar}\n{progress_text}",
                 parse_mode=enums.ParseMode.MARKDOWN,
                 reply_markup=InlineKeyboardMarkup(
@@ -39,7 +39,7 @@ async def progress_for_pyrogram(current, total, ud_type, message, start):
                 )
             )
         except Exception as e:
-            print(f"Error editing message: {e}")
+            print(f"Error editing query: {e}")
 
 
 def humanbytes(size):
