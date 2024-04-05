@@ -86,7 +86,7 @@ class script(object):
     FORMAT_SELECTION = "Now Select The Desired Format or File 🗄️ Size to Upload"
     SET_CUSTOM_USERNAME_PASSWORD = """"""
     NOYES_URL = "URL detected. Please use https://shrtz.me/PtsVnf6 and get me a fast URL so that I can upload to Telegram, without me slowing down for other users."
-    DOWNLOAD_START = "Downloading to my server please wait ⏳"
+    DOWNLOAD_START = "Downloading Please Wait ⏳\n\n{custom_file_name}"
     UPLOAD_START = "📤 Uploading Please Wait"
     RCHD_BOT_API_LIMIT = "size greater than maximum allowed size (50MB). Neverthless, trying to upload."
     RCHD_TG_API_LIMIT = "Downloaded in {} seconds.\nDetected File Size: {}\nSorry. But, I cannot upload files greater than 2GB due to Telegram API limitations."
