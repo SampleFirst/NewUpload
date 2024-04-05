@@ -71,11 +71,12 @@ async def button(client, query):
         await opensettings(query.message)
     elif "close" in query.data:
         await query.message.delete(True)
-    elif "|" in query.data:
-        await ddl_call_back(client, query)
-    elif "=" in query.data:
-        await youtube_dl_call_back(client, query)
+    elif "|" in update.data:
+        await youtube_dl_call_back(bot, update)
+    elif "=" in update.data:
+        await ddl_call_back(bot, update)
     else:
-        await query.message.delete()
+        await update.message.delete()
+
 
     
