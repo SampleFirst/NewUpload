@@ -60,17 +60,16 @@ async def ddl_call_back(client, message):
         if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
             logger.info('cant define file size for youtube videos')
         else:
-            xLAZY_BAAPUx_d_size = requests.head(youtube_dl_url)    
-            xLAZY_BAAPUx_t_length = int(xLAZY_BAAPUx_d_size.headers.get("Content-Length", 0))
-            xLAZY_BAAPUx_path = urlparse(youtube_dl_url).path
-            xLAZY_BAAPUx_u_name = os.path.basename(xLAZY_BAAPUx_path)
-            total_length = humanbytes(xLAZY_BAAPUx_t_length)
+            x_size = requests.head(youtube_dl_url)    
+            x_length = int(x_size.headers.get("Content-Length", 0))
+            x_path = urlparse(youtube_dl_url).path
+            x_name = os.path.basename(x_path)
+            total_length = humanbytes(x_length)
         logger.info(total_length)
         sizee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else total_length
-        namee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else xLAZY_BAAPUx_u_name
+        namee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else x_name
     except Exception as e:
         logger.error(f"Something went wrong in the code =>::: {e}")
-    ######################## 
 
     description = script.CUSTOM_CAPTION_UL_FILE
     start = datetime.now()
@@ -89,11 +88,12 @@ async def ddl_call_back(client, message):
             await download_coroutine(
                 client,
                 session,
+                custom_file_name,
                 youtube_dl_url,
                 download_directory,
-                message.message.chat.id,
-                message.id,
-                c_time
+                query.message.chat.id,
+                query.message.id,
+                c_time,
             )
         except asyncio.TimeoutError:
             await message.message.edit_caption(
@@ -205,21 +205,21 @@ async def ddl_call_back(client, message):
             parse_mode=enums.ParseMode.HTML
         )
 
-async def download_coroutine(client, session, url, file_name, chat_id, message_id, start):
+async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
         total_length = int(response.headers["Content-Length"])
         content_type = response.headers["Content-Type"]
+        x_path = urlparse(url).path
+        x_name = os.path.basename(x_path)
         if "text" in content_type and total_length < 500:
             return await response.release()
-        await client.edit_message_caption(
+        await bot.edit_message_text(
             chat_id,
             message_id,
-            caption=f"""Initiating Download
-🔗 Uʀʟ : `{url}`
-🗂️ Sɪᴢᴇ : {humanbytes(total_length)}""",
-            parse_mode=enums.ParseMode.MARKDOWN
+            text=""""**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{}`\n🧬**ѕιzє:**`{}`
+            """.format(x_name, humanbytes(total_length))
         )
         with open(file_name, "wb") as f_handle:
             while True:
@@ -230,6 +230,8 @@ async def download_coroutine(client, session, url, file_name, chat_id, message_i
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
+                x_path = urlparse(url).path
+                x_name = os.path.basename(x_path)
                 if round(diff % 5.00) == 0 or downloaded == total_length:
                     percentage = downloaded * 100 / total_length
                     speed = downloaded / diff
@@ -237,21 +239,30 @@ async def download_coroutine(client, session, url, file_name, chat_id, message_i
                     time_to_completion = round(
                         (total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
+                    xxLAZY_BAPUXX_total_size = humanbytes(total_length)
+                    tp = round(percentage, 2)
+                    xxLAZY_BAPUXX_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
+                    template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
+
+                    xLDx = f"**ღ♡ ʀᴜɴɴɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪**\n**ᵉⁿʲᵒʸ ˢᵘᵖᵉʳᶠᵃˢᵗ ᵈᵒʷⁿˡᵒᵈ ᵇʸ [ᴸᵃᶻʸᴰᵉᵛᵉˡᵒᵖᵉʳʳ](https://t.me/LazyDeveloperr)◔_◔** \n\n**░░✩ 📂𝐎𝐑𝐆 𝐅𝐈𝐋𝐄𝐍𝐀𝐌𝐄 ✩ **\n<code>{x_name}</code>\n\n**░░✩ 📝𝐍𝐄𝐖 𝐍𝐀𝐌𝐄 ✩ **\n<code>{template_name}</code>\n\n ☼﹍︿﹍ⲯ﹍︿﹍﹍︿﹍ⲯ﹍︿﹍☼\n⚡️**Done:{tp}**%| 🧬ѕιzє: {xxLAZY_BAPUXX_total_size}"
+                    progress = "{0}{1}".format(
+                        ''.join(["█" for i in range(math.floor(percentage / 5))]),
+                        ''.join(["░" for i in range(20 - math.floor(percentage / 5))]))
+                    tmp = xLDx + "\n" + progress + script.PROGRESS_BAR.format( 
+                        round(percentage, 2),
+                        humanbytes(downloaded),
+                        humanbytes(total_length),
+                        humanbytes(speed),
+                        xxLAZY_BAPUXX_estimated_total_time if xxLAZY_BAPUXX_estimated_total_time != '' else "0 s"
+                    )
                     try:
-                        progress_bar = "[{:<50}] {:.2f}%".format(
-                            '=' * int(percentage / 2), percentage)
-                        current_message = f"""Downloading...
-🔗 URL: `{url}`
-🗂️ Size: {humanbytes(total_length)}
-⏳ Progress: {progress_bar}
-✅ Done: {humanbytes(downloaded)}
-⏱️ ETA: {TimeFormatter(estimated_total_time)}"""
+                        current_message = tmp
                         if current_message != display_message:
-                            await client.edit_message_caption(
+                            await bot.edit_message_text(
                                 chat_id,
                                 message_id,
-                                caption=current_message,
-                                parse_mode=enums.ParseMode.MARKDOWN
+                                text=current_message,
+                                disable_web_page_preview=True
                             )
                             display_message = current_message
                     except Exception as e:
