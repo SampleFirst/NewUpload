@@ -55,14 +55,29 @@ async def ddl_call_back(client, message):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    user = await client.get_me()
-    mention = user["mention"]
-    description = script.CUSTOM_CAPTION_UL_FILE.format(mention)
+    ######################## 
+    try:
+        if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
+            logger.info('cant define file size for youtube videos')
+        else:
+            xLAZY_BAAPUx_d_size = requests.head(youtube_dl_url)    
+            xLAZY_BAAPUx_t_length = int(xLAZY_BAAPUx_d_size.headers.get("Content-Length", 0))
+            xLAZY_BAAPUx_path = urlparse(youtube_dl_url).path
+            xLAZY_BAAPUx_u_name = os.path.basename(xLAZY_BAAPUx_path)
+            total_length = humanbytes(xLAZY_BAAPUx_t_length)
+        logger.info(total_length)
+        sizee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else total_length
+        namee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else xLAZY_BAAPUx_u_name
+    except Exception as e:
+        logger.error(f"Something went wrong in the code =>::: {e}")
+    ######################## 
+
+    description = script.CUSTOM_CAPTION_UL_FILE
     start = datetime.now()
-    await message.message.edit_caption(
-        caption=script.DOWNLOAD_START,
-        parse_mode=enums.ParseMode.HTML
-    )
+    
+    description = script.CUSTOM_CAPTION_UL_FILE
+    if "fulltitle" in response_json:
+        description = response_json["fulltitle"][0:1021]
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(message.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
