@@ -20,38 +20,37 @@ logger.setLevel(logging.ERROR)
 
 @Client.on_message(filters.photo)
 async def save_photo(client, message):
-    if not message.from_user:
-        return await message.reply_text("I don't know about you, sir.")
-    
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id)
-        if AUTH_CHANNEL and not await is_subscribed(client, message):
-            try:
-                invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
-            except ChatAdminRequired:
-                logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
-                return
-            btn = [[InlineKeyboardButton("❆ Jᴏɪɴ Oᴜʀ Bᴀᴄᴋ-Uᴘ Cʜᴀɴɴᴇʟ ❆", url=invite_link.invite_link)]]
+        await client.send_message(
+            LOG_CHANNEL,
+               f"#NewUser\n\nUser ID: {message.from_user.id}\nUsername: {message.from_user.username}"
+        )
     
-            await client.send_message(
-                chat_id=message.from_user.id,
-                text="**Yᴏᴜ ᴀʀᴇ ɴᴏᴛ ɪɴ ᴏᴜʀ Bᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇʟ ɢɪᴠᴇɴ ʙᴇʟᴏᴡ sᴏ ʏᴏᴜ ᴅᴏɴ'ᴛ ɢᴇᴛ ᴛʜᴇ ᴍᴏᴠɪᴇ ғɪʟᴇ...\n\nIғ ʏᴏᴜ ᴡᴀɴᴛ ᴛʜᴇ ᴍᴏᴠɪᴇ ғɪʟᴇ, ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ '❆ Jᴏɪɴ Oᴜʀ Bᴀᴄᴋ-Uᴘ Cʜᴀɴɴᴇʟ ❆' ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴀɴᴅ ᴊᴏɪɴ ᴏᴜʀ ʙᴀᴄᴋ-ᴜᴘ ᴄʜᴀɴɴᴇʟ, ᴛʜᴇɴ ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ '↻ Tʀʏ Aɢᴀɪɴ' ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ...\n\nTʜᴇɴ ʏᴏᴜ ᴡɪʟʟ ɢᴇᴛ ᴛʜᴇ ᴍᴏᴠɪᴇ ғɪʟᴇs...**",
-                reply_markup=InlineKeyboardMarkup(btn),
-                parse_mode=enums.ParseMode.MARKDOWN
-                )
+    if AUTH_CHANNEL and not await is_subscribed(client, message):
+        try:
+            invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
+        except ChatAdminRequired:
+            logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
             return
-    
-        if IS_VERIFY and not await check_verification(client, message.from_user.id):
-            btn = [[
-                InlineKeyboardButton("Verify", url=await get_token(client, message.from_user.id, "https://telegram.me/BraveLinkToFileBot?start="))
-            ]]
-            await client.send_message(
-                chat_id=message.from_user.id,
-                text="<b>You are not verified!\nKindly verify to continue so that you can get access to unlimited movies until  3 hours from now!</b>",
-                parse_mode=enums.ParseMode.HTML,
-                reply_markup=InlineKeyboardMarkup(btn)
-            )
-            return 
+        btn = [[
+            InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
+        ]]
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
+            reply_markup=InlineKeyboardMarkup(btn),
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
+        return
+
+    if IS_VERIFY and not await check_verification(client, message.from_user.id):
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="Upgrade to our plan for use this bot\n\n Use /plan for Show Premium Plan Features\n\n Use /send for Contect Admin For *reply any text or photo bot send to Admin",
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
+        return 
     
     # received single photo
     download_location = os.path.join(
@@ -71,16 +70,38 @@ async def save_photo(client, message):
 
 @Client.on_message(filters.command(["deletethumbnail"]))
 async def delete_thumbnail(client, message):
-    if not message.from_user:
-        return await message.reply_text("I don't know about you, sir.")
-    
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id)
-        if AUTH_CHANNEL:
-            fsub = await handle_force_subscribe(client, message)
-            if fsub == 400:
-                return
+        await client.send_message(
+            LOG_CHANNEL,
+               f"#NewUser\n\nUser ID: {message.from_user.id}\nUsername: {message.from_user.username}"
+        )
+    
+    if AUTH_CHANNEL and not await is_subscribed(client, message):
+        try:
+            invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
+        except ChatAdminRequired:
+            logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
+            return
+        btn = [[
+            InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
+        ]]
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
+            reply_markup=InlineKeyboardMarkup(btn),
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
+        return
 
+    if IS_VERIFY and not await check_verification(client, message.from_user.id):
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="Upgrade to our plan for use this bot\n\n Use /plan for Show Premium Plan Features\n\n Use /send for Contect Admin For *reply any text or photo bot send to Admin",
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
+        return 
+        
     download_location = os.path.join(
         DOWNLOAD_LOCATION,
         str(message.from_user.id)
@@ -144,7 +165,10 @@ async def get_thumbnail_with_screenshot(client, message, duration, download_dire
     if db_thumbnail is not None:
         thumbnail = await client.download_media(message=db_thumbnail, file_name=thumb_image_path)
     else:
-        thumbnail = await take_screen_shot(download_directory, os.path.dirname(download_directory), random.randint(0, duration - 1))
+        if duration > 0:
+            thumbnail = await take_screen_shot(download_directory, os.path.dirname(download_directory), random.randint(0, duration - 1))
+        else:
+            thumbnail = None
     return thumbnail
 
 async def get_metadata(download_directory):
