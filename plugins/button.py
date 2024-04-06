@@ -139,6 +139,7 @@ async def youtube_dl_call_back(client, query):
     )
     start_time = time.time()
     await client.download_media(
+        message=download_directory,
         progress=progress_for_pyrogram,
             progress_args=(
                 script.UPLOAD_START,
