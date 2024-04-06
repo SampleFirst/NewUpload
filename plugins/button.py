@@ -140,8 +140,8 @@ async def youtube_dl_call_back(client, query):
                 custom_file_name,
                 youtube_dl_url,
                 download_directory,
-                query.message.chat.id,
-                query.query.id,
+                chat.id,
+                query.id,
                 c_time,
             )
         except asyncio.TimeoutError:
