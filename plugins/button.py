@@ -269,17 +269,19 @@ async def youtube_dl_call_back(client, query):
 async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
     downloaded = 0
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        total_length = int(response.headers["Content-Length"])
+        x_length = int(x_size.headers.get("Content-Length", 0))
         content_type = response.headers["Content-Type"]
         x_path = urlparse(url).path
         x_name = os.path.basename(x_path)
+        total_length = humanbytes(x_length)
+            
         if "text" in content_type and total_length < 500:
             return await response.release()
         await bot.edit_message_text(
             chat_id,
             message_id,
             text="**Initializing Lazy Construction**\n⬇️⏬ `{}`\n**Size:**`{}"
-            .format(x_name, humanbytes(total_length))
+            .format(x_name, total_length)
         )
         with open(file_name, "wb") as f_handle:
             while True:
