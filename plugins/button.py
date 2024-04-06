@@ -75,7 +75,7 @@ async def youtube_dl_call_back(client, query):
     logger.info(youtube_dl_url)
     logger.info(custom_file_name)
 
-    await query.message.reply_text(
+    await client.download_media(
         progress=progress_for_pyrogram
     )
 
