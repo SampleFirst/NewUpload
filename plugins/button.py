@@ -24,6 +24,8 @@ logger.setLevel(logging.ERROR)
 
 async def youtube_dl_call_back(client, query):
     cb_data = query.data
+    lzmsg = query.message.reply_to_message  # msg will be callback query
+    message_idx = lzmsg.id #getting id
     tg_send_type, youtube_dl_format, youtube_dl_ext, random_suffix = cb_data.split("|")
     random1 = random_char(5)
 
