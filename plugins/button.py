@@ -6,6 +6,7 @@ import os
 import shutil
 import time
 import requests
+import math
 from urllib.parse import urlparse
 from datetime import datetime
 from pyrogram import enums
@@ -21,16 +22,12 @@ from plugins.functions.ran_text import random_char
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-
 async def youtube_dl_call_back(client, query):
     cb_data = query.data
-    # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext, random_suffix = cb_data.split("|")
-    print(cb_data)
     random1 = random_char(5)
 
-    save_ytdl_json_path = DOWNLOAD_LOCATION + \
-        "/" + str(query.from_user.id) + f'{random_suffix}' + ".json"
+    save_ytdl_json_path = DOWNLOAD_LOCATION + "/" + str(query.from_user.id) + f'{random_suffix}' + ".json"
     try:
         with open(save_ytdl_json_path, "r", encoding="utf8") as f:
             response_json = json.load(f)
@@ -39,8 +36,7 @@ async def youtube_dl_call_back(client, query):
         return False
 
     youtube_dl_url = query.message.reply_to_message.text
-    custom_file_name = str(response_json.get("title")) + \
-        "_" + youtube_dl_format + "." + youtube_dl_ext
+    custom_file_name = str(response_json.get("title")) + "_" + youtube_dl_format + "." + youtube_dl_ext
     youtube_dl_username = None
     youtube_dl_password = None
 
@@ -63,46 +59,31 @@ async def youtube_dl_call_back(client, query):
                     l = entity.length
                     youtube_dl_url = youtube_dl_url[o:o + l]
 
-    if youtube_dl_url is not None:
-        youtube_dl_url = youtube_dl_url.strip()
-    if custom_file_name is not None:
-        custom_file_name = custom_file_name.strip()
-
-    if youtube_dl_username is not None:
-        youtube_dl_username = youtube_dl_username.strip()
-    if youtube_dl_password is not None:
-        youtube_dl_password = youtube_dl_password.strip()
-
-    logger.info(youtube_dl_url)
-    logger.info(custom_file_name)
+    youtube_dl_url = youtube_dl_url.strip() if youtube_dl_url else None
+    custom_file_name = custom_file_name.strip() if custom_file_name else None
+    youtube_dl_username = youtube_dl_username.strip() if youtube_dl_username else None
+    youtube_dl_password = youtube_dl_password.strip() if youtube_dl_password else None
 
     try:
         if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
-            logger.info('cant define file size for youtube videos')
+            logger.info('Cannot define file size for youtube videos')
         else:
             x_size = requests.head(youtube_dl_url)    
             x_length = int(x_size.headers.get("Content-Length", 0))
             x_path = urlparse(youtube_dl_url).path
             x_name = os.path.basename(x_path)
             total_length = humanbytes(x_length)
-        logger.info(total_length)
-        sizee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else total_length
-        namee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else x_name
     except Exception as e:
         logger.error(f"Something went wrong in the code =>::: {e}")
 
     start = datetime.now()
-    description = script.CUSTOM_CAPTION_UL_FILE
-    if custom_file_name:
-        description = custom_file_name
-    elif "fulltitle" in response_json:
-        description = response_json["fulltitle"][0:1021]
+    description = script.CUSTOM_CAPTION_UL_FILE if not custom_file_name else custom_file_name[:1021]
 
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id) + f'{random1}'
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
 
-    download_directory = tmp_directory_for_each_user + "/" + custom_file_name
+    download_directory = os.path.join(tmp_directory_for_each_user, custom_file_name)
 
     command_to_exec = []
     if tg_send_type == "audio":
@@ -132,23 +113,18 @@ async def youtube_dl_call_back(client, query):
             "-o", download_directory
         ]
 
-    if HTTP_PROXY != "":
-        command_to_exec.append("--proxy")
-        command_to_exec.append(HTTP_PROXY)
-    if youtube_dl_username is not None:
-        command_to_exec.append("--username")
-        command_to_exec.append(youtube_dl_username)
-    if youtube_dl_password is not None:
-        command_to_exec.append("--password")
-        command_to_exec.append(youtube_dl_password)
+    if HTTP_PROXY:
+        command_to_exec.extend(["--proxy", HTTP_PROXY])
+    if youtube_dl_username:
+        command_to_exec.extend(["--username", youtube_dl_username])
+    if youtube_dl_password:
+        command_to_exec.extend(["--password", youtube_dl_password])
     command_to_exec.append("--no-warnings")
-    #command_to_exec.append("--geo-bypass-country")
-    # command_to_exec.append("--quiet")
+
     logger.info(command_to_exec)
     start = datetime.now()
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
-        # stdout must a pipe to be accessible as process.stdout
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
@@ -162,8 +138,8 @@ async def youtube_dl_call_back(client, query):
                 custom_file_name,
                 youtube_dl_url,
                 download_directory,
-                query.query.chat.id,
-                query.query.id,
+                query.message.chat.id,
+                query.message.message_id,
                 c_time,
             )
         except asyncio.TimeoutError:
@@ -172,24 +148,23 @@ async def youtube_dl_call_back(client, query):
                 parse_mode=enums.ParseMode.HTML
             )
             return False
-    # Wait for the subprocess to finish
+
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
+
     logger.info(e_response)
     logger.info(t_response)
+
     ad_string_to_replace = "**Invalid link !**"
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
-        await query.message.edit_caption(
-            
-            text=error_message
-        )
+        await query.message.edit_caption(text=error_message)
         return False
 
     if os.path.exists(download_directory):
         end_one = datetime.now()
-        time_taken_for_download = (end_one -start).seconds
+        time_taken_for_download = (end_one - start).seconds
         await query.message.edit_caption(
             caption=script.UPLOAD_START,
             parse_mode=enums.ParseMode.HTML
@@ -199,8 +174,8 @@ async def youtube_dl_call_back(client, query):
             file_size = os.stat(download_directory).st_size
         except FileNotFoundError as exc:
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
-            # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
+
         if file_size > TG_MAX_FILE_SIZE:
             await query.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT,
@@ -208,7 +183,7 @@ async def youtube_dl_call_back(client, query):
             )
         else:
             start_time = time.time()
-            if (await db.get_upload_as_doc(query.from_user.id)) is False:
+            if not await db.get_upload_as_doc(query.from_user.id):
                 thumbnail = await get_thumbnail(client, query)
                 await query.message.reply_document(
                     document=download_directory,
@@ -280,7 +255,7 @@ async def youtube_dl_call_back(client, query):
                 os.remove(thumb_image_path)
             except:
                 pass
-                
+
             await query.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
             )
@@ -288,9 +263,9 @@ async def youtube_dl_call_back(client, query):
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
 
-async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, query_id, start):
+
+async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
     downloaded = 0
-    display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
         total_length = int(response.headers["Content-Length"])
         content_type = response.headers["Content-Type"]
@@ -301,8 +276,8 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         await bot.edit_message_text(
             chat_id,
             message_id,
-            text=""""**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{}`\n🧬**ѕιzє:**`{}`
-            """.format(x_name, humanbytes(total_length))
+            text="**Initializing Lazy Construction**\n⬇️⏬ `{}`\n**Size:**`{}"
+            .format(x_name, humanbytes(total_length))
         )
         with open(file_name, "wb") as f_handle:
             while True:
@@ -313,31 +288,34 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
-                x_path = urlparse(url).path
-                x_name = os.path.basename(x_path)
                 if round(diff % 5.00) == 0 or downloaded == total_length:
                     percentage = downloaded * 100 / total_length
                     speed = downloaded / diff
                     elapsed_time = round(diff) * 1000
-                    time_to_completion = round(
-                        (total_length - downloaded) / speed) * 1000
+                    time_to_completion = round((total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     xxLAZY_BAPUXX_total_size = humanbytes(total_length)
                     tp = round(percentage, 2)
                     xxLAZY_BAPUXX_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
                     template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
 
-                    xLDx = f"**ღ♡ ʀᴜɴɴɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪**\n**ᵉⁿʲᵒʸ ˢᵘᵖᵉʳᶠᵃˢᵗ ᵈᵒʷⁿˡᵒᵈ ᵇʸ [ᴸᵃᶻʸᴰᵉᵛᵉˡᵒᵖᵉʳʳ](https://t.me/LazyDeveloperr)◔_◔** \n\n**░░✩ 📂𝐎𝐑𝐆 𝐅𝐈𝐋𝐄𝐍𝐀𝐌𝐄 ✩ **\n<code>{x_name}</code>\n\n**░░✩ 📝𝐍𝐄𝐖 𝐍𝐀𝐌𝐄 ✩ **\n<code>{template_name}</code>\n\n ☼﹍︿﹍ⲯ﹍︿﹍﹍︿﹍ⲯ﹍︿﹍☼\n⚡️**Done:{tp}**%| 🧬ѕιzє: {xxLAZY_BAPUXX_total_size}"
+                    xLDx = ("**Running Lazy Construction**\n**Enjoy superfast download by LazyDeveloper**\n\n"
+                            "**File Name:**\n<code>{}</code>\n\n"
+                            "**New Name:**\n<code>{}</code>\n\n"
+                            "☼-︿-ⲯ-︿-︿-︿-ⲯ-︿-☼\n"
+                            "**Done:{}**%| **Size:** {}"
+                            .format(x_name, template_name, tp, xxLAZY_BAPUXX_total_size))
+
                     progress = "{0}{1}".format(
-                        ''.join(["█" for i in range(math.floor(percentage / 5))]),
-                        ''.join(["░" for i in range(20 - math.floor(percentage / 5))]))
-                    tmp = xLDx + "\n" + progress + script.PROGRESS_BAR.format( 
+                        ''.join(["█" for _ in range(math.floor(percentage / 5))]),
+                        ''.join(["░" for _ in range(20 - math.floor(percentage / 5))]))
+                    tmp = (xLDx + "\n" + progress + script.PROGRESS_BAR.format(
                         round(percentage, 2),
                         humanbytes(downloaded),
                         humanbytes(total_length),
                         humanbytes(speed),
-                        xxLAZY_BAPUXX_estimated_total_time if xxLAZY_BAPUXX_estimated_total_time != '' else "0 s"
-                    )
+                        xxLAZY_BAPUXX_estimated_total_time if xxLAZY_BAPUXX_estimated_total_time != '' else "0 s"))
+
                     try:
                         current_message = tmp
                         if current_message != display_message:
