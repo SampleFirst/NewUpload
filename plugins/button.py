@@ -140,7 +140,7 @@ async def youtube_dl_call_back(client, query):
         stderr=asyncio.subprocess.PIPE,
     )
 
-    async def progress_callback():
+    async def progress_callback(response):
         while True:
             await asyncio.sleep(5)  # adjust the interval as needed
             if os.path.exists(download_directory):
@@ -153,7 +153,7 @@ async def youtube_dl_call_back(client, query):
                 if progress >= 100:
                     break
 
-    asyncio.create_task(progress_callback())
+    asyncio.create_task(progress_callback(response))
 
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
