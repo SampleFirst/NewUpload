@@ -39,7 +39,7 @@ async def echo(client, message):
         try:
             invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
         except ChatAdminRequired:
-            logger.error("Make sure Bot is admin in ForceSubscribe channel")
+            logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
             return
         btn = [[
             InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
@@ -184,47 +184,52 @@ async def echo(client, message):
                     approx_file_size = ""
                     if "filesize" in formats:
                         approx_file_size = humanbytes(formats["filesize"])
-                    cb_string_video = "{}|{}|{}|{}".format(
-                        "video", format_id, format_ext, randem)
-                    cb_string_file = "{}|{}|{}|{}".format(
-                        "file", format_id, format_ext, randem)
-                    if format_string is not None and not "audio only" in format_string:
-                        ikeyboard = [
-                            InlineKeyboardButton(f"📹 {format_string} ({approx_file_size})", callback_data=(cb_string_video).encode("UTF-8"))
-                        ]
+                        cb_string_video = "{}|{}|{}|{}".format(
+                            "video", format_id, format_ext, randem)
+                        cb_string_file = "{}|{}|{}|{}".format(
+                            "file", format_id, format_ext, randem)
+                        if format_string is not None and not "audio only" in format_string:
+                            ikeyboard = [
+                                InlineKeyboardButton("😀 " + format_string + " " + format_ext + " " + approx_file_size + " ", callback_data=(cb_string_video).encode("UTF-8"))
+                            ]
+                        else:
+                            ikeyboard = [
+                                InlineKeyboardButton("📦 [" + "] ( " + approx_file_size + " )", callback_data=(cb_string_video).encode("UTF-8"))
+                            ]
+                        inline_keyboard.append(ikeyboard)
                     else:
-                        ikeyboard = [
-                            InlineKeyboardButton(f"📦 [{format_string}] ({approx_file_size})", callback_data=(cb_string_video).encode("UTF-8"))
-                        ]
-                    inline_keyboard.append(ikeyboard)
+                        approx_file_size = "none"
+                        cb_string_video = "{}|{}|{}|{}".format(
+                            "video", format_id, format_ext, randem)
+                        cb_string_file = "{}|{}|{}|{}".format(
+                            "file", format_id, format_ext, randem)
+                        if format_string is not None and not "audio only" in format_string:
+                            ikeyboard = [
+                                InlineKeyboardButton("📂 " + format_string + " " + format_ext + " " + approx_file_size + " ", callback_data=(cb_string_video).encode("UTF-8"))
+                            ]
+                        else:
+                            ikeyboard = [
+                                InlineKeyboardButton("😆 [" + "] ( " + approx_file_size + " )", callback_data=(cb_string_video).encode("UTF-8"))
+                            ]
+                        inline_keyboard.append(ikeyboard)
                 if duration is not None:
-                    cb_string_144p = "{}|{}|{}|{}".format("video", "144p", "mp4", randem)
-                    cb_string_240p = "{}|{}|{}|{}".format("video", "240p", "mp4", randem)
-                    cb_string_360p = "{}|{}|{}|{}".format("video", "360p", "mp4", randem)
-                    cb_string_480p = "{}|{}|{}|{}".format("video", "480p", "mp4", randem)
-                    cb_string_720p = "{}|{}|{}|{}".format("video", "720p", "mp4", randem)
-                    cb_string_1080p = "{}|{}|{}|{}".format("video", "1080p", "mp4", randem)
+                    cb_string_64 = "{}|{}|{}|{}".format("audio", "64k", "mp3", randem)
+                    cb_string_128 = "{}|{}|{}|{}".format("audio", "128k", "mp3", randem)
+                    cb_string = "{}|{}|{}|{}".format("audio", "320k", "mp3", randem)
                     inline_keyboard.append(
                         [
-                            InlineKeyboardButton("🎥 144p", callback_data=cb_string_144p.encode("UTF-8")),
-                            InlineKeyboardButton("🎥 240p", callback_data=cb_string_240p.encode("UTF-8"))
+                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
+                            InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=cb_string_128.encode("UTF-8"))
                         ]
                     )
                     inline_keyboard.append(
                         [
-                            InlineKeyboardButton("🎥 360p", callback_data=cb_string_360p.encode("UTF-8")),
-                            InlineKeyboardButton("🎥 480p", callback_data=cb_string_480p.encode("UTF-8"))
+                        InlineKeyboardButton("🎵 ᴍᴘ𝟹 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=cb_string.encode("UTF-8"))
                         ]
                     )
                     inline_keyboard.append(
                         [
-                            InlineKeyboardButton("🎥 720p", callback_data=cb_string_720p.encode("UTF-8")),
-                            InlineKeyboardButton("🎥 1080p", callback_data=cb_string_1080p.encode("UTF-8"))
-                        ]
-                    )
-                    inline_keyboard.append(
-                        [
-                            InlineKeyboardButton("⛔️ Close", callback_data='close')               
+                        InlineKeyboardButton("⛔️ ᴄʟᴏsᴇ", callback_data='close')               
                         ]
                     )
             else:
@@ -236,7 +241,7 @@ async def echo(client, message):
                     "video", format_id, format_ext)
                 inline_keyboard.append(
                     [
-                        InlineKeyboardButton("🎬 Media", callback_data=(cb_string_video).encode("UTF-8"))
+                        InlineKeyboardButton("🎬 sᴍᴇᴅɪᴀ", callback_data=(cb_string_video).encode("UTF-8"))
                     ]
                 )
                 cb_string_file = "{}={}={}".format(
@@ -245,7 +250,7 @@ async def echo(client, message):
                     "video", format_id, format_ext)
                 inline_keyboard.append(
                     [
-                        InlineKeyboardButton("🎥 Video", callback_data=(cb_string_video).encode("UTF-8"))
+                        InlineKeyboardButton("🎥 ᴠɪᴅᴇᴏ", callback_data=(cb_string_video).encode("UTF-8"))
                     ]
                 )
             reply_markup = InlineKeyboardMarkup(inline_keyboard)
@@ -265,7 +270,7 @@ async def echo(client, message):
                 "video", "OFL", "ENON")
             inline_keyboard.append(
                 [
-                    InlineKeyboardButton("🎬 Media", callback_data=(cb_string_video).encode("UTF-8"))
+                    InlineKeyboardButton("🎬 ᴍᴇᴅɪᴀ", callback_data=(cb_string_video).encode("UTF-8"))
                 ]
             )
             reply_markup = InlineKeyboardMarkup(inline_keyboard)
@@ -277,3 +282,4 @@ async def echo(client, message):
                 parse_mode=enums.ParseMode.HTML,
                 reply_to_message_id=message.id
             )
+    
