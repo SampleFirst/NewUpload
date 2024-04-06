@@ -75,8 +75,10 @@ async def youtube_dl_call_back(client, query):
     logger.info(youtube_dl_url)
     logger.info(custom_file_name)
 
-    msg = await query.message.edit_caption(caption=script.DOWNLOAD_START.format(a=custom_file_name))
-    
+    await query.message.edit_caption(
+        caption=script.DOWNLOAD_START.format(a=custom_file_name)
+    )
+
     description = script.CUSTOM_CAPTION_UL_FILE
     if custom_file_name:
         description = custom_file_name
@@ -137,16 +139,22 @@ async def youtube_dl_call_back(client, query):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-    start_time = time.time()
-    await client.download_media(
-        message=download_directory,
-        progress=progress_for_pyrogram,
-            progress_args=(
-                script.UPLOAD_START,
-                msg,
-                start_time
-            )
-        )
+
+    async def progress_callback():
+        while True:
+            await asyncio.sleep(5)  # adjust the interval as needed
+            if os.path.exists(download_directory):
+                downloaded_bytes = os.path.getsize(download_directory)
+                total_bytes = int(response.headers.get('content-length', 0))
+                progress = min(100, 100 * downloaded_bytes / total_bytes)
+                await query.message.edit_caption(
+                    caption=script.DOWNLOAD_START.format(a=custom_file_name) + f"\nProgress: {progress:.2f}%"
+                )
+                if progress >= 100:
+                    break
+
+    asyncio.create_task(progress_callback())
+
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
