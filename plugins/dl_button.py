@@ -1,6 +1,7 @@
 import logging
 import aiohttp
 import os
+import asyncio
 import shutil
 import time
 import requests
@@ -94,8 +95,8 @@ async def ddl_call_back(client, query):
                 custom_file_name,
                 youtube_dl_url,
                 download_directory,
-                query.query.chat.id,
-                query.query.id,
+                query.message.chat.id,
+                query.id,
                 c_time,
             )
         except asyncio.TimeoutError:
