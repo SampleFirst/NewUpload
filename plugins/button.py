@@ -145,7 +145,8 @@ async def youtube_dl_call_back(client, query):
 
     total_size = None
     downloaded = 0
-    async for line in process.stdout:
+    async for line_bytes in process.stdout:
+        line = line_bytes.decode().strip()
         if "size" in line:
             total_size = line.split(":")[1].strip()
         elif "Downloading" in line:
