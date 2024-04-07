@@ -266,7 +266,7 @@ async def youtube_dl_call_back(client, query):
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
 
 
-async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
+async def download_coroutine(client, session, custom_file_name, url, file_name, chat_id, message_id, start):
     downloaded = 0
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
         x_size = requests.head(url)    
