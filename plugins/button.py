@@ -279,7 +279,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         await bot.edit_message_text(
             chat_id,
             message_id,
-            text=f"**Initializing Lazy Construction**\n⬇️⏬ `{x_name}`\n**Size:**`{total_length}"
+            text="**Initializing Lazy Construction**\n⬇️⏬"
         )
         with open(file_name, "wb") as f_handle:
             while True:
