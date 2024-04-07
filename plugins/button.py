@@ -276,9 +276,8 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         x_name = os.path.basename(x_path)
         total_length = humanbytes(x_length)
             
-        await bot.edit_message_text(
+        msg = await client.send_message(
             chat_id,
-            message_id,
             text="**Initializing Lazy Construction**\n⬇️⏬"
         )
         with open(file_name, "wb") as f_handle:
@@ -320,9 +319,8 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                     try:
                         current_message = tmp
                         if current_message != display_message:
-                            await bot.edit_message_text(
+                            await msg.edit(
                                 chat_id,
-                                message_id,
                                 text=current_message,
                                 disable_web_page_preview=True
                             )
