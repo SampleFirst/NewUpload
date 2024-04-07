@@ -145,34 +145,38 @@ async def youtube_dl_call_back(client, query):
 
     total_size = None
     downloaded = 0
-    async for line_bytes in process.stdout:
-        line = line_bytes.decode().strip()
-        if "size" in line:
-            total_size_str = line.split(":")[1].strip()
-            # Check if total_size_str is a valid integer
-            if total_size_str.isdigit():
-                total_size = int(total_size_str)
-        elif "Downloading" in line:
-            downloaded_str = line.split(" ")[1].strip()
-            # Check if downloaded_str is a valid integer
-            if downloaded_str.isdigit():
-                downloaded = int(downloaded_str)
-                percentage = f"{(downloaded/total_size)*100:.2f}%" if total_size else "0%"
-                eta = line.split(" ETA ")[1].strip()
-                await query.message.edit_caption(
-                    caption=f"Downloading <code>{custom_file_name}</code>\n\n"
-                            f"Total Size: {total_size}\n"
-                            f"Downloaded: {downloaded}\n"
-                            f"Percentage: {percentage}\n"
-                            f"ETA: {eta}"
-                )
+    try:
+        while True:
+            line_bytes = await asyncio.wait_for(process.stdout.read(CHUNK_SIZE), timeout=10)
+            if not line_bytes:
+                break
+            line = line_bytes.decode().strip()
+            if "size" in line:
+                total_size_str = line.split(":")[1].strip()
+                # Check if total_size_str is a valid integer
+                if total_size_str.isdigit():
+                    total_size = int(total_size_str)
+            elif "Downloading" in line:
+                downloaded_str = line.split(" ")[1].strip()
+                # Check if downloaded_str is a valid integer
+                if downloaded_str.isdigit():
+                    downloaded = int(downloaded_str)
+                    percentage = f"{(downloaded/total_size)*100:.2f}%" if total_size else "0%"
+                    eta = line.split(" ETA ")[1].strip()
+                    await query.message.edit_caption(
+                        caption=f"Downloading <code>{custom_file_name}</code>\n\n"
+                                f"Total Size: {total_size}\n"
+                                f"Downloaded: {downloaded}\n"
+                                f"Percentage: {percentage}\n"
+                                f"ETA: {eta}"
+                    )
 
     # Wait for the subprocess to finish
     await process.communicate()
     end = datetime.now()
     time_taken = (end - start).seconds
     logger.info(f"✅ Downloaded in: {time_taken} seconds")
-
+    
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
