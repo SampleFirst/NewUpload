@@ -183,8 +183,8 @@ async def echo(client, message):
                     approx_file_size = ""
                     if "filesize" in formats:
                         approx_file_size = humanbytes(formats["filesize"])
-                        cb_string_video = f"video|{format_id}|{format_ext}|{randem}"
-                        cb_string_file = f"file|{format_id}|{format_ext}|{randem}"
+                        cb_string_video = f"video={format_id}={format_ext}={randem}"
+                        cb_string_file = f"file={format_id}={format_ext}={randem}"
                         if format_string is not None and not "audio only" in format_string:
                             ikeyboard = [
                                 InlineKeyboardButton(f"😀 {format_string} {format_ext} {approx_file_size} ", callback_data=cb_string_video)
