@@ -148,18 +148,24 @@ async def youtube_dl_call_back(client, query):
     async for line_bytes in process.stdout:
         line = line_bytes.decode().strip()
         if "size" in line:
-            total_size = line.split(":")[1].strip()
+            total_size_str = line.split(":")[1].strip()
+            # Check if total_size_str is a valid integer
+            if total_size_str.isdigit():
+                total_size = int(total_size_str)
         elif "Downloading" in line:
-            downloaded = line.split(" ")[1].strip()
-            percentage = f"{(int(downloaded)/int(total_size))*100:.2f}%"
-            eta = line.split(" ETA ")[1].strip()
-            await query.message.edit_caption(
-                caption=f"Downloading <code>{custom_file_name}</code>\n\n"
-                        f"Total Size: {total_size}\n"
-                        f"Downloaded: {downloaded}\n"
-                        f"Percentage: {percentage}\n"
-                        f"ETA: {eta}"
-            )
+            downloaded_str = line.split(" ")[1].strip()
+            # Check if downloaded_str is a valid integer
+            if downloaded_str.isdigit():
+                downloaded = int(downloaded_str)
+                percentage = f"{(downloaded/total_size)*100:.2f}%" if total_size else "0%"
+                eta = line.split(" ETA ")[1].strip()
+                await query.message.edit_caption(
+                    caption=f"Downloading <code>{custom_file_name}</code>\n\n"
+                            f"Total Size: {total_size}\n"
+                            f"Downloaded: {downloaded}\n"
+                            f"Percentage: {percentage}\n"
+                            f"ETA: {eta}"
+                )
 
     # Wait for the subprocess to finish
     await process.communicate()
