@@ -292,13 +292,13 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
-                if round(diff % 5.00) == 0 or downloaded == total_length:
-                    percentage = downloaded * 100 / total_length
+                if round(diff % 5.00) == 0 or downloaded == x_length:
+                    percentage = downloaded * 100 / x_length
                     speed = downloaded / diff
                     elapsed_time = round(diff) * 1000
-                    time_to_completion = round((total_length - downloaded) / speed) * 1000
+                    time_to_completion = round((x_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
-                    x_total_size = humanbytes(total_length)
+                    x_total_size = humanbytes(x_length)
                     tp = round(percentage, 2)
                     x_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
                     template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
@@ -315,7 +315,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                     tmp = (xLDx + "\n" + progress + script.PROGRESS_BAR.format(
                         round(percentage, 2),
                         humanbytes(downloaded),
-                        humanbytes(total_length),
+                        humanbytes(x_length),
                         humanbytes(speed),
                         x_estimated_total_time if x_estimated_total_time != '' else "0 s"))
 
