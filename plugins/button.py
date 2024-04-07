@@ -14,7 +14,7 @@ from info import *
 from Script import script
 from plugins.thumbnail import get_thumbnail, get_thumbnail_with_screenshot, get_metadata, get_width_and_duration, get_duration
 from pyrogram.types import InputMediaPhoto
-from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
+from plugins.functions.display_progress import progress_for_pyrogram, humanbytes, TimeFormatter
 from database.database import db
 from PIL import Image
 from plugins.functions.ran_text import random_char
