@@ -139,7 +139,7 @@ async def youtube_dl_call_back(client, query):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
         bufsize=0,
-        text=True,
+        text=False,
         close_fds=True
     )
 
