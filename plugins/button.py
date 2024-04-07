@@ -276,7 +276,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         x_name = os.path.basename(x_path)
         total_length = humanbytes(x_length)
             
-        if "text" in content_type and total_length < 500:
+        if "text" in content_type and int(total_length) < 500:
             return await response.release()
         await bot.edit_message_text(
             chat_id,
