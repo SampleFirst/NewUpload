@@ -4,8 +4,6 @@ import json
 import os
 import shutil
 import time
-import requests
-from urllib.parse import urlparse
 from datetime import datetime
 from pyrogram import enums
 from info import *
@@ -21,23 +19,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
 
-async def youtube_dl_call_back(client, query):
-    cb_data = query.data
+async def youtube_dl_call_back(client, message):
+    cb_data = message.data
     # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext, random_suffix = cb_data.split("|")
     print(cb_data)
     random1 = random_char(5)
 
     save_ytdl_json_path = DOWNLOAD_LOCATION + \
-        "/" + str(query.from_user.id) + f'{random_suffix}' + ".json"
+        "/" + str(message.from_user.id) + f'{random_suffix}' + ".json"
     try:
         with open(save_ytdl_json_path, "r", encoding="utf8") as f:
             response_json = json.load(f)
     except FileNotFoundError:
-        await query.message.delete()
+        await message.message.delete()
         return False
 
-    youtube_dl_url = query.message.reply_to_message.text
+    youtube_dl_url = message.message.reply_to_message.text
     custom_file_name = str(response_json.get("title")) + \
         "_" + youtube_dl_format + "." + youtube_dl_ext
     youtube_dl_username = None
@@ -54,7 +52,7 @@ async def youtube_dl_call_back(client, query):
             youtube_dl_username = url_parts[2]
             youtube_dl_password = url_parts[3]
         else:
-            for entity in query.message.reply_to_message.entities:
+            for entity in message.message.reply_to_message.entities:
                 if entity.type == "text_link":
                     youtube_dl_url = entity.url
                 elif entity.type == "url":
@@ -75,19 +73,15 @@ async def youtube_dl_call_back(client, query):
     logger.info(youtube_dl_url)
     logger.info(custom_file_name)
 
-    await query.message.edit_caption(
-        caption=f"Downloading <code>{custom_file_name}</code>\n\n"
-                "Total Size: Calculating...\n"
-                "Downloaded: 0\n"
-                "Percentage: 0%\n"
-                "ETA: Calculating..."
+    await message.message.edit_caption(
+        caption=script.DOWNLOAD_START.format(custom_file_name)
     )
 
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
 
-    tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id) + f'{random1}'
+    tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(message.from_user.id) + f'{random1}'
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
 
@@ -131,54 +125,16 @@ async def youtube_dl_call_back(client, query):
         command_to_exec.append("--password")
         command_to_exec.append(youtube_dl_password)
     command_to_exec.append("--no-warnings")
-
+    #command_to_exec.append("--geo-bypass-country")
+    # command_to_exec.append("--quiet")
     logger.info(command_to_exec)
     start = datetime.now()
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
+        # stdout must a pipe to be accessible as process.stdout
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
-        bufsize=0,
-        text=False,
-        close_fds=True
     )
-
-    total_size = None
-    downloaded = 0
-    try:
-        while True:
-            line_bytes = await asyncio.wait_for(process.stdout.read(CHUNK_SIZE), timeout=10)
-            if not line_bytes:
-                break
-            line = line_bytes.decode().strip()
-            if "size" in line:
-                total_size_str = line.split(":")[1].strip()
-                # Check if total_size_str is a valid integer
-                if total_size_str.isdigit():
-                    total_size = int(total_size_str)
-            elif "Downloading" in line:
-                downloaded_str = line.split(" ")[1].strip()
-                # Check if downloaded_str is a valid integer
-                if downloaded_str.isdigit():
-                    downloaded = int(downloaded_str)
-                    percentage = f"{(downloaded/total_size)*100:.2f}%" if total_size else "0%"
-                    eta = line.split(" ETA ")[1].strip()
-                    await query.message.edit_caption(
-                        caption=f"Downloading <code>{custom_file_name}</code>\n\n"
-                                f"Total Size: {total_size}\n"
-                                f"Downloaded: {downloaded}\n"
-                                f"Percentage: {percentage}\n"
-                                f"ETA: {eta}"
-                    )
-    except Exception as e:
-        logger.error(f"error 2 : {e}")
-
-    # Wait for the subprocess to finish
-    await process.communicate()
-    end = datetime.now()
-    time_taken = (end - start).seconds
-    logger.info(f"✅ Downloaded in: {time_taken} seconds")
-    
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
@@ -188,7 +144,7 @@ async def youtube_dl_call_back(client, query):
     ad_string_to_replace = "**Invalid link !**"
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
-        await query.message.edit_caption(
+        await message.message.edit_caption(
             
             text=error_message
         )
@@ -197,7 +153,7 @@ async def youtube_dl_call_back(client, query):
     if os.path.exists(download_directory):
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
-        await query.message.edit_caption(
+        await message.message.edit_caption(
             caption=script.UPLOAD_START,
             parse_mode=enums.ParseMode.HTML
         )
@@ -209,29 +165,29 @@ async def youtube_dl_call_back(client, query):
             # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
         if file_size > TG_MAX_FILE_SIZE:
-            await query.message.edit_caption(
+            await message.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT,
                 parse_mode=enums.ParseMode.HTML
             )
         else:
             start_time = time.time()
-            if (await db.get_upload_as_doc(query.from_user.id)) is False:
-                thumbnail = await get_thumbnail(client, query)
-                await query.message.reply_document(
+            if (await db.get_upload_as_doc(message.from_user.id)) is False:
+                thumbnail = await get_thumbnail(client, message)
+                await message.message.reply_document(
                     document=download_directory,
                     thumb=thumbnail,
                     caption=description,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        query.message,
+                        message.message,
                         start_time
                     )
                 )
             else:
                 width, height, duration = await get_metadata(download_directory)
-                thumb_image_path = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
-                await query.message.reply_video(
+                thumb_image_path = await get_thumbnail_with_screenshot(client, message, duration, download_directory)
+                await message.message.reply_video(
                     video=download_directory,
                     caption=description,
                     duration=duration,
@@ -242,15 +198,15 @@ async def youtube_dl_call_back(client, query):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        query.message,
+                        message.message,
                         start_time
                     )
                 )
 
             if tg_send_type == "audio":
                 duration = await get_duration(download_directory)
-                thumbnail = await get_thumbnail(client, query)
-                await query.message.reply_audio(
+                thumbnail = await get_thumbnail(client, message)
+                await message.message.reply_audio(
                     audio=download_directory,
                     caption=description,
                     duration=duration,
@@ -258,14 +214,14 @@ async def youtube_dl_call_back(client, query):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        query.message,
+                        message.message,
                         start_time
                     )
                 )
             elif tg_send_type == "vm":
                 width, duration = await get_width_and_duration(download_directory)
-                thumbnail = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
-                await query.message.reply_video_note(
+                thumbnail = await get_thumbnail_with_screenshot(client, message, duration, download_directory)
+                await message.message.reply_video_note(
                     video_note=download_directory,
                     duration=duration,
                     length=width,
@@ -273,7 +229,7 @@ async def youtube_dl_call_back(client, query):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        query.message,
+                        message.message,
                         start_time
                     )
                 )
@@ -288,7 +244,7 @@ async def youtube_dl_call_back(client, query):
             except:
                 pass
                 
-            await query.message.edit_caption(
+            await message.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
             )
 
