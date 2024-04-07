@@ -281,8 +281,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         await bot.edit_message_text(
             chat_id,
             message_id,
-            text="**Initializing Lazy Construction**\n⬇️⏬ `{}`\n**Size:**`{}"
-            .format(x_name, total_length)
+            text=f"**Initializing Lazy Construction**\n⬇️⏬ `{x_name}`\n**Size:**`{total_length}"
         )
         with open(file_name, "wb") as f_handle:
             while True:
@@ -299,18 +298,17 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                     elapsed_time = round(diff) * 1000
                     time_to_completion = round((total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
-                    xxLAZY_BAPUXX_total_size = humanbytes(total_length)
+                    x_total_size = humanbytes(total_length)
                     tp = round(percentage, 2)
-                    xxLAZY_BAPUXX_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
+                    x_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
                     template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
 
-                    xLDx = ("**Running Lazy Construction**\n**Enjoy superfast download by LazyDeveloper**\n\n"
-                            "**File Name:**\n<code>{}</code>\n\n"
-                            "**New Name:**\n<code>{}</code>\n\n"
+                    xLDx = (f"**Running Lazy Construction**\n**Enjoy superfast download by LazyDeveloper**\n\n"
+                            "**File Name:**\n<code>{x_name}</code>\n\n"
+                            "**New Name:**\n<code>{template_name}</code>\n\n"
                             "☼-︿-ⲯ-︿-︿-︿-ⲯ-︿-☼\n"
-                            "**Done:{}**%| **Size:** {}"
-                            .format(x_name, template_name, tp, xxLAZY_BAPUXX_total_size))
-
+                            "**Done:{tp}**%| **Size:** {x_total_size}"
+                            )
                     progress = "{0}{1}".format(
                         ''.join(["█" for _ in range(math.floor(percentage / 5))]),
                         ''.join(["░" for _ in range(20 - math.floor(percentage / 5))]))
@@ -319,7 +317,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                         humanbytes(downloaded),
                         humanbytes(total_length),
                         humanbytes(speed),
-                        xxLAZY_BAPUXX_estimated_total_time if xxLAZY_BAPUXX_estimated_total_time != '' else "0 s"))
+                        x_estimated_total_time if x_estimated_total_time != '' else "0 s"))
 
                     try:
                         current_message = tmp
