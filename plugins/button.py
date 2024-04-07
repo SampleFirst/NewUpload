@@ -76,7 +76,11 @@ async def youtube_dl_call_back(client, query):
     logger.info(custom_file_name)
 
     await query.message.edit_caption(
-        caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        caption=f"Downloading <code>{custom_file_name}</code>\n\n"
+                "Total Size: Calculating...\n"
+                "Downloaded: 0\n"
+                "Percentage: 0%\n"
+                "ETA: Calculating..."
     )
 
     description = script.CUSTOM_CAPTION_UL_FILE
@@ -127,16 +131,41 @@ async def youtube_dl_call_back(client, query):
         command_to_exec.append("--password")
         command_to_exec.append(youtube_dl_password)
     command_to_exec.append("--no-warnings")
-    #command_to_exec.append("--geo-bypass-country")
-    # command_to_exec.append("--quiet")
+
     logger.info(command_to_exec)
     start = datetime.now()
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
-        # stdout must a pipe to be accessible as process.stdout
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
+        bufsize=1,
+        text=True,
+        close_fds=True
     )
+
+    total_size = None
+    downloaded = 0
+    async for line in process.stdout:
+        if "size" in line:
+            total_size = line.split(":")[1].strip()
+        elif "Downloading" in line:
+            downloaded = line.split(" ")[1].strip()
+            percentage = f"{(int(downloaded)/int(total_size))*100:.2f}%"
+            eta = line.split(" ETA ")[1].strip()
+            await query.message.edit_caption(
+                caption=f"Downloading <code>{custom_file_name}</code>\n\n"
+                        f"Total Size: {total_size}\n"
+                        f"Downloaded: {downloaded}\n"
+                        f"Percentage: {percentage}\n"
+                        f"ETA: {eta}"
+            )
+
+    # Wait for the subprocess to finish
+    await process.communicate()
+    end = datetime.now()
+    time_taken = (end - start).seconds
+    logger.info(f"✅ Downloaded in: {time_taken} seconds")
+
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
