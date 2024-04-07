@@ -24,8 +24,8 @@ logger.setLevel(logging.ERROR)
 
 async def youtube_dl_call_back(client, query):
     cb_data = query.data
-    lzmsg = query.message.reply_to_message
-    message_idx = lzmsg.id
+    lzmsg = query.message.reply_to_message  # msg will be callback query
+    message_idx = lzmsg.id #getting id
     tg_send_type, youtube_dl_format, youtube_dl_ext, random_suffix = cb_data.split("|")
     random1 = random_char(5)
 
@@ -70,16 +70,13 @@ async def youtube_dl_call_back(client, query):
         if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
             logger.info('Cannot define file size for youtube videos')
         else:
-            x_size = requests.head(youtube_dl_url)
+            x_size = requests.head(youtube_dl_url)    
             x_length = int(x_size.headers.get("Content-Length", 0))
+            x_path = urlparse(youtube_dl_url).path
+            x_name = os.path.basename(x_path)
             total_length = humanbytes(x_length)
     except Exception as e:
-        logger.error(f"Error determining file size: {e}")
-        await query.message.edit_caption(
-            caption=script.SLOW_URL_DECED,
-            parse_mode=enums.ParseMode.HTML
-        )
-        return False
+        logger.error(f"Something went wrong in the code =>::: {e}")
 
     start = datetime.now()
     description = script.CUSTOM_CAPTION_UL_FILE if not custom_file_name else custom_file_name[:1021]
@@ -272,22 +269,20 @@ async def youtube_dl_call_back(client, query):
 async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
     downloaded = 0
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        content_length = response.headers.get("Content-Length", "")
-        if not content_length:
-            logger.error("Content-Length header is missing")
+        x_size = requests.head(url)    
+        x_length = int(x_size.headers.get("Content-Length", 0))
+        content_type = response.headers["Content-Type"]
+        x_path = urlparse(url).path
+        x_name = os.path.basename(x_path)
+        total_length = humanbytes(x_length)
+            
+        if "text" in content_type and x_length < 500:
             return await response.release()
-
-        total_length = humanbytes(int(content_length))
-        if "text" in response.headers["Content-Type"] and int(content_length) < 500:
-            logger.error("Invalid response content type or size")
-            return await response.release()
-
         await bot.edit_message_text(
             chat_id,
             message_id,
-            text=f"**Initializing Lazy Construction**\n⬇️⏬ `{custom_file_name}`\n**Size:** `{total_length}`"
+            text=f"**Initializing Lazy Construction**\n⬇️⏬ `{x_name}`\n**Size:**`{total_length}"
         )
-
         with open(file_name, "wb") as f_handle:
             while True:
                 chunk = await response.content.read(CHUNK_SIZE)
@@ -297,40 +292,43 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
-                if round(diff % 5.00) == 0 or downloaded == content_length:
-                    percentage = downloaded * 100 / int(content_length)
+                if round(diff % 5.00) == 0 or downloaded == total_length:
+                    percentage = downloaded * 100 / total_length
                     speed = downloaded / diff
                     elapsed_time = round(diff) * 1000
-                    time_to_completion = round((int(content_length) - downloaded) / speed) * 1000
+                    time_to_completion = round((total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
-                    x_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time) if estimated_total_time else "0 s"
+                    x_total_size = humanbytes(total_length)
                     tp = round(percentage, 2)
+                    x_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
+                    template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
+
+                    xLDx = (f"**Running Lazy Construction**\n**Enjoy superfast download by LazyDeveloper**\n\n"
+                            "**File Name:**\n<code>{x_name}</code>\n\n"
+                            "**New Name:**\n<code>{template_name}</code>\n\n"
+                            "☼-︿-ⲯ-︿-︿-︿-ⲯ-︿-☼\n"
+                            "**Done:{tp}**%| **Size:** {x_total_size}"
+                            )
                     progress = "{0}{1}".format(
                         ''.join(["█" for _ in range(math.floor(percentage / 5))]),
                         ''.join(["░" for _ in range(20 - math.floor(percentage / 5))]))
+                    tmp = (xLDx + "\n" + progress + script.PROGRESS_BAR.format(
+                        round(percentage, 2),
+                        humanbytes(downloaded),
+                        humanbytes(total_length),
+                        humanbytes(speed),
+                        x_estimated_total_time if x_estimated_total_time != '' else "0 s"))
 
-                    tmp = ("**Running Lazy Construction**\n**Enjoy superfast download by LazyDeveloper**\n\n"
-                           "**File Name:**\n`{custom_file_name}`\n\n"
-                           "**New Name:**\n`{custom_file_name}`\n\n"
-                           "☼-︿-ⲯ-︿-︿-︿-ⲯ-︿-☼\n"
-                           "**Done:{tp}**%| **Size:** `{total_length}`\n"
-                           "{progress}"
-                           "{script.PROGRESS_BAR.format(
-                               round(percentage, 2),
-                               humanbytes(downloaded),
-                               total_length,
-                               humanbytes(speed),
-                               x_estimated_total_time if x_estimated_total_time != '' else "0 s")}"
-                           )
-
-                    current_message = tmp.format(custom_file_name=custom_file_name, tp=tp, total_length=total_length, progress=progress)
                     try:
-                        await bot.edit_message_text(
-                            chat_id,
-                            message_id,
-                            text=current_message,
-                            disable_web_page_preview=True
-                        )
+                        current_message = tmp
+                        if current_message != display_message:
+                            await bot.edit_message_text(
+                                chat_id,
+                                message_id,
+                                text=current_message,
+                                disable_web_page_preview=True
+                            )
+                            display_message = current_message
                     except Exception as e:
                         logger.info(str(e))
                         pass
