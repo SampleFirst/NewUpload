@@ -170,6 +170,8 @@ async def youtube_dl_call_back(client, query):
                                 f"Percentage: {percentage}\n"
                                 f"ETA: {eta}"
                     )
+    except Exception as e:
+        logger.error(f"error 2 : {e}")
 
     # Wait for the subprocess to finish
     await process.communicate()
