@@ -101,15 +101,12 @@ async def youtube_dl_call_back(client, message):
             "-o", download_directory
         ]
     else:
-        minus_f_format = youtube_dl_format
-        if "youtu" in youtube_dl_url:
-            minus_f_format = f"{youtube_dl_format}+bestaudio"
         command_to_exec = [
             "yt-dlp",
             "-c",
             "--max-filesize", str(TG_MAX_FILE_SIZE),
             "--embed-subs",
-            "-f", minus_f_format,
+            "-f", youtube_dl_format,
             "--bidi-workaround",
             youtube_dl_url,
             "-o", download_directory
