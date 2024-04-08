@@ -13,6 +13,7 @@ from pyrogram.raw.all import layer
 from datetime import date, datetime 
 from plugins import web_server
 from info import *
+from Script import script 
 
 class Bot(Client):
 
