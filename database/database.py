@@ -53,6 +53,9 @@ class Database:
     async def delete_user(self, user_id):
         await self.col.delete_many({'id': int(user_id)})
 
+    async def delete_all_data(self):
+        await self.col.delete_many({})
+
     async def set_apply_caption(self, id, apply_caption):
         await self.col.update_one({'id': id}, {'$set': {'apply_caption': apply_caption}})
 
