@@ -2,14 +2,11 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # Define the command handler
-@Client.on_message(filters.command("plan"))
+@Client.on_message(filters.command("plans"))
 def plan(client, message):
-    text = "Per Month: 99 Rupees\n"
-    text += "All Allowed Links\n"
-    text += "No Timeouts\n"
-    text += "No Links Limit\n\n"
-    text += "Ask for QR code /send \n"
-    text += "Note: Payment Not Refundable"
+    user_id = message.from_user.id
+    name = message.from_user.first_name
+    text = f"User ID: {user_id}\nName: {name}\n\n💠 Premium\n\n✓ All Allowed URL\n✓ Task Limit: NO LIMIT\n✓ Time Gap: NO\n✓ No Anti-Spam Timer\n✓ Validity: 1 MONTH\n\nAmount: 99 INR ₹\n\nBUY NOW FROM : @UpcomingPaidBot"
     keyboard = InlineKeyboardMarkup(
         [
             [
@@ -18,4 +15,3 @@ def plan(client, message):
         ]
     )
     message.reply_text(text, reply_markup=keyboard)
-
