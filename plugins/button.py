@@ -126,12 +126,29 @@ async def youtube_dl_call_back(client, message):
     # command_to_exec.append("--quiet")
     logger.info(command_to_exec)
     start = datetime.now()
+    
+    downloaded_bytes = 0
+    total_size = int(response_json.get("filesize"))  # Assuming file size available
+
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
-        # stdout must a pipe to be accessible as process.stdout
+        # ... other arguments
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
+
+    # Read process output in chunks
+    while True:
+        chunk = await process.stdout.read(1024)
+        if not chunk:
+            break
+        downloaded_bytes += len(chunk)
+        download_percentage = int((downloaded_bytes / total_size) * 100)
+
+        # Update message caption with progress
+        new_caption = f"**Progress:** {download_percentage}% ({humanbytes(downloaded_bytes)}/{humanbytes(total_size)})"
+        await message.message.edit_caption(caption=new_caption)
+
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
@@ -247,4 +264,4 @@ async def youtube_dl_call_back(client, message):
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
-
+            
