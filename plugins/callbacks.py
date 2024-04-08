@@ -79,7 +79,6 @@ async def button(client, query):
         await youtube_dl_call_back(client, query)
     elif "=" in query.data:
         await ddl_call_back(client, query)
-    elif 
     else:
         await query.message.delete()
 
