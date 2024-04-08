@@ -14,7 +14,8 @@ async def send_to_admin(bot, message):
     else:
         await message.reply_text("<b>Reply to a message with /send to forward it to an admin.</b>")
 
-@Client.on_message(filters.private & ~filters.command("send") & filters.reply)
+@Client.on_message(filters.private & filters.reply & filters.user(ADMINS))
 async def forward_reply_to_user(bot, message):
-    if message.reply_to_message.forward_from.id in ADMINS:
+    if message.reply_to_message.forward_from.id:
         await message.reply_to_message.forward(chat_id=message.from_user.id)
+        
