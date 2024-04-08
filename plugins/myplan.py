@@ -2,7 +2,7 @@ from pyrogram import Client, filters
 from datetime import datetime, timedelta
 from utils import get_verify_status
 
-@Client.on_message(filters.command("myplan") & Filters.private)
+@Client.on_message(filters.command("myplan") & filters.private)
 async def myplan(client, message):
     userid = message.from_user.id
 
