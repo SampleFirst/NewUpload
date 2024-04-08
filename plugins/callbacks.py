@@ -34,6 +34,7 @@ async def button(client, query):
     elif query.data == "opensettings":
         await query.answer()
         await opensettings(query.message)
+     
     elif query.data == "showThumbnail":
         thumbnail = await db.get_thumbnail(query.from_user.id)
         if not thumbnail:
@@ -69,14 +70,18 @@ async def button(client, query):
         else:
             await db.set_upload_as_doc(query.from_user.id, True)
         await opensettings(query.message)
+    elif query.data == "autodelete"
+        await db.delete_all_data()
+        await message.message.edit('Sᴜᴄᴄᴇsғᴜʟʟʏ Dᴇʟᴇᴛᴇᴅ Aʟʟ Tʜᴇ Iɴᴅᴇxᴇᴅ Fɪʟᴇs.')
     elif "close" in query.data:
         await query.message.delete(True)
     elif "|" in query.data:
         await youtube_dl_call_back(client, query)
     elif "=" in query.data:
         await ddl_call_back(client, query)
+    elif 
     else:
-        await update.message.delete()
+        await query.message.delete()
 
 
     
