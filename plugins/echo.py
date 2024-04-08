@@ -198,7 +198,7 @@ async def echo(client, message):
                     if format_string is not None and not "audio only" in format_string:
                         ikeyboard = [
                             InlineKeyboardButton(
-                                "🎬 " + format_string + " " + format_ext +
+                                "📂 " + format_string + " " + format_ext +
                                 " " + humanbytes(size) + " ",
                                 callback_data=(cb_string_video).encode("UTF-8")
                             )
@@ -248,10 +248,10 @@ async def echo(client, message):
             else:
                 format_id = response_json["format_id"]
                 format_ext = response_json["ext"]
-                cb_string_file = "{}|{}|{}|{}".format(
-                    "file", format_id, format_ext, randem)
-                cb_string_video = "{}|{}|{}|{}".format(
-                    "video", format_id, format_ext, randem)
+                cb_string_file = "{}={}={}".format(
+                    "file", format_id, format_ext)
+                cb_string_video = "{}={}={}".format(
+                    "video", format_id, format_ext)
                 inline_keyboard.append([
                     InlineKeyboardButton(
                         "🎬 sᴍᴇᴅɪᴀ",
