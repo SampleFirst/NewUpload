@@ -129,3 +129,5 @@ class script(object):
     FORCE_SUBSCRIBE_TEXT = "<code>Sorry Dear You Must Join My Updates Channel for using me 😌😉....</code>"
     BANNED_USER_TEXT = "<code>You are Banned!</code>"
     CHECK_LINK = "Processing your link ⌛"
+    RESTART_TXT = "#Restarted\n\n🔄 Bot Restarted!\n📅 Date: <code>{a}</code>\n⏰ Time: <code>{b}</code>\n🌐 Timezone: <code>Asia/Kolkata</code>\n\n#{c}\n#Restart_{c}"
+
