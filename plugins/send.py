@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from pyrogram.types import MessageEntity
+from pyrogram.types import Message
 from typing import Union
 from info import ADMINS 
 
