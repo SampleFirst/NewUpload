@@ -16,7 +16,7 @@ async def myplan(client, message):
     # Subtract 12 hours from the expiration datetime
     check_datetime = expire_datetime - timedelta(days=30)
     
-    if check_datetime > current_datetime:
+    if check_datetime < current_datetime:
         text = "Status: Premium ☑️\n\n"
         text += f"Premium Date: {check_datetime.date()}\n"
         text += f"Premium Time: {check_datetime.time()}\n\n"
