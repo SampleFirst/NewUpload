@@ -92,8 +92,3 @@ async def delete_all_data(bot, message):
     )
 
 
-@Client.on_callback_query(filters.regex(r'^autodelete'))
-async def delete_all_confirm(bot, message):
-    await db.delete_all_data()
-    await message.answer("Eᴠᴇʀʏᴛʜɪɴɢ's Gᴏɴᴇ")
-    await message.message.edit('Sᴜᴄᴄᴇsғᴜʟʟʏ Dᴇʟᴇᴛᴇᴅ Aʟʟ Tʜᴇ Iɴᴅᴇxᴇᴅ Fɪʟᴇs.')
