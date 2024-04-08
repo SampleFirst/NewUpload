@@ -70,7 +70,7 @@ async def button(client, query):
         else:
             await db.set_upload_as_doc(query.from_user.id, True)
         await opensettings(query.message)
-    elif query.data == "autodelete"
+    elif query.data == "autodelete":
         await db.delete_all_data()
         await message.message.edit('Sᴜᴄᴄᴇsғᴜʟʟʏ Dᴇʟᴇᴛᴇᴅ Aʟʟ Tʜᴇ Iɴᴅᴇxᴇᴅ Fɪʟᴇs.')
     elif "close" in query.data:
