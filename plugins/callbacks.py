@@ -72,7 +72,7 @@ async def button(client, query):
         await opensettings(query.message)
     elif query.data == "autodelete":
         await db.delete_all_data()
-        await message.message.edit('Sᴜᴄᴄᴇsғᴜʟʟʏ Dᴇʟᴇᴛᴇᴅ Aʟʟ Tʜᴇ Iɴᴅᴇxᴇᴅ Fɪʟᴇs.')
+        await query.message.edit_text('Sᴜᴄᴄᴇsғᴜʟʟʏ Dᴇʟᴇᴛᴇᴅ Aʟʟ Tʜᴇ Iɴᴅᴇxᴇᴅ Fɪʟᴇs.')
     elif "close" in query.data:
         await query.message.delete(True)
     elif "|" in query.data:
