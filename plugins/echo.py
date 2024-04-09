@@ -274,7 +274,7 @@ async def echo(client, message):
             await chk.delete()
             await client.send_message(
                 chat_id=message.chat.id,
-                text=script.FORMAT_SELECTION.format(Thumbnail) + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
+                text=script.FORMAT_SELECTION + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML,
                 reply_to_message_id=message.id
