@@ -19,8 +19,9 @@ async def jsonify(client, message):
                 async with session.get(url) as response:
                     data = await response.json()
                     filename = "json_file.json"
-                    with open(filename, "w") as json_file:
-                        json.dump(data, json_file, indent=4)
+                    with open(filename, "w", encoding="utf8") as json_file:
+                        json.dump(data, json_file, ensure_ascii=False)
+                        
                     await message.reply_document(
                         document=filename,
                         caption="Here's the JSON file for the provided URL.",
