@@ -76,10 +76,32 @@ async def youtube_dl_call_back(client, query):
     logger.info(youtube_dl_url)
     logger.info(custom_file_name)
 
-    await query.message.edit_caption(
-        caption=script.DOWNLOAD_START.format(a=custom_file_name)
-    )
-
+    if total_size != "0" and total_size != "":
+        async with aiohttp.ClientSession() as session:
+            c_time = time.time()
+            try:
+                await download_coroutine(
+                    client,
+                    session,
+                    custom_file_name,
+                    youtube_dl_url,
+                    download_directory,
+                    query.message.chat.id,
+                    query.id,
+                    c_time,
+                )
+            except asyncio.TimeoutError:
+                await query.query.edit_caption(
+                    caption=script.SLOW_URL_DECED,
+                    parse_mode=enums.ParseMode.HTML
+                )
+                return False
+                
+    else:
+        await query.message.edit_caption(
+            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        )
+    
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
@@ -139,27 +161,6 @@ async def youtube_dl_call_back(client, query):
         stderr=asyncio.subprocess.PIPE,
     )
 
-    if total_size != "0" and total_size != "":
-        async with aiohttp.ClientSession() as session:
-            c_time = time.time()
-            try:
-                await download_coroutine(
-                    client,
-                    session,
-                    custom_file_name,
-                    youtube_dl_url,
-                    download_directory,
-                    query.message.chat.id,
-                    query.id,
-                    c_time,
-                )
-            except asyncio.TimeoutError:
-                await query.query.edit_caption(
-                    caption=script.SLOW_URL_DECED,
-                    parse_mode=enums.ParseMode.HTML
-                )
-                return False
-                
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
