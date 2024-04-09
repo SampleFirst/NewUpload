@@ -20,23 +20,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
 
-async def youtube_dl_call_back(client, message):
-    cb_data = message.data
+async def youtube_dl_call_back(client, query):
+    cb_data = query.data
     # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext, total_size, random_suffix = cb_data.split("|")
     print(cb_data)
     random1 = random_char(5)
 
     save_ytdl_json_path = DOWNLOAD_LOCATION + \
-        "/" + str(message.from_user.id) + f'{random_suffix}' + ".json"
+        "/" + str(query.from_user.id) + f'{random_suffix}' + ".json"
     try:
         with open(save_ytdl_json_path, "r", encoding="utf8") as f:
             response_json = json.load(f)
     except FileNotFoundError:
-        await message.message.delete()
+        await query.message.delete()
         return False
 
-    youtube_dl_url = message.message.reply_to_message.text
+    youtube_dl_url = query.message.reply_to_message.text
     custom_file_name = str(response_json.get("title")) + \
         "_" + youtube_dl_format + "." + youtube_dl_ext
     youtube_dl_username = None
@@ -53,7 +53,7 @@ async def youtube_dl_call_back(client, message):
             youtube_dl_username = url_parts[2]
             youtube_dl_password = url_parts[3]
         else:
-            for entity in message.message.reply_to_message.entities:
+            for entity in query.message.reply_to_message.entities:
                 if entity.type == "text_link":
                     youtube_dl_url = entity.url
                 elif entity.type == "url":
@@ -74,7 +74,7 @@ async def youtube_dl_call_back(client, message):
     logger.info(youtube_dl_url)
     logger.info(custom_file_name)
 
-    await message.message.edit_caption(
+    await query.message.edit_caption(
         caption=script.DOWNLOAD_START.format(a=custom_file_name)
     )
 
@@ -82,7 +82,7 @@ async def youtube_dl_call_back(client, message):
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
 
-    tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(message.from_user.id) + f'{random1}'
+    tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id) + f'{random1}'
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
 
@@ -148,12 +148,12 @@ async def youtube_dl_call_back(client, message):
                     youtube_dl_url,
                     total_size,
                     download_directory,
-                    query.query.chat.id,
+                    query.message.chat.id,
                     query.id,
                     c_time,
                 )
             except asyncio.TimeoutError:
-                await query.message.edit_caption(
+                await query.query.edit_caption(
                     caption=script.SLOW_URL_DECED,
                     parse_mode=enums.ParseMode.HTML
                 )
@@ -168,7 +168,7 @@ async def youtube_dl_call_back(client, message):
     ad_string_to_replace = "**Invalid link !**"
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
-        await message.message.edit_caption(
+        await query.message.edit_caption(
             text=error_message
         )
         return False
@@ -176,7 +176,7 @@ async def youtube_dl_call_back(client, message):
     if os.path.exists(download_directory):
         end_one = datetime.now()
         time_taken_for_download = (end_one -start).seconds
-        await message.message.edit_caption(
+        await query.message.edit_caption(
             caption=script.UPLOAD_START,
             parse_mode=enums.ParseMode.HTML
         )
@@ -187,29 +187,29 @@ async def youtube_dl_call_back(client, message):
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
             file_size = os.stat(download_directory).st_size
         if file_size > TG_MAX_FILE_SIZE:
-            await message.message.edit_caption(
+            await query.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT,
                 parse_mode=enums.ParseMode.HTML
             )
         else:
             start_time = time.time()
-            if (await db.get_upload_as_doc(message.from_user.id)) is False:
-                thumbnail = await get_thumbnail(client, message)
-                await message.message.reply_document(
+            if (await db.get_upload_as_doc(query.from_user.id)) is False:
+                thumbnail = await get_thumbnail(client, query)
+                await query.message.reply_document(
                     document=download_directory,
                     thumb=thumbnail,
                     caption=description,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
             else:
                 width, height, duration = await get_metadata(download_directory)
-                thumb_image_path = await get_thumbnail_with_screenshot(client, message, duration, download_directory)
-                await message.message.reply_video(
+                thumb_image_path = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
+                await query.message.reply_video(
                     video=download_directory,
                     caption=description,
                     duration=duration,
@@ -220,15 +220,15 @@ async def youtube_dl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
 
             if tg_send_type == "audio":
                 duration = await get_duration(download_directory)
-                thumbnail = await get_thumbnail(client, message)
-                await message.message.reply_audio(
+                thumbnail = await get_thumbnail(client, query)
+                await query.message.reply_audio(
                     audio=download_directory,
                     caption=description,
                     duration=duration,
@@ -236,14 +236,14 @@ async def youtube_dl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
             elif tg_send_type == "vm":
                 width, duration = await get_width_and_duration(download_directory)
-                thumbnail = await get_thumbnail_with_screenshot(client, message, duration, download_directory)
-                await message.message.reply_video_note(
+                thumbnail = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
+                await query.message.reply_video_note(
                     video_note=download_directory,
                     duration=duration,
                     length=width,
@@ -251,7 +251,7 @@ async def youtube_dl_call_back(client, message):
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
-                        message.message,
+                        query.message,
                         start_time
                     )
                 )
@@ -266,7 +266,7 @@ async def youtube_dl_call_back(client, message):
             except:
                 pass
                 
-            await message.message.edit_caption(
+            await query.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
             )
 
