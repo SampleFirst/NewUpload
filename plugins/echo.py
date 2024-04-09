@@ -184,9 +184,9 @@ async def echo(client, message):
     
                     format_ext = formats.get("ext")
                     size = formats.get('filesize')
-                    cb_string_video = "{}|{}|{}|{}".format(
+                    cb_string_video = "{}|{}|{}|{}|{}".format(
                         "video", format_id, format_ext, size, randem)
-                    cb_string_file = "{}|{}|{}|{}".format(
+                    cb_string_file = "{}|{}|{}|{}|{}".format(
                         "file", format_id, format_ext, size, randem)
                     if format_string is not None and not "audio only" in format_string:
                         ikeyboard = [
