@@ -22,7 +22,7 @@ logger.setLevel(logging.ERROR)
 async def youtube_dl_call_back(client, message):
     cb_data = message.data
     # youtube_dl extractors
-    tg_send_type, youtube_dl_format, youtube_dl_ext, random_suffix = cb_data.split("|")
+    tg_send_type, youtube_dl_format, youtube_dl_ext, total_size, random_suffix = cb_data.split("|")
     print(cb_data)
     random1 = random_char(5)
 
@@ -128,8 +128,7 @@ async def youtube_dl_call_back(client, message):
     start = datetime.now()
     
     downloaded_bytes = 0
-    total_size = int(response_json.get("filesize", 0))
-    
+
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
         # ... other arguments
@@ -137,18 +136,19 @@ async def youtube_dl_call_back(client, message):
         stderr=asyncio.subprocess.PIPE,
     )
 
-    # Read process output in chunks
-    while True:
-        chunk = await process.stdout.read(CHUNK_SIZE)
-        if not chunk:
-            break
-        downloaded_bytes += CHUNK_SIZE
-        download_percentage = int((downloaded_bytes / total_size) * 100)
-
-        # Update message caption with progress
-        new_caption = f"**Progress:** {download_percentage}% ({humanbytes(downloaded_bytes)}/{humanbytes(total_size)})"
-        await message.message.edit_caption(caption=new_caption)
-
+    if total_size != "0":
+        # Read process output in chunks
+        while True:
+            chunk = await process.stdout.read(1024)
+            if not chunk:
+                break
+            downloaded_bytes += len(chunk)
+            download_percentage = int((downloaded_bytes / int(total_size)) * 100)
+    
+            # Update message caption with progress
+            new_caption = f"**Progress:** {download_percentage}% ({humanbytes(downloaded_bytes)}/{humanbytes(int(total_size))})"
+            await message.message.edit_caption(caption=new_caption)
+   
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
@@ -159,7 +159,6 @@ async def youtube_dl_call_back(client, message):
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
         await message.message.edit_caption(
-            
             text=error_message
         )
         return False
@@ -176,7 +175,6 @@ async def youtube_dl_call_back(client, message):
             file_size = os.stat(download_directory).st_size
         except FileNotFoundError as exc:
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
-            # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
         if file_size > TG_MAX_FILE_SIZE:
             await message.message.edit_caption(
@@ -264,4 +262,3 @@ async def youtube_dl_call_back(client, message):
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
-            
