@@ -191,17 +191,15 @@ async def echo(client, message):
                     else:
                         size = 0
                     
-                    x_size = humanbytes(size)
-                    
                     cb_string_video = "{}|{}|{}|{}|{}".format(
-                        "video", format_id, format_ext, x_size, randem)
+                        "video", format_id, format_ext, size, randem)
                     cb_string_file = "{}|{}|{}|{}|{}".format(
-                        "file", format_id, format_ext, x_size, randem)
+                        "file", format_id, format_ext, size, randem)
                     if format_string is not None and not "audio only" in format_string:
                         ikeyboard = [
                             InlineKeyboardButton(
                                 "📂 " + format_string + " " + format_ext +
-                                " " + x_size + " ",
+                                " " + humanbytes(size) + " ",
                                 callback_data=(cb_string_video).encode("UTF-8")
                             )
                         ]
@@ -221,18 +219,18 @@ async def echo(client, message):
                             InlineKeyboardButton(
                                 "🎬 [" +
                                 "] ( " +
-                                x_size + " )",
+                                humanbytes(size) + " )",
                                 callback_data=(cb_string_video).encode("UTF-8")
                             )
                         ]
                     inline_keyboard.append(ikeyboard)
                 if duration is not None:
                     cb_string_64 = "{}|{}|{}|{}|{}".format(
-                        "audio", "64k", "mp3", x_size, randem)
+                        "audio", "64k", "mp3", size, randem)
                     cb_string_128 = "{}|{}|{}|{}|{}".format(
-                        "audio", "128k", "mp3", x_size, randem)
+                        "audio", "128k", "mp3", size, randem)
                     cb_string = "{}|{}|{}|{}|{}".format(
-                        "audio", "320k", "mp3", x_size, randem)
+                        "audio", "320k", "mp3", size, randem)
                     inline_keyboard.append([
                         InlineKeyboardButton(
                             "🎼 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
