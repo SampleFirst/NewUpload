@@ -137,6 +137,7 @@ async def youtube_dl_call_back(client, message):
                     custom_file_name,
                     youtube_dl_url,
                     download_directory,
+                    total_size,
                     message.message.chat.id,
                     c_time,
                 )
@@ -148,7 +149,7 @@ async def youtube_dl_call_back(client, message):
                 return False
     else:
         await message.message.edit_caption(
-            caption=script.DOWNLOAD_START.format(a=custom_file_name, b=total_size)
+            caption=script.DOWNLOAD_START.format(a=custom_file_name)
         )
     
     process = await asyncio.create_subprocess_exec(
@@ -273,7 +274,7 @@ async def youtube_dl_call_back(client, message):
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
 
 
-async def download_coroutine(bot, message, session, custom_file_name, url, file_name, chat_id, start):
+async def download_coroutine(bot, message, session, custom_file_name, url, file_name, approx_file_size, chat_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
@@ -283,7 +284,9 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
         x_path = urlparse(url).path
         x_name = os.path.basename(x_path)
         
-        logger.info(f"{x_size}_{total_length}_{content_type}_{x_path}_{x_name}")
+        if total_length == "0" and total_length == "":
+            total_length = approx_file_size
+            
         await message.message.edit_caption(
             caption=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ {x_name}\n🧬ѕιzє: {humanbytes(total_length)}")
         with open(file_name, "wb") as f_handle:
