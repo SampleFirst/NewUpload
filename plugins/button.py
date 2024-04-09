@@ -148,7 +148,7 @@ async def youtube_dl_call_back(client, message):
                 return False
     else:
         await message.message.edit_caption(
-            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+            caption=script.DOWNLOAD_START.format(a=custom_file_name, b=total_size)
         )
     
     process = await asyncio.create_subprocess_exec(
@@ -283,6 +283,7 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
         x_path = urlparse(url).path
         x_name = os.path.basename(x_path)
         
+        logger.info(f"{x_size}_{total_length}_{content_type}_{x_path}_{x_name}")
         await message.message.edit_caption(
             caption=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ {x_name}\n🧬ѕιzє: {humanbytes(total_length)}")
         with open(file_name, "wb") as f_handle:
