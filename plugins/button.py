@@ -132,12 +132,12 @@ async def youtube_dl_call_back(client, query):
             try:
                 await download_coroutine(
                     client,
+                    query,
                     session,
                     custom_file_name,
                     youtube_dl_url,
                     download_directory,
                     query.message.chat.id,
-                    query.id,
                     c_time,
                 )
             except asyncio.TimeoutError:
@@ -274,7 +274,7 @@ async def youtube_dl_call_back(client, query):
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
 
 
-async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, query_id, start):
+async def download_coroutine(bot, query, session, custom_file_name, url, file_name, chat_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
@@ -287,7 +287,6 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         m_size = humanbytes(total_length)
         await query.message.edit_caption(
             chat_id,
-            query_id,
             text=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{x_name}`\n🧬**ѕιzє:**{m_size}")
         with open(file_name, "wb") as f_handle:
             while True:
@@ -328,7 +327,6 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                         if current_message != display_message:
                             await query.message.edit_caption(
                                 chat_id,
-                                query_id,
                                 text=current_message,
                                 disable_web_page_preview=True
                             )
