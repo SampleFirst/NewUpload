@@ -285,7 +285,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         x_name = os.path.basename(x_path)
         
         m_size = humanbytes(total_length)
-        await bot.edit_message_text(
+        await query.message.edit_caption(
             chat_id,
             query_id,
             text=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{x_name}`\n🧬**ѕιzє:**{m_size}")
@@ -326,7 +326,7 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                     try:
                         current_message = tmp
                         if current_message != display_message:
-                            await bot.edit_message_text(
+                            await query.message.edit_caption(
                                 chat_id,
                                 query_id,
                                 text=current_message,
