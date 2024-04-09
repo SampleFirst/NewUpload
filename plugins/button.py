@@ -136,7 +136,7 @@ async def youtube_dl_call_back(client, message):
         stderr=asyncio.subprocess.PIPE,
     )
 
-    if total_size != "0":
+    if total_size != "0" and total_size != "":
         # Read process output in chunks
         while True:
             chunk = await process.stdout.read(1024)
