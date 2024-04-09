@@ -283,11 +283,8 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
         x_path = urlparse(url).path
         x_name = os.path.basename(x_path)
         
-        m_size = humanbytes(total_length)
-        await bot.edit_message_text(
-            chat_id,
-            message_id,
-            text=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{x_name}`\n🧬**ѕιzє:**{m_size}")
+        await message.message.edit_caption(
+            caption=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ {x_name}\n🧬ѕιzє: {humanbytes(total_length)}")
         with open(file_name, "wb") as f_handle:
             while True:
                 chunk = await response.content.read(CHUNK_SIZE)
@@ -325,10 +322,8 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                     try:
                         current_message = tmp
                         if current_message != display_message:
-                            await bot.edit_message_text(
-                                chat_id,
-                                message_id,
-                                text=current_message,
+                            await message.message.edit_caption(
+                                caption=current_message,
                                 disable_web_page_preview=True
                             )
                             display_message = current_message
