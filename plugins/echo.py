@@ -18,7 +18,7 @@ from plugins.functions.ran_text import random_char
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-@Client.on_message(filters.private & filters.regex(pattern=".*https.*"))
+@Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
 async def echo(client, message):
     if LOG_CHANNEL:
         try:
