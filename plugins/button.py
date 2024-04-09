@@ -1,7 +1,8 @@
 import logging
+import aiohttp
+import os
 import asyncio
 import json
-import os
 import shutil
 import time
 from datetime import datetime
@@ -137,18 +138,27 @@ async def youtube_dl_call_back(client, message):
     )
 
     if total_size != "0" and total_size != "":
-        # Read process output in chunks
-        while True:
-            chunk = await process.stdout.read(1024)
-            if not chunk:
-                break
-            downloaded_bytes += len(chunk)
-            download_percentage = int((downloaded_bytes / int(total_size)) * 100)
-    
-            # Update message caption with progress
-            new_caption = f"**Progress:** {download_percentage}% ({humanbytes(downloaded_bytes)}/{humanbytes(int(total_size))})"
-            await message.message.edit_caption(caption=new_caption)
-   
+        async with aiohttp.ClientSession() as session:
+            c_time = time.time()
+            try:
+                await download_coroutine(
+                    client,
+                    session,
+                    custom_file_name,
+                    youtube_dl_url,
+                    total_size,
+                    download_directory,
+                    query.message.chat.id,
+                    query.id,
+                    c_time,
+                )
+            except asyncio.TimeoutError:
+                await query.message.edit_caption(
+                    caption=script.SLOW_URL_DECED,
+                    parse_mode=enums.ParseMode.HTML
+                )
+                return False
+                
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
@@ -262,3 +272,67 @@ async def youtube_dl_call_back(client, message):
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
+
+
+async def download_coroutine(bot, session, custom_file_name, url, total_size, file_name, chat_id, query_id, start):
+    downloaded = 0
+    display_message = ""
+    async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
+        total_length = total_size
+        x_path = urlparse(url).path
+        x_name = os.path.basename(x_path)
+        
+        await bot.edit_message_text(
+            chat_id,
+            message_id,
+            text=""""**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{}`\n🧬**ѕιzє:**`{}`
+            """.format(x_name, humanbytes(total_length))
+        )
+        with open(file_name, "wb") as f_handle:
+            while True:
+                chunk = await response.content.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                f_handle.write(chunk)
+                downloaded += CHUNK_SIZE
+                now = time.time()
+                diff = now - start
+                x_path = urlparse(url).path
+                x_name = os.path.basename(x_path)
+                if round(diff % 5.00) == 0 or downloaded == total_length:
+                    percentage = downloaded * 100 / total_length
+                    speed = downloaded / diff
+                    elapsed_time = round(diff) * 1000
+                    time_to_completion = round(
+                        (total_length - downloaded) / speed) * 1000
+                    estimated_total_time = elapsed_time + time_to_completion
+                    x_size = humanbytes(total_length)
+                    tp = round(percentage, 2)
+                    estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
+                    template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
+
+                    xLDx = f"**ღ♡ ʀᴜɴɴɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪**\n**ᵉⁿʲᵒʸ ˢᵘᵖᵉʳᶠᵃˢᵗ ᵈᵒʷⁿˡᵒᵈ ᵇʸ [ᴸᵃᶻʸᴰᵉᵛᵉˡᵒᵖᵉʳʳ](https://t.me/LazyDeveloperr)◔_◔** \n\n**░░✩ 📂𝐎𝐑𝐆 𝐅𝐈𝐋𝐄𝐍𝐀𝐌𝐄 ✩ **\n<code>{x_name}</code>\n\n**░░✩ 📝𝐍𝐄𝐖 𝐍𝐀𝐌𝐄 ✩ **\n<code>{template_name}</code>\n\n ☼﹍︿﹍ⲯ﹍︿﹍﹍︿﹍ⲯ﹍︿﹍☼\n⚡️**Done:{tp}**%| 🧬ѕιzє: {x_size}"
+                    progress = "{0}{1}".format(
+                        ''.join(["█" for i in range(math.floor(percentage / 5))]),
+                        ''.join(["░" for i in range(20 - math.floor(percentage / 5))]))
+                    tmp = xLDx + "\n" + progress + script.PROGRESS_BAR.format( 
+                        round(percentage, 2),
+                        humanbytes(downloaded),
+                        humanbytes(total_length),
+                        humanbytes(speed),
+                        estimated_total_time if estimated_total_time != '' else "0 s"
+                    )
+                    try:
+                        current_message = tmp
+                        if current_message != display_message:
+                            await bot.edit_message_text(
+                                chat_id,
+                                message_id,
+                                text=current_message,
+                                disable_web_page_preview=True
+                            )
+                            display_message = current_message
+                    except Exception as e:
+                        logger.info(str(e))
+                        pass
+        return await response.release()
