@@ -278,17 +278,20 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        x_size = requests.head(url)    
-        total_length = int(x_size.headers.get("Content-Length", 0))
-        content_type = response.headers["Content-Type"]
+        total_length = response.content_length  # Updated to get total content length directly
+
+        # Get other file details
+        content_type = response.headers.get("Content-Type", "")
         x_path = urlparse(url).path
         x_name = os.path.basename(x_path)
         
-        if total_length == "0" and total_length == "":
+        # If total length is not available or is 0, use the provided approx_file_size
+        if not total_length or total_length == 0:
             total_length = approx_file_size
             
         await message.message.edit_caption(
-            caption=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ {x_name}\n🧬ѕιzє: {humanbytes(total_length)}")
+            caption=f"**Initializing lazy construction** \n⬇️⏬ {x_name}\n🧬Size: {humanbytes(total_length)}")
+        
         with open(file_name, "wb") as f_handle:
             while True:
                 chunk = await response.content.read(CHUNK_SIZE)
@@ -298,8 +301,11 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
+                
+                # Reassign x_name in the loop if necessary
                 x_path = urlparse(url).path
                 x_name = os.path.basename(x_path)
+                
                 if round(diff % 5.00) == 0 or downloaded == total_length:
                     percentage = downloaded * 100 / total_length
                     speed = downloaded / diff
@@ -312,7 +318,7 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
                     estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
                     template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
 
-                    xLDx = f"**ღ♡ ʀᴜɴɴɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪**\n**ᵉⁿʲᵒʸ ˢᵘᵖᵉʳᶠᵃˢᵗ ᵈᵒʷⁿˡᵒᵈ ᵇʸ [ᴸᵃᶻʸᴰᵉᵛᵉˡᵒᵖᵉʳʳ](https://t.me/LazyDeveloperr)◔_◔** \n\n**░░✩ 📂𝐎𝐑𝐆 𝐅𝐈𝐋𝐄𝐍𝐀𝐌𝐄 ✩ **\n<code>{x_name}</code>\n\n**░░✩ 📝𝐍𝐄𝐖 𝐍𝐀𝐌𝐄 ✩ **\n<code>{template_name}</code>\n\n ☼﹍︿﹍ⲯ﹍︿﹍﹍︿﹍ⲯ﹍︿﹍☼\n⚡️**Done:{tp}**%| 🧬ѕιzє: {m_size}"
+                    xLDx = f"**Running lazy construction**\nEnjoy superfast download by LazyDeveloper\n\n**File Name:** <code>{x_name}</code>\n\n**New Name:** <code>{template_name}</code>\n\nProgress: {tp}% | Size: {m_size}"
                     progress = "{0}{1}".format(
                         ''.join(["█" for i in range(math.floor(percentage / 5))]),
                         ''.join(["░" for i in range(20 - math.floor(percentage / 5))]))
@@ -335,4 +341,3 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
                         logger.info(str(e))
                         pass
         return await response.release()
-        
