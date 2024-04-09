@@ -287,7 +287,7 @@ async def download_coroutine(bot, query, session, custom_file_name, url, file_na
         m_size = humanbytes(total_length)
         await query.message.edit_caption(
             chat_id,
-            text=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{x_name}`\n🧬**ѕιzє:**{m_size}")
+            caption=f"**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{x_name}`\n🧬**ѕιzє:**{m_size}")
         with open(file_name, "wb") as f_handle:
             while True:
                 chunk = await response.content.read(CHUNK_SIZE)
@@ -327,7 +327,7 @@ async def download_coroutine(bot, query, session, custom_file_name, url, file_na
                         if current_message != display_message:
                             await query.message.edit_caption(
                                 chat_id,
-                                text=current_message,
+                                caption=current_message,
                                 disable_web_page_preview=True
                             )
                             display_message = current_message
