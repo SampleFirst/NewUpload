@@ -1,41 +1,31 @@
-import os
-import json
-import aiohttp
-from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram import Client
+from pyrogram import filters
+import requests
 
-@Client.on_message(filters.command(["json", "js"]))
-async def jsonify(client, message):
-    url = None
-    
+
+# Define the command to trigger the action
+@Client.on_message(filters.command("extract")
+def extract_media(client, message):
+    # Check if the replied message contains a URL
     if message.reply_to_message and message.reply_to_message.text:
         url = message.reply_to_message.text
-    elif len(message.command) > 1:
-        url = message.command[1]
-
-    if url:
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    data = await response.json()
-                    filename = "json_file.json"
-                    with open(filename, "w", encoding="utf8") as json_file:
-                        json.dump(data, json_file, ensure_ascii=False)
-                        
-                    await message.reply_document(
-                        document=filename,
-                        caption="Here's the JSON file for the provided URL.",
-                        disable_notification=True,
-                        quote=True
-                    )
-                    os.remove(filename)
-        except Exception as e:
-            await message.reply_text(
-                f"An error occurred while fetching or processing the JSON data: {e}",
-                quote=True
+        # Send a request to the URL to fetch the media data
+        response = requests.get(url)
+        if response.ok:
+            media_data = response.json()
+            # Send the media JSON data back to the user
+            client.send_message(
+                chat_id=message.chat.id,
+                text=str(media_data)  # Convert the JSON data to a string
+            )
+        else:
+            client.send_message(
+                chat_id=message.chat.id,
+                text="Failed to fetch media data from the provided URL."
             )
     else:
-        await message.reply_text(
-            "Please provide a valid URL to fetch JSON data from.",
-            quote=True
+        client.send_message(
+            chat_id=message.chat.id,
+            text="Please reply to a message containing a URL."
         )
+
