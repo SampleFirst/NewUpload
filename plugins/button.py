@@ -139,10 +139,10 @@ async def youtube_dl_call_back(client, message):
 
     # Read process output in chunks
     while True:
-        chunk = await process.stdout.read(1024)
+        chunk = await process.stdout.read(CHUNK_SIZE)
         if not chunk:
             break
-        downloaded_bytes += len(chunk)
+        downloaded_bytes += CHUNK_SIZE
         download_percentage = int((downloaded_bytes / total_size) * 100)
 
         # Update message caption with progress
