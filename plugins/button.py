@@ -286,7 +286,7 @@ async def download_coroutine(bot, session, custom_file_name, url, total_size, fi
         
         await bot.edit_message_text(
             chat_id,
-            message_id,
+            query_id,
             text=""""**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{}`\n🧬**ѕιzє:**`{}`
             """.format(x_name, humanbytes(total_length))
         )
@@ -329,7 +329,7 @@ async def download_coroutine(bot, session, custom_file_name, url, total_size, fi
                         if current_message != display_message:
                             await bot.edit_message_text(
                                 chat_id,
-                                message_id,
+                                query_id,
                                 text=current_message,
                                 disable_web_page_preview=True
                             )
