@@ -35,7 +35,7 @@ async def echo(client, message):
         try:
             invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
         except ChatAdminRequired:
-            logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
+            logger.error("Make sure Bot is admin in Forcesub channel")
             return
         btn = [[
             InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
@@ -183,17 +183,10 @@ async def echo(client, message):
                         continue
     
                     format_ext = formats.get("ext")
-    
-                    if formats.get('filesize'):
-                        size = formats['filesize']
-                    elif formats.get('filesize_approx'):
-                        size = formats['filesize_approx']
-                    else:
-                        size = 0
-                    
-                    cb_string_video = "{}|{}|{}|{}|{}".format(
+                    size = formats.get('filesize')
+                    cb_string_video = "{}|{}|{}|{}".format(
                         "video", format_id, format_ext, size, randem)
-                    cb_string_file = "{}|{}|{}|{}|{}".format(
+                    cb_string_file = "{}|{}|{}|{}".format(
                         "file", format_id, format_ext, size, randem)
                     if format_string is not None and not "audio only" in format_string:
                         ikeyboard = [
@@ -248,20 +241,21 @@ async def echo(client, message):
             else:
                 format_id = response_json["format_id"]
                 format_ext = response_json["ext"]
-                cb_string_file = "{}={}={}".format(
-                    "file", format_id, format_ext)
-                cb_string_video = "{}={}={}".format(
-                    "video", format_id, format_ext)
+                size = response_json.get('filesize', 0)
+                cb_string_file = "{}|{}|{}|{}|{}".format(
+                    "file", format_id, format_ext, size, randem)
+                cb_string_video = "{}|{}|{}|{}|{}".format(
+                    "video", format_id, format_ext, size, randem)
                 inline_keyboard.append([
                     InlineKeyboardButton(
                         "🎬 sᴍᴇᴅɪᴀ",
                         callback_data=(cb_string_video).encode("UTF-8")
                     )
                 ])
-                cb_string_file = "{}={}={}".format(
-                    "file", format_id, format_ext)
-                cb_string_video = "{}={}={}".format(
-                    "video", format_id, format_ext)
+                cb_string_file = "{}|{}|{}|{}|{}".format(
+                    "file", format_id, format_ext, size, randem)
+                cb_string_video = "{}|{}|{}|{}|{}".format(
+                    "video", format_id, format_ext, size, randem)
                 inline_keyboard.append([
                     InlineKeyboardButton(
                         "🎥 ᴠɪᴅᴇᴏ",
@@ -298,4 +292,3 @@ async def echo(client, message):
                 parse_mode=enums.ParseMode.HTML,
                 reply_to_message_id=message.id
             )
-            
