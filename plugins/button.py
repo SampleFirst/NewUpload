@@ -288,9 +288,10 @@ async def download_coroutine(bot, message, session, custom_file_name, url, file_
         # If total length is not available or is 0, use the provided approx_file_size
         if not total_length or total_length == 0:
             total_length = approx_file_size
-            
+
+        m_size = humanbytes(total_length)
         await message.message.edit_caption(
-            caption=f"**Initializing lazy construction** \n⬇️⏬ {x_name}\n🧬Size: {humanbytes(total_length)}")
+            caption=f"**Initializing lazy construction** \n⬇️⏬ {x_name}\n🧬Size: {m_size}")
         
         with open(file_name, "wb") as f_handle:
             while True:
