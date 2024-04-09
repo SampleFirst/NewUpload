@@ -132,12 +132,12 @@ async def youtube_dl_call_back(client, message):
             try:
                 await download_coroutine(
                     client,
+                    message,
                     session,
                     custom_file_name,
                     youtube_dl_url,
                     download_directory,
                     message.message.chat.id,
-                    message.id,
                     c_time,
                 )
             except asyncio.TimeoutError:
@@ -273,7 +273,7 @@ async def youtube_dl_call_back(client, message):
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
 
 
-async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, message_id, start):
+async def download_coroutine(bot, message, session, custom_file_name, url, file_name, chat_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
