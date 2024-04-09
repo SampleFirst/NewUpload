@@ -128,8 +128,7 @@ async def youtube_dl_call_back(client, message):
     start = datetime.now()
     
     downloaded_bytes = 0
-    length = int(response_json.get("filesize"))  # Assuming file size available
-    total_size = humanbytes(length)
+    total_size = int(response_json.get("filesize", 0))
     
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
