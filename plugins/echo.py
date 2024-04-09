@@ -190,16 +190,18 @@ async def echo(client, message):
                         size = formats['filesize_approx']
                     else:
                         size = 0
-    
-                    cb_string_video = "{}|{}|{}|{}".format(
-                        "video", format_id, format_ext, randem)
-                    cb_string_file = "{}|{}|{}|{}".format(
-                        "file", format_id, format_ext, randem)
+                    
+                    x_size = humanbytes(size)
+                    
+                    cb_string_video = "{}|{}|{}|{}|{}".format(
+                        "video", format_id, format_ext, x_size, randem)
+                    cb_string_file = "{}|{}|{}|{}|{}".format(
+                        "file", format_id, format_ext, x_size, randem)
                     if format_string is not None and not "audio only" in format_string:
                         ikeyboard = [
                             InlineKeyboardButton(
                                 "📂 " + format_string + " " + format_ext +
-                                " " + humanbytes(size) + " ",
+                                " " + x_size + " ",
                                 callback_data=(cb_string_video).encode("UTF-8")
                             )
                         ]
@@ -219,18 +221,18 @@ async def echo(client, message):
                             InlineKeyboardButton(
                                 "🎬 [" +
                                 "] ( " +
-                                humanbytes(size) + " )",
+                                x_size + " )",
                                 callback_data=(cb_string_video).encode("UTF-8")
                             )
                         ]
                     inline_keyboard.append(ikeyboard)
                 if duration is not None:
-                    cb_string_64 = "{}|{}|{}|{}".format(
-                        "audio", "64k", "mp3", randem)
-                    cb_string_128 = "{}|{}|{}|{}".format(
-                        "audio", "128k", "mp3", randem)
-                    cb_string = "{}|{}|{}|{}".format(
-                        "audio", "320k", "mp3", randem)
+                    cb_string_64 = "{}|{}|{}|{}|{}".format(
+                        "audio", "64k", "mp3", x_size, randem)
+                    cb_string_128 = "{}|{}|{}|{}|{}".format(
+                        "audio", "128k", "mp3", x_size, randem)
+                    cb_string = "{}|{}|{}|{}|{}".format(
+                        "audio", "320k", "mp3", x_size, randem)
                     inline_keyboard.append([
                         InlineKeyboardButton(
                             "🎼 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
@@ -290,7 +292,7 @@ async def echo(client, message):
                 )
             ])
             reply_markup = InlineKeyboardMarkup(inline_keyboard)
-            await chk.delete(True)
+            await chk.delete()
             await client.send_message(
                 chat_id=message.chat.id,
                 text=script.FORMAT_SELECTION,
