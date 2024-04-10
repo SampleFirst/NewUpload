@@ -291,11 +291,11 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
                 now = time.time()
                 diff = now - start
                 if round(diff % 5.00) == 0 or downloaded == total_size:
-                    percentage = downloaded * 100 / total_size
+                    percentage = downloaded * 100 / int(total_size)
                     speed = downloaded / diff
                     elapsed_time = round(diff) * 1000
                     time_to_completion = round(
-                        (total_size - downloaded) / speed) * 1000
+                        (int(total_size) - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
                         current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**\n**🗂️ Sɪᴢᴇ :** {}\n**✅ Dᴏɴᴇ :** {}\n**⏱️ Eᴛᴀ :** {}""".format(humanbytes(total_size, convert_to_int=True), humanbytes(downloaded, convert_to_int=True), TimeFormatter(estimated_total_time))
