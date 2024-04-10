@@ -277,7 +277,7 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        total_length = int(response.headers["Content-Length", 0])
+        total_length = int(response.headers("Content-Length", 0))
         if total_length == 0:
             total_length = total_size
         content_type = response.headers["Content-Type"]
