@@ -125,33 +125,17 @@ async def youtube_dl_call_back(client, query):
     # command_to_exec.append("--quiet")
     logger.info(command_to_exec)
     start = datetime.now()
-    
+
     if total_size != "0" and total_size != "":
-        total_size = humanbytes(int(total_size))
-        downloaded_size = 0
-        progress = "0%"
-        speed = ""
-        eta = ""
-        start_time = time.time()
-
-        async def progress_status():
-            nonlocal downloaded_size, progress, speed, eta
-            while os.path.exists(download_directory):
-                downloaded_size = os.path.getsize(download_directory)
-                progress = "{:.2f}%".format(downloaded_size / int(total_size) * 100)
-                elapsed_time = time.time() - start_time
-                if elapsed_time == 0:
-                    speed = humanbytes(0) + "/s"
-                else:
-                    speed = humanbytes((downloaded_size / elapsed_time))
-                if downloaded_size == 0:
-                    eta = "∞"
-                else:
-                    eta = humanbytes((int(total_size) - downloaded_size) / (downloaded_size / elapsed_time))
-                await asyncio.sleep(2)
-
-        asyncio.create_task(progress_status())
-
+        await query.message.edit_caption(
+            caption=script.DOWNLOAD_PROGRESS.format(
+                custom_file_name=custom_file_name,
+                total_size=humanbytes(int(total_size)),
+                total_downloaded="0 Bytes",
+                estimated_time="Calculating...",
+                percentage="0%"
+            )
+        )
     else:
         await query.message.edit_caption(
             caption=script.DOWNLOAD_START.format(a=custom_file_name)
@@ -163,6 +147,35 @@ async def youtube_dl_call_back(client, query):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
+
+    # Wait for the subprocess to finish
+    while True:
+        # Calculate download progress
+        if total_size != "0" and total_size != "":
+            downloaded = os.path.getsize(download_directory)
+            total_size_bytes = int(total_size)
+            downloaded_str = humanbytes(downloaded)
+            percentage = (downloaded / total_size_bytes) * 100
+            speed = downloaded / (time.time() - start_time)
+            remaining_time = ((total_size_bytes - downloaded) / speed) if speed > 0 else 0
+            estimated_time = time.strftime("%H:%M:%S", time.gmtime(remaining_time))
+            percentage_str = "%.2f%%" % percentage
+
+            await query.message.edit_caption(
+                caption=script.DOWNLOAD_PROGRESS.format(
+                    custom_file_name=custom_file_name,
+                    total_size=humanbytes(total_size_bytes),
+                    total_downloaded=downloaded_str,
+                    estimated_time=estimated_time,
+                    percentage=percentage_str
+                )
+            )
+
+        # Check if download is complete
+        if downloaded == total_size_bytes:
+            break
+
+        await asyncio.sleep(5)  # Adjust the sleep time as per your requirement
 
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
@@ -277,4 +290,5 @@ async def youtube_dl_call_back(client, query):
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
-
+            
+            
