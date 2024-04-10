@@ -58,29 +58,14 @@ async def ddl_call_back(client, query):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    ######################## 
-    try:
-        if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
-            logger.info('cant define file size for youtube videos')
-        else:
-            x_size = requests.head(youtube_dl_url)    
-            x_length = int(x_size.headers.get("Content-Length", 0))
-            x_path = urlparse(youtube_dl_url).path
-            x_name = os.path.basename(x_path)
-            total_length = humanbytes(x_length)
-        logger.info(total_length)
-        sizee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else total_length
-        namee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else x_name
-    except Exception as e:
-        logger.error(f"Something went wrong in the code =>::: {e}")
-
+    user = await client.get_me()
+    mention = user["mention"]
+    description = script.CUSTOM_CAPTION_UL_FILE.format(mention)
     start = datetime.now()
-    description = script.CUSTOM_CAPTION_UL_FILE
-    if custom_file_name:
-        description = custom_file_name
-    elif "fulltitle" in response_json:
-        description = response_json["fulltitle"][0:1021]
-
+    await query.message.edit_caption(
+        caption=script.DOWNLOAD_START,
+        parse_mode=enums.ParseMode.HTML
+    )
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
@@ -92,14 +77,13 @@ async def ddl_call_back(client, query):
             await download_coroutine(
                 client,
                 session,
-                custom_file_name,
                 youtube_dl_url,
                 download_directory,
                 query.message.chat.id,
                 query.id,
-                c_time,
+                c_time
             )
-        except asyncio.TimeoutError:
+        except asyncio.TimeOutError:
             await query.message.edit_caption(
                 caption=script.SLOW_URL_DECED,
                 parse_mode=enums.ParseMode.HTML
@@ -120,18 +104,22 @@ async def ddl_call_back(client, query):
             file_size = os.stat(download_directory).st_size
         if file_size > TG_MAX_FILE_SIZE:
             await query.message.edit_caption(
+                
                 caption=script.RCHD_TG_API_LIMIT,
                 parse_mode=enums.ParseMode.HTML
             )
         else:
+            
             start_time = time.time()
             if (await db.get_upload_as_doc(query.from_user.id)) is False:
                 thumbnail = await get_thumbnail(client, query)
                 await query.message.reply_document(
+                    #chat_id=query.message.chat.id,
                     document=download_directory,
                     thumb=thumbnail,
                     caption=description,
                     parse_mode=enums.ParseMode.HTML,
+                    #reply_to_message_id=query.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
@@ -143,6 +131,7 @@ async def ddl_call_back(client, query):
                  width, height, duration = await get_metadata(download_directory)
                  thumb_image_path = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
                  await query.message.reply_video(
+                    #chat_id=query.message.chat.id,
                     video=download_directory,
                     caption=description,
                     duration=duration,
@@ -151,6 +140,7 @@ async def ddl_call_back(client, query):
                     supports_streaming=True,
                     parse_mode=enums.ParseMode.HTML,
                     thumb=thumb_image_path,
+                    #reply_to_message_id=query.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
@@ -162,11 +152,13 @@ async def ddl_call_back(client, query):
                 duration = await get_duration(download_directory)
                 thumbnail = await get_thumbnail(client, query)
                 await query.message.reply_audio(
+                    #chat_id=query.message.chat.id,
                     audio=download_directory,
                     caption=description,
                     parse_mode=enums.ParseMode.HTML,
                     duration=duration,
                     thumb=thumbnail,
+                    #reply_to_message_id=query.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
@@ -178,10 +170,12 @@ async def ddl_call_back(client, query):
                 width, duration = await get_width_and_duration(download_directory)
                 thumbnail = await get_thumbnail_with_screenshot(client, query, duration, download_directory)
                 await query.message.reply_video_note(
+                    #chat_id=query.message.chat.id,
                     video_note=download_directory,
                     duration=duration,
                     length=width,
                     thumb=thumbnail,
+                    #reply_to_message_id=query.id,
                     progress=progress_for_pyrogram,
                     progress_args=(
                         script.UPLOAD_START,
@@ -201,31 +195,32 @@ async def ddl_call_back(client, query):
             time_taken_for_upload = (end_two - end_one).seconds
             await query.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload),
+               
                 parse_mode=enums.ParseMode.HTML
             )
     else:
         await query.message.edit_caption(
             caption=script.NO_VOID_FORMAT_FOUND.format("Incorrect Link"),
+            
+            
             parse_mode=enums.ParseMode.HTML
         )
 
-async def download_coroutine(bot, session, custom_file_name, url, file_name, chat_id, query_id, start):
+async def download_coroutine(client, session, url, file_name, chat_id, message_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        x_size = requests.head(url)    
-        total_length = int(x_size.headers.get("Content-Length", 0))
+        total_length = int(response.headers["Content-Length"])
         content_type = response.headers["Content-Type"]
-        x_path = urlparse(url).path
-        x_name = os.path.basename(x_path)
-              
         if "text" in content_type and total_length < 500:
             return await response.release()
-        await bot.edit_message_text(
-            chat_id,
-            message_id,
-            text=""""**ღ♡ ɪɴɪᴛɪᴀᴛɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪** \n⬇️⏬ `{}`\n🧬**ѕιzє:**`{}`
-            """.format(x_name, humanbytes(total_length))
+        await query.message.edit_caption(
+         
+      
+            caption="""Initiating Download
+**🔗 Uʀʟ :** `{}`
+**🗂️ Sɪᴢᴇ :** {}""".format(url, humanbytes(total_length)),
+            parse_mode=enums.ParseMode.HTML
         )
         with open(file_name, "wb") as f_handle:
             while True:
@@ -236,8 +231,6 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
-                x_path = urlparse(url).path
-                x_name = os.path.basename(x_path)
                 if round(diff % 5.00) == 0 or downloaded == total_length:
                     percentage = downloaded * 100 / total_length
                     speed = downloaded / diff
@@ -245,31 +238,25 @@ async def download_coroutine(bot, session, custom_file_name, url, file_name, cha
                     time_to_completion = round(
                         (total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
-                    xxLAZY_BAPUXX_total_size = humanbytes(total_length)
-                    tp = round(percentage, 2)
-                    xxLAZY_BAPUXX_estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
-                    template_name = custom_file_name if custom_file_name else "**⚠ You haven't given any custom name...**"
-
-                    xLDx = f"**ღ♡ ʀᴜɴɴɪɴɢ ʟᴀᴢʏ ᴄᴏɴꜱᴛʀᴜᴄᴛɪᴏɴ ♡♪**\n**ᵉⁿʲᵒʸ ˢᵘᵖᵉʳᶠᵃˢᵗ ᵈᵒʷⁿˡᵒᵈ ᵇʸ [ᴸᵃᶻʸᴰᵉᵛᵉˡᵒᵖᵉʳʳ](https://t.me/LazyDeveloperr)◔_◔** \n\n**░░✩ 📂𝐎𝐑𝐆 𝐅𝐈𝐋𝐄𝐍𝐀𝐌𝐄 ✩ **\n<code>{x_name}</code>\n\n**░░✩ 📝𝐍𝐄𝐖 𝐍𝐀𝐌𝐄 ✩ **\n<code>{template_name}</code>\n\n ☼﹍︿﹍ⲯ﹍︿﹍﹍︿﹍ⲯ﹍︿﹍☼\n⚡️**Done:{tp}**%| 🧬ѕιzє: {xxLAZY_BAPUXX_total_size}"
-                    progress = "{0}{1}".format(
-                        ''.join(["█" for i in range(math.floor(percentage / 5))]),
-                        ''.join(["░" for i in range(20 - math.floor(percentage / 5))]))
-                    tmp = xLDx + "\n" + progress + script.PROGRESS_BAR.format( 
-                        round(percentage, 2),
-                        humanbytes(downloaded),
-                        humanbytes(total_length),
-                        humanbytes(speed),
-                        xxLAZY_BAPUXX_estimated_total_time if xxLAZY_BAPUXX_estimated_total_time != '' else "0 s"
-                    )
                     try:
-                        current_message = tmp
+                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**
+**🔗 Uʀʟ :** `{}`
+
+**🗂️ Sɪᴢᴇ :** {}
+
+**✅ Dᴏɴᴇ :** {}
+
+**⏱️ Eᴛᴀ :** {}""".format(
+    url,
+    humanbytes(total_length),
+    humanbytes(downloaded),
+    TimeFormatter(estimated_total_time)
+)
                         if current_message != display_message:
-                            await bot.edit_message_text(
-                                chat_id,
-                                message_id,
-                                text=current_message,
-                                disable_web_page_preview=True
-                            )
+                            await query.message.edit_caption(
+                                caption=current_message,
+                                parse_mode=enums.ParseMode.HTML
+            )
                             display_message = current_message
                     except Exception as e:
                         logger.info(str(e))
