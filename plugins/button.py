@@ -76,9 +76,30 @@ async def youtube_dl_call_back(client, query):
     logger.info(youtube_dl_url)
     logger.info(custom_file_name)
 
-    await query.message.edit_caption(
-        caption=script.DOWNLOAD_START.format(a=custom_file_name)
-    )
+    if total_size != "0" and total_size != "":
+        async with aiohttp.ClientSession() as session:
+            c_time = time.time()
+            try:
+                await download_coroutine(
+                    client,
+                    query,
+                    session,
+                    youtube_dl_url,
+                    total_size,
+                    download_directory,
+                    query.message.chat.id,
+                    c_time
+                )
+            except asyncio.TimeoutError:
+                await query.message.edit_caption(
+                    caption=script.SLOW_URL_DECED,
+                    parse_mode=enums.ParseMode.HTML
+                )
+                return False
+    else:
+        await query.message.edit_caption(
+            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        )
 
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
@@ -139,27 +160,7 @@ async def youtube_dl_call_back(client, query):
         stderr=asyncio.subprocess.PIPE,
     )
 
-    if total_size != "0" and total_size != "":
-        async with aiohttp.ClientSession() as session:
-            c_time = time.time()
-            try:
-                await download_coroutine(
-                    client,
-                    query,
-                    session,
-                    youtube_dl_url,
-                    total_size,
-                    download_directory,
-                    query.message.chat.id,
-                    c_time
-                )
-            except asyncio.TimeoutError:
-                await query.query.edit_caption(
-                    caption=script.SLOW_URL_DECED,
-                    parse_mode=enums.ParseMode.HTML
-                )
-                return False
-                
+    
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
@@ -279,7 +280,7 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        total_length = int(response.headers["Content-Length"])
+        total_length = int(response.headers["Content-Length", 0])
         if total_length == 0:
             total_length = total_size
         content_type = response.headers["Content-Type"]
