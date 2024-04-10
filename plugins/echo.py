@@ -137,7 +137,7 @@ async def echo(client, message):
             chat_id=message.chat.id,
             text='Processing your link ⌛',
             disable_web_page_preview=True,
-            reply_to_message_id=message.message_id,
+            reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML
         )
 
@@ -160,7 +160,7 @@ async def echo(client, message):
             await client.send_message(
                 chat_id=message.chat.id,
                 text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
-                reply_to_message_id=message.message_id,
+                reply_to_message_id=message.id,
                 parse_mode=enums.ParseMode.HTML,
                 disable_web_page_preview=True
             )
