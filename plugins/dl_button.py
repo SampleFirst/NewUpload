@@ -25,7 +25,7 @@ async def ddl_call_back(client, query):
     logger.info(query)
     cb_data = query.data
     # youtube_dl extractors
-    tg_send_type, youtube_dl_format, youtube_dl_ext, total_size, random_suffix = cb_data.split("|")
+    tg_send_type, youtube_dl_format, youtube_dl_ext = cb_data.split("=")
     thumb_image_path = DOWNLOAD_LOCATION + \
         "/" + str(query.from_user.id) + ".jpg"
     youtube_dl_url = query.message.reply_to_message.text
@@ -62,7 +62,7 @@ async def ddl_call_back(client, query):
     description = script.CUSTOM_CAPTION_UL_FILE.format()
     start = datetime.now()
     await query.message.edit_caption(
-        caption=script.DOWNLOAD_START,
+        caption=script.DOWNLOAD_START.format(a=custom_file_name),
         parse_mode=enums.ParseMode.HTML
     )
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id)
@@ -75,15 +75,15 @@ async def ddl_call_back(client, query):
         try:
             await download_coroutine(
                 client,
+                query,
                 session,
                 youtube_dl_url,
                 download_directory,
                 query.message.chat.id,
-                query.id,
                 c_time
             )
-        except asyncio.TimeOutError:
-            await query.message.edit_caption(
+        except TimeoutError:
+            await query.edit_message_text(
                 caption=script.SLOW_URL_DECED,
                 parse_mode=enums.ParseMode.HTML
             )
@@ -205,7 +205,7 @@ async def ddl_call_back(client, query):
             parse_mode=enums.ParseMode.HTML
         )
 
-async def download_coroutine(client, session, url, file_name, chat_id, message_id, start):
+async def download_coroutine(client, query, session, url, file_name, chat_id, start):
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
