@@ -281,12 +281,11 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
         if total_length == 0:
             total_length = total_size
         content_type = response.headers["Content-Type"]
-        if "text" in content_type and total_length < 500:
-            return await response.release()
+        if "text" in content_type and int(total_length) < 500:
+            await response.release()
+            return
         await query.message.edit_caption(
-            caption="""Initiating Download
-**🔗 Uʀʟ :** `{}`
-**🗂️ Sɪᴢᴇ :** {}""".format(url, humanbytes(total_length)),
+            caption="""Initiating Download\n**🔗 Uʀʟ :** `{}`\n**🗂️ Sɪᴢᴇ :** {}""".format(url, humanbytes(total_length)),
             parse_mode=enums.ParseMode.HTML
         )
         with open(file_name, "wb") as f_handle:
@@ -306,26 +305,15 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
                         (total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
-                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**
-**🔗 Uʀʟ :** `{}`
-
-**🗂️ Sɪᴢᴇ :** {}
-
-**✅ Dᴏɴᴇ :** {}
-
-**⏱️ Eᴛᴀ :** {}""".format(
-    url,
-    humanbytes(total_length),
-    humanbytes(downloaded),
-    TimeFormatter(estimated_total_time)
-)
+                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**\n**🔗 Uʀʟ :** `{}`\n**🗂️ Sɪᴢᴇ :** {}\n**✅ Dᴏɴᴇ :** {}\n**⏱️ Eᴛᴀ :** {}""".format(url, humanbytes(total_length), humanbytes(downloaded), TimeFormatter(estimated_total_time))
                         if current_message != display_message:
                             await query.message.edit_caption(
                                 caption=current_message,
                                 parse_mode=enums.ParseMode.HTML
-            )
+                            )
                             display_message = current_message
                     except Exception as e:
                         logger.info(str(e))
                         pass
-        return await response.release()
+        await response.release()
+        
