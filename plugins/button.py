@@ -277,9 +277,8 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        total_length = total_size
         await query.message.edit_caption(
-            caption="""Initiating Download\n**🗂️ Sɪᴢᴇ :** {}""".format(humanbytes(total_length)),
+            caption="""Initiating Download\n**🗂️ Sɪᴢᴇ :** {}""".format(humanbytes(total_size, convert_to_int=True)),
             parse_mode=enums.ParseMode.HTML
         )
         with open(file_name, "wb") as f_handle:
@@ -291,15 +290,15 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
-                if round(diff % 5.00) == 0 or downloaded == total_length:
-                    percentage = downloaded * 100 / total_length
+                if round(diff % 5.00) == 0 or downloaded == total_size:
+                    percentage = downloaded * 100 / total_size
                     speed = downloaded / diff
                     elapsed_time = round(diff) * 1000
                     time_to_completion = round(
-                        (total_length - downloaded) / speed) * 1000
+                        (total_size - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
-                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**\n**🗂️ Sɪᴢᴇ :** {}\n**✅ Dᴏɴᴇ :** {}\n**⏱️ Eᴛᴀ :** {}""".format(humanbytes(total_length), humanbytes(downloaded), TimeFormatter(estimated_total_time))
+                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**\n**🗂️ Sɪᴢᴇ :** {}\n**✅ Dᴏɴᴇ :** {}\n**⏱️ Eᴛᴀ :** {}""".format(humanbytes(total_size, convert_to_int=True), humanbytes(downloaded, convert_to_int=True), TimeFormatter(estimated_total_time))
                         if current_message != display_message:
                             await query.message.edit_caption(
                                 caption=current_message,
@@ -310,3 +309,4 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
                         logger.info(str(e))
                         pass
         await response.release()
+        
