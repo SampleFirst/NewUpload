@@ -277,9 +277,7 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
     downloaded = 0
     display_message = ""
     async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
-        total_length = int(response.headers.get("Content-Length", 0))
-        if total_length == 0:
-            total_length = total_size
+        total_length = int(response.headers.get("Content-Length", total_size))
         content_type = response.headers["Content-Type"]
         if "text" in content_type and int(total_length) < 500:
             await response.release()
