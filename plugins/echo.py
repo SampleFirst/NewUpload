@@ -32,20 +32,20 @@ async def echo(client, message):
                 disable_web_page_preview=True
             )
         except Exception as error:
-            print(error)
+            logger.error(error)
 
     if AUTH_CHANNEL and not await is_subscribed(client, message):
         try:
             invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
         except ChatAdminRequired:
-            logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
+            logger.error("Make sure Bot is admin in ForceSub channel")
             return
         btn = [[
             InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
         ]]
         await client.send_message(
             chat_id=message.from_user.id,
-            text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
+            text="Please join my Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
             reply_markup=InlineKeyboardMarkup(btn),
             parse_mode=enums.ParseMode.MARKDOWN
         )
@@ -54,12 +54,11 @@ async def echo(client, message):
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         await client.send_message(
             chat_id=message.from_user.id,
-            text="Upgrade to our plan for use this bot\n\n Use /plan for Show Premium Plan Features\n\n Use /send for Contect Admin For *reply any text or photo bot send to Admin",
+            text="Upgrade to our plan to use this bot\n\nUse /plan to show Premium Plan Features\n\nUse /send to contact Admin for assistance.",
             parse_mode=enums.ParseMode.MARKDOWN
         )
         return 
     else:
-        logger.info(message.from_user)
         url = message.text
         youtube_dl_username = None
         youtube_dl_password = None
@@ -136,9 +135,9 @@ async def echo(client, message):
         logger.info(command_to_exec)
         chk = await client.send_message(
             chat_id=message.chat.id,
-            text=f'Processing your link ⌛',
+            text='Processing your link ⌛',
             disable_web_page_preview=True,
-            reply_to_message_id=message.id,
+            reply_to_message_id=message.message_id,
             parse_mode=enums.ParseMode.HTML
         )
 
@@ -161,7 +160,7 @@ async def echo(client, message):
             await client.send_message(
                 chat_id=message.chat.id,
                 text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
-                reply_to_message_id=message.id,
+                reply_to_message_id=message.message_id,
                 parse_mode=enums.ParseMode.HTML,
                 disable_web_page_preview=True
             )
@@ -227,9 +226,9 @@ async def echo(client, message):
                             )
                         ]
                     inline_keyboard.append(ikeyboard)
-                if audio_ext = formats.get("audio_ext")
+                if audio_ext := formats.get("audio_ext"):
                     language = formats.get("language")
-                    cb_string_video = "{}|{}|{}|{}|{}".format(
+                    cb_string_audio = "{}|{}|{}|{}|{}".format(
                         "audio", format_id, audio_ext, size, randem)
                     
                     ikeyboard = [
@@ -238,6 +237,7 @@ async def echo(client, message):
                             callback_data=(cb_string_audio).encode("UTF-8")
                         )
                     ]
+                    inline_keyboard.append(ikeyboard)
                 if duration is not None:
                     cb_string_64 = "{}|{}|{}|{}|{}".format(
                         "audio", "64k", "mp3", size, randem)
@@ -247,13 +247,13 @@ async def echo(client, message):
                         "audio", "320k", "mp3", size, randem)
                     inline_keyboard.append([
                         InlineKeyboardButton(
-                            "🎼 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
+                            "🎼 ᴍᴘ3 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
                         InlineKeyboardButton(
-                            "🎼 ᴍᴘ𝟹 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=cb_string_128.encode("UTF-8"))
+                            "🎼 ᴍᴘ3 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=cb_string_128.encode("UTF-8"))
                     ])
                     inline_keyboard.append([
                         InlineKeyboardButton(
-                            "🎼 ᴍᴘ𝟹 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=cb_string.encode("UTF-8"))
+                            "🎼 ᴍᴘ3 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=cb_string.encode("UTF-8"))
                     ])
                     inline_keyboard.append([
                         InlineKeyboardButton(
@@ -268,7 +268,7 @@ async def echo(client, message):
                     "video", format_id, format_ext)
                 inline_keyboard.append([
                     InlineKeyboardButton(
-                        "🎬 sᴍᴇᴅɪᴀ",
+                        "🎬 Media",
                         callback_data=(cb_string_video).encode("UTF-8")
                     )
                 ])
@@ -278,7 +278,7 @@ async def echo(client, message):
                     "video", format_id, format_ext)
                 inline_keyboard.append([
                     InlineKeyboardButton(
-                        "🎥 ᴠɪᴅᴇᴏ",
+                        "🎥 Video",
                         callback_data=(cb_string_video).encode("UTF-8")
                     )
                 ])
@@ -289,7 +289,7 @@ async def echo(client, message):
                 text=script.FORMAT_SELECTION + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML,
-                reply_to_message_id=message.id
+                reply_to_message_id=message.message_id
             )
         else:
             inline_keyboard = []
@@ -299,7 +299,7 @@ async def echo(client, message):
                 "video", "OFL", "ENON")
             inline_keyboard.append([
                 InlineKeyboardButton(
-                    "🎬 ᴍᴇᴅɪᴀ",
+                    "🎬 Media",
                     callback_data=(cb_string_video).encode("UTF-8")
                 )
             ])
@@ -310,6 +310,5 @@ async def echo(client, message):
                 text=script.FORMAT_SELECTION,
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML,
-                reply_to_message_id=message.id
+                reply_to_message_id=message.message_id
             )
-            
