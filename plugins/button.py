@@ -280,10 +280,6 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
         total_length = int(response.headers.get("Content-Length", 0))
         if total_length == 0:
             total_length = total_size
-        content_type = response.headers["Content-Type"]
-        if "text" in content_type and int(total_length) < 500:
-            await response.release()
-            return
         await query.message.edit_caption(
             caption="""Initiating Download\n**🔗 Uʀʟ :** `{}`\n**🗂️ Sɪᴢᴇ :** {}""".format(url, humanbytes(total_length)),
             parse_mode=enums.ParseMode.HTML
