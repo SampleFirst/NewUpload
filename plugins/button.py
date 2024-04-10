@@ -152,7 +152,7 @@ async def youtube_dl_call_back(client, query):
     while True:
         # Calculate download progress
         if total_size != "0" and total_size != "":
-            downloaded = os.path.getsize(download_directory)
+            downloaded = os.stat(download_directory).st_size
             total_size_bytes = int(total_size)
             downloaded_str = humanbytes(downloaded)
             percentage = (downloaded / total_size_bytes) * 100
