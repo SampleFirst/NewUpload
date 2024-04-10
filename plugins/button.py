@@ -278,7 +278,7 @@ async def youtube_dl_call_back(client, query):
 async def download_coroutine(bot, session, url, total_size, file_name, chat_id, query_id, start):
     downloaded = 0
     display_message = ""
-    async with session.get(url, timeout=Config.PROCESS_MAX_TIMEOUT) as response:
+    async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
         total_length = int(response.headers["Content-Length"])
         if total_length == 0:
             total_length = total_size
@@ -293,11 +293,11 @@ async def download_coroutine(bot, session, url, total_size, file_name, chat_id, 
         )
         with open(file_name, "wb") as f_handle:
             while True:
-                chunk = await response.content.read(Config.CHUNK_SIZE)
+                chunk = await response.content.read(CHUNK_SIZE)
                 if not chunk:
                     break
                 f_handle.write(chunk)
-                downloaded += Config.CHUNK_SIZE
+                downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
                 if round(diff % 5.00) == 0 or downloaded == total_length:
