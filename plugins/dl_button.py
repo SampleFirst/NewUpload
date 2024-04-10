@@ -58,9 +58,8 @@ async def ddl_call_back(client, query):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    user = await client.get_me()
-    mention = user["mention"]
-    description = script.CUSTOM_CAPTION_UL_FILE.format(mention)
+                
+    description = script.CUSTOM_CAPTION_UL_FILE.format()
     start = datetime.now()
     await query.message.edit_caption(
         caption=script.DOWNLOAD_START,
