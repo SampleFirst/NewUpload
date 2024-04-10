@@ -75,12 +75,10 @@ async def button(client, query):
         await query.message.edit_text('Sᴜᴄᴄᴇsғᴜʟʟʏ Dᴇʟᴇᴛᴇᴅ Aʟʟ Tʜᴇ Iɴᴅᴇxᴇᴅ Fɪʟᴇs.')
     elif "close" in query.data:
         await query.message.delete(True)
-    elif "|" in query.data:
-        await youtube_dl_call_back(client, query)
     elif "=" in query.data:
+        await youtube_dl_call_back(client, query)
+    elif "|" in query.data:
         await ddl_call_back(client, query)
     else:
         await query.message.delete()
-
-
-    
+        
