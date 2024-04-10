@@ -2,6 +2,8 @@ import logging
 import asyncio
 import json
 import time
+import requests
+from urllib.parse import urlparse
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Thumbnail
 from pyrogram.errors import ChatAdminRequired
