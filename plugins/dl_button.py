@@ -25,7 +25,8 @@ async def ddl_call_back(client, query):
     logger.info(query)
     cb_data = query.data
     # youtube_dl extractors
-    tg_send_type, youtube_dl_format, youtube_dl_ext = cb_data.split("=")
+    tg_send_type, youtube_dl_format, youtube_dl_ext, total_size, random_suffix = cb_data.split("|")
+    print(cb_data)
     thumb_image_path = DOWNLOAD_LOCATION + \
         "/" + str(query.from_user.id) + ".jpg"
     youtube_dl_url = query.message.reply_to_message.text
