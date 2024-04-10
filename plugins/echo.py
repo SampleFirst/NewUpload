@@ -226,7 +226,7 @@ async def echo(client, message):
                             )
                         ]
                     inline_keyboard.append(ikeyboard)
-                if audio_ext := formats.get("audio_ext"):
+                if audio_ext == formats.get("audio_ext"):
                     language = formats.get("language")
                     cb_string_audio = "{}|{}|{}|{}|{}".format(
                         "audio", format_id, audio_ext, size, randem)
