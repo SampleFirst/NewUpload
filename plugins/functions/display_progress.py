@@ -42,17 +42,20 @@ async def progress_for_pyrogram(current, total, ud_type, query, start):
             print(f"Error editing query: {e}")
 
 
-def humanbytes(size):
+def humanbytes(size, convert_to_int=False):
     if not size:
         return ""
     power = 2 ** 10
     n = 0
     Dic_powerN = {0: ' ', 1: 'K', 2: 'M', 3: 'G', 4: 'T'}
+    
+    if convert_to_int:
+        size = int(size)
+    
     while size > power:
         size /= power
         n += 1
     return str(round(size, 2)) + " " + Dic_powerN[n] + 'B'
-
 
 def TimeFormatter(milliseconds: int) -> str:
     seconds, milliseconds = divmod(int(milliseconds), 1000)
