@@ -305,7 +305,7 @@ async def download_coroutine(bot, query, session, url, total_size, file_name, ch
                         (total_length - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
-                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**\n**🔗 Uʀʟ :** `{}`\n**🗂️ Sɪᴢᴇ :** {}\n**✅ Dᴏɴᴇ :** {}\n**⏱️ Eᴛᴀ :** {}""".format(url, humanbytes(total_length, convert_to_int=True), humanbytes(downloaded), TimeFormatter(estimated_total_time))
+                        current_message = """**DᴏᴡɴʟᴏᴀᴅɪɴG**\n**🔗 Uʀʟ :** `{}`\n**🗂️ Sɪᴢᴇ :** {}\n**✅ Dᴏɴᴇ :** {}\n**⏱️ Eᴛᴀ :** {}""".format(url, humanbytes(total_length, convert_to_int=True), humanbytes(downloaded, convert_to_int=True), TimeFormatter(estimated_total_time))
                         if current_message != display_message:
                             await query.message.edit_caption(
                                 caption=current_message,
