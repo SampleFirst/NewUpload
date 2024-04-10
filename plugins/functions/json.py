@@ -46,27 +46,23 @@ async def send_json_data(client, message):
                 await client.send_document(
                     chat_id=message.chat.id,
                     document=save_ytdl_json_path,
-                    caption="Here is the JSON data for the provided link.",
-                    reply_to_message_id=message.reply_to_message.message_id
+                    caption="Here is the JSON data for the provided link."
                 )
             else:
                 # If no JSON data is retrieved, notify the user
                 await client.send_message(
                     chat_id=message.chat.id,
-                    text="No JSON data found for the provided link.",
-                    reply_to_message_id=message.reply_to_message.message_id
+                    text="No JSON data found for the provided link."
                 )
         else:
             # If the replied message doesn't contain a link, notify the user
             await client.send_message(
                 chat_id=message.chat.id,
-                text="No link found in the replied message.",
-                reply_to_message_id=message.reply_to_message.message_id
+                text="No link found in the replied message."
             )
     else:
         # If the message is not a reply, notify the user
         await client.send_message(
             chat_id=message.chat.id,
-            text="Please reply to a message containing a link.",
-            reply_to_message_id=message.message_id
+            text="Please reply to a message containing a link."
         )
