@@ -289,7 +289,7 @@ async def echo(client, message):
                 text=script.FORMAT_SELECTION + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML,
-                reply_to_message_id=message.message_id
+                reply_to_message_id=message.id
             )
         else:
             inline_keyboard = []
@@ -310,5 +310,5 @@ async def echo(client, message):
                 text=script.FORMAT_SELECTION,
                 reply_markup=reply_markup,
                 parse_mode=enums.ParseMode.HTML,
-                reply_to_message_id=message.message_id
+                reply_to_message_id=message.id
             )
