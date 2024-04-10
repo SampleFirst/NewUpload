@@ -2,9 +2,6 @@ import logging
 import asyncio
 import json
 import time
-import shutil
-import os
-import requests
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Thumbnail
 from pyrogram.errors import ChatAdminRequired
@@ -32,33 +29,43 @@ async def echo(client, message):
                 disable_web_page_preview=True
             )
         except Exception as error:
-            logger.error(error)
+            print(error)
 
     if AUTH_CHANNEL and not await is_subscribed(client, message):
         try:
             invite_link = await client.create_chat_invite_link(int(AUTH_CHANNEL))
         except ChatAdminRequired:
-            logger.error("Make sure Bot is admin in ForceSub channel")
+            logger.error("Mᴀᴋᴇ sᴜʀᴇ Bᴏᴛ ɪs ᴀᴅᴍɪɴ ɪɴ Fᴏʀᴄᴇsᴜʙ ᴄʜᴀɴɴᴇʟ")
             return
         btn = [[
             InlineKeyboardButton("Update Channel", url=invite_link.invite_link)
         ]]
         await client.send_message(
             chat_id=message.from_user.id,
-            text="Please join my Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
+            text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!\n\nNote: Once you join the update channel, do not leave to avoid being banned.",
             reply_markup=InlineKeyboardMarkup(btn),
             parse_mode=enums.ParseMode.MARKDOWN
         )
         return
 
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
-        await client.send_message(
-            chat_id=message.from_user.id,
-            text="Upgrade to our plan to use this bot\n\nUse /plan to show Premium Plan Features\n\nUse /send to contact Admin for assistance.",
-            parse_mode=enums.ParseMode.MARKDOWN
-        )
-        return 
+        if str(message.from_user.id) in ADL_BOT_RQ:
+            current_time = time.time()
+            previous_time = ADL_BOT_RQ[str(message.from_user.id)]
+            process_max_timeout = round(PROCESS_MAX_TIMEOUT/60)
+            present_time = round(PROCESS_MAX_TIMEOUT - (current_time - previous_time))
+            ADL_BOT_RQ[str(message.from_user.id)] = time.time()
+            if round(current_time - previous_time) < PROCESS_MAX_TIMEOUT:
+                await client.send_message(
+                    chat_id=message.from_user.id,
+                    text="Cannot Process Free users only 1 request per 6 hrs\n**Upgrade** your /plans to Remove Time Gaps and For link Processing",
+                    parse_mode=enums.ParseMode.MARKDOWN
+                )
+                return
+        else:
+            ADL_BOT_RQ[str(message.from_user.id)] = time.time()
     else:
+        logger.info(message.from_user)
         url = message.text
         youtube_dl_username = None
         youtube_dl_password = None
@@ -102,11 +109,6 @@ async def echo(client, message):
                     l = entity.length
                     url = url[o:o + l]
 
-        x_size = requests.head(url)    
-        x_length = int(x_size.headers.get("Content-Length", 0))
-        o_size = x_length
-        logger.info(o_size)
-        
         if HTTP_PROXY != "":
             command_to_exec = [
                 "yt-dlp",
@@ -135,12 +137,13 @@ async def echo(client, message):
         logger.info(command_to_exec)
         chk = await client.send_message(
             chat_id=message.chat.id,
-            text='Processing your link ⌛',
+            text=f'Processing your link ⌛',
             disable_web_page_preview=True,
             reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML
         )
 
+        
         process = await asyncio.create_subprocess_exec(
             *command_to_exec,
             stdout=asyncio.subprocess.PIPE,
@@ -196,13 +199,10 @@ async def echo(client, message):
                     elif formats.get('filesize_approx'):
                         size = formats['filesize_approx']
                     else:
-                        size = 0
-                        
-                    if size == 0:
-                        size = o_size
-                    else:
-                        size == 0
-                    
+                        x_d_size = requests.head(url)    
+                        x_t_length = int(x_d_size.headers.get("Content-Length", 0))
+                        size = x_t_length if x_t_length else 0
+
                     cb_string_video = "{}|{}|{}|{}|{}".format(
                         "video", format_id, format_ext, size, randem)
                     cb_string_file = "{}|{}|{}|{}|{}".format(
@@ -226,19 +226,6 @@ async def echo(client, message):
                             )
                         ]
                     inline_keyboard.append(ikeyboard)
-                if "audio_ext" in response_json:
-                    audio_ext = formats.get("audio_ext")
-                    language = formats.get("language")
-                    cb_string_audio = "{}|{}|{}|{}|{}".format(
-                        "audio", format_id, audio_ext, size, randem)
-                    
-                    ikeyboard = [
-                        InlineKeyboardButton(
-                            "🎵 " + language + " " + audio_ext + " ",
-                            callback_data=(cb_string_audio).encode("UTF-8")
-                        )
-                    ]
-                    inline_keyboard.append(ikeyboard)
                 if duration is not None:
                     cb_string_64 = "{}|{}|{}|{}|{}".format(
                         "audio", "64k", "mp3", size, randem)
@@ -248,13 +235,13 @@ async def echo(client, message):
                         "audio", "320k", "mp3", size, randem)
                     inline_keyboard.append([
                         InlineKeyboardButton(
-                            "🎼 ᴍᴘ3 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
+                            "🎼 ᴍᴘ𝟹 " + "(" + "64 ᴋʙᴘs" + ")", callback_data=cb_string_64.encode("UTF-8")),
                         InlineKeyboardButton(
-                            "🎼 ᴍᴘ3 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=cb_string_128.encode("UTF-8"))
+                            "🎼 ᴍᴘ𝟹 " + "(" + "128 ᴋʙᴘs" + ")", callback_data=cb_string_128.encode("UTF-8"))
                     ])
                     inline_keyboard.append([
                         InlineKeyboardButton(
-                            "🎼 ᴍᴘ3 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=cb_string.encode("UTF-8"))
+                            "🎼 ᴍᴘ𝟹 " + "(" + "320 ᴋʙᴘs" + ")", callback_data=cb_string.encode("UTF-8"))
                     ])
                     inline_keyboard.append([
                         InlineKeyboardButton(
@@ -269,7 +256,7 @@ async def echo(client, message):
                     "video", format_id, format_ext)
                 inline_keyboard.append([
                     InlineKeyboardButton(
-                        "🎬 Media",
+                        "🎬 sᴍᴇᴅɪᴀ",
                         callback_data=(cb_string_video).encode("UTF-8")
                     )
                 ])
@@ -279,7 +266,7 @@ async def echo(client, message):
                     "video", format_id, format_ext)
                 inline_keyboard.append([
                     InlineKeyboardButton(
-                        "🎥 Video",
+                        "🎥 ᴠɪᴅᴇᴏ",
                         callback_data=(cb_string_video).encode("UTF-8")
                     )
                 ])
@@ -300,7 +287,7 @@ async def echo(client, message):
                 "video", "OFL", "ENON")
             inline_keyboard.append([
                 InlineKeyboardButton(
-                    "🎬 Media",
+                    "🎬 ᴍᴇᴅɪᴀ",
                     callback_data=(cb_string_video).encode("UTF-8")
                 )
             ])
@@ -313,3 +300,4 @@ async def echo(client, message):
                 parse_mode=enums.ParseMode.HTML,
                 reply_to_message_id=message.id
             )
+            
