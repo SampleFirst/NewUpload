@@ -15,17 +15,17 @@ async def opensettings(m: "types.Message"):
     thumbnail = user_data.get("thumbnail", None)
 
     buttons_markup = [
-        [types.InlineKeyboardButton(f"Upload as {'🎥 Video' if upload_as_doc else '🗃️ File'}",
+        [types.InlineKeyboardButton(f"Upload as {'🎬 Video' if upload_as_doc else '📂 File'}",
                                     callback_data="triggerUploadMode")],
         [types.InlineKeyboardButton(f"{'Change' if thumbnail else 'Set'} Thumbnail",
                                     callback_data="setThumbnail")]
     ]
 
     if thumbnail:
-        buttons_markup.append([types.InlineKeyboardButton("Show Thumbnail",
+        buttons_markup.append([types.InlineKeyboardButton("🌌 Show Thumbnail",
                                                           callback_data="showThumbnail")])
 
-    buttons_markup.append([types.InlineKeyboardButton("Close",
+    buttons_markup.append([types.InlineKeyboardButton("⛔ Close",
                                                       callback_data="close")])
 
     try:
@@ -42,5 +42,3 @@ async def opensettings(m: "types.Message"):
         await open_settings(m)
     except Exception as err:
         print(f"An error occurred: {err}")
-
-# Note: I've made some variable names lowercase for consistency and PEP 8 compliance.
