@@ -29,7 +29,7 @@ async def download_progress(query, custom_file_name, total_length):
 
     while downloaded_size < int(total_length):
         # Simulating fluctuating download speed between 1MB/s to 2MB/s
-        download_speed = 1 + random()  # Assuming random() generates a number between 0 and 1
+        download_speed = 1 + random.random()  # Using random.random() to generate a random number
         downloaded_size += download_speed * 5  # Increase download size every 5 seconds
         await edit_progress_message(query, custom_file_name, total_length, downloaded_size, download_speed)
         await asyncio.sleep(5)
