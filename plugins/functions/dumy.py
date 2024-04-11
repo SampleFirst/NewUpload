@@ -6,9 +6,9 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     total_size_str = humanbytes(total_length, convert_to_int=True)
     downloaded_size_str = humanbytes(downloaded_size)
     speed_str = humanbytes(download_speed) + "/s"
-    remaining_time = (total_length - downloaded_size) / download_speed
+    remaining_time = (int(total_size) - downloaded_size) / download_speed
     estimated_time_str = f"{round(remaining_time)} seconds"
-    percentage = (downloaded_size / total_length) * 100
+    percentage = (downloaded_size / int(total_size)) * 100
 
     caption = (
         f"Downloading Please Wait ⏳\n\n"
@@ -26,7 +26,7 @@ async def download_progress(query, custom_file_name, total_length):
     downloaded_size = 0
     start_time = time.time()
 
-    while downloaded_size < total_length:
+    while downloaded_size < int(total_size):
         # Simulating fluctuating download speed between 1MB/s to 2MB/s
         download_speed = 1 + random()  # Assuming random() generates a number between 0 and 1
         downloaded_size += download_speed * 5  # Increase download size every 5 seconds
