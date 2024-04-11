@@ -1,9 +1,7 @@
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 class script(object):
 
     START_TEXT = """
-👋 ʜᴇʏ {} 
+👋 ʜᴇʏ {},
 
 ɪ ᴀᴍ ᴀ ᴛᴇʟᴇɢʀᴀᴍ ᴜʀʟ ᴜᴘʟᴏᴀᴅᴇʀ ʙᴏᴛ.
 
@@ -12,30 +10,30 @@ class script(object):
 ᴜꜱᴇ ʜᴇʟᴘ ʙᴜᴛᴛᴏɴ ᴛᴏ ᴋɴᴏᴡ ʜᴏᴡ ᴛᴏ ᴜꜱᴇ ᴍᴇ.
 """
     HELP_TEXT = """
+👋 ʜᴇʏ {},
+
 **Link to Media or File**
 ➠ Send a link for upload to Telegram file or media.
 
 **Set Thumbnail**
 ➠ Send a photo to make it as permanent thumbnail.
 
+**Show Thumbnail**
+➠ Send /showthumb to view custom thumbnail. 
+
 **Deleting Thumbnail**
 ➠ Send /delthumb to delete thumbnail.
 
 **Settings**
 ➠ Configure my settings to change upload mode.
-
-**Show Thumbnail**
-➠ Send /showthumb to view custom thumbnail. 
 """
     ABOUT_TEXT = """
+👋 ʜᴇʏ {},
+
 **Name** : [Uploader Bot v4](https://t.me/BraveLinkToFileBot)
-
 **Channel** : [Update Channel](https://t.me/+pXzjJ61z81IyMGFl)
-
 **Support Group** : [Support Chat](https://t.me/+rFmrUic07f9iMjM1)
-
 **Language:** [Python 3.12.2](https://www.python.org/)
-
 **Framework:** [Pyrogram 2.0.106](https://docs.pyrogram.org/)
 """
 
@@ -56,51 +54,20 @@ class script(object):
 ┣⪼ ⏱️ : {e}
 ╰━━━━━━━━━━━━━━━➣ """
     
-    START_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('⚙️ Settings', callback_data='opensettings')
-        ],[
-        InlineKeyboardButton('❔ Help', callback_data='help'),
-        InlineKeyboardButton('👨‍🚒 About', callback_data='about')
-        ],[
-        InlineKeyboardButton('⛔️ Close', callback_data='close')
-        ]]
-    )
-    HELP_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('🏡 Home', callback_data='home'),
-        InlineKeyboardButton('👨‍🚒 About', callback_data='about')
-        ],[
-        InlineKeyboardButton('⛔️ Close', callback_data='close')
-        ]]
-    )
-    ABOUT_BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('🏡 Home', callback_data='home'),
-        InlineKeyboardButton('❔ Help', callback_data='help')
-        ],[
-        InlineKeyboardButton('⛔️ Close', callback_data='close')
-        ]]
-    )
-    BUTTONS = InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('⛔️ Close', callback_data='close')
-        ]]
-    )
+
     TEXT = "Send me any custom thumbnail to set it"
     IFLONG_FILE_NAME = " Only 64 characters can be named . "
     RENAME_403_ERR = "Sorry. You are not permitted to rename this file."
     ABS_TEXT = " Please don't be selfish."
-    FORMAT_SELECTION = "Now Select The Desired Format or File 🗄️ Size to Upload"
-    SET_CUSTOM_USERNAME_PASSWORD = """"""
+    FORMAT_SELECTION = "Now Select The Desired Format or File Size to Upload"
+    SET_CUSTOM_USERNAME_PASSWORD = ""
     NOYES_URL = "URL detected. Please use https://shrtz.me/PtsVnf6 and get me a fast URL so that I can upload to Telegram, without me slowing down for other users."
-    DOWNLOAD_PROGRESS = "ORG NAME: \n\nNEW NAME: {custom_file_name}\n\nDone Size: {total_downloaded} | File Size: {total_size}\n\nComplete Percentage: {percentage}\n\nETA: {estimated_time}"
     DOWNLOAD_START = "Downloading Please Wait ⏳\n\n{a}"
     UPLOAD_START = "📤 Uploading Please Wait"
     RCHD_BOT_API_LIMIT = "size greater than maximum allowed size (50MB). Neverthless, trying to upload."
     RCHD_TG_API_LIMIT = "Downloaded in {} seconds.\nDetected File Size: {}\nSorry. But, I cannot upload files greater than 2GB due to Telegram API limitations."
     AFTER_SUCCESSFUL_UPLOAD_MSG = " OWNER: Admin 💕\nFor the List of Telegram Bots"
-    AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS = "Downloaded in {} seconds.\n\nUploaded in {} seconds"
+    AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS = "Downloaded in {} seconds.\nUploaded in {} seconds"
     NOT_AUTH_USER_TEXT_FILE_SIZE = "Detected File Size: {}. Free Users can only upload: {}\nPlease /upgrade your subscription.\nIf you think this is a bug, please contact Admin"
     SAVED_CUSTOM_THUMB_NAIL = "Custom video/file thumbnail saved. This image will be used in the video/file."
     DEL_ETED_CUSTOM_THUMB_NAIL = "✅ Custom thumbnail cleared successfully"
@@ -108,7 +75,7 @@ class script(object):
     SAVED_RECVD_DOC_FILE = "Document Downloaded Successfully."
     CUSTOM_CAPTION_UL_FILE = " "
     NO_CUSTOM_THUMB_NAIL_FOUND = "No custom thumbnail found"
-    NO_VOID_FORMAT_FOUND = "ERROR... <code>{}</code>"
+    NO_VOID_FORMAT_FOUND = "<code>{}</code>"
     FILE_NOT_FOUND = "Error, File not Found!!"
     USER_ADDED_TO_DB = "User <a href='tg://user?id={}'>{}</a> added to {} till {}."
     SOMETHING_WRONG = "<code>Something Wrong. Try again.</code>"
@@ -139,4 +106,4 @@ class script(object):
     BANNED_USER_TEXT = "<code>You are Banned!</code>"
     CHECK_LINK = "Processing your link ⌛"
     RESTART_TXT = "#Restarted\n\n🔄 Bot Restarted!\n📅 Date: <code>{a}</code>\n⏰ Time: <code>{b}</code>\n🌐 Timezone: <code>Asia/Kolkata</code>\n\n#{c}\n#Restart_{c}"
-
+    
