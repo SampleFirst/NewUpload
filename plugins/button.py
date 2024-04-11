@@ -15,6 +15,7 @@ from plugins.functions.display_progress import progress_for_pyrogram, humanbytes
 from database.database import db
 from PIL import Image
 from plugins.functions.ran_text import random_char
+from plugins.functions.dumy import download_progress
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
