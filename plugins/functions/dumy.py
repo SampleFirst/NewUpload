@@ -25,16 +25,17 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     await query.message.edit_caption(caption)
 
 async def download_progress(query, custom_file_name, total_length):
-    downloaded_size = 0
+    downloaded_size_mb = 0  # Initialize downloaded size in MB
+    total_length_mb = int(total_length) / (1024 * 1024)  # Convert total length to MB
     start_time = time.time()
 
-    while downloaded_size < int(total_length):
+    while downloaded_size_mb < total_length_mb:
         # Simulating fluctuating download speed between 1MB/s to 2MB/s
-        download_speed = 1 + random.random()  # Using random.random() to generate a random number
-        downloaded_size += download_speed * 5  # Increase download size every 5 seconds
-        await edit_progress_message(query, custom_file_name, total_length, downloaded_size, download_speed)
+        download_speed_mb = 1 + random.random()  # Speed fluctuates around 1MB/s
+        downloaded_size_mb += download_speed_mb * 5  # Increase download size every 5 seconds
+        downloaded_size_bytes = downloaded_size_mb * (1024 * 1024)  # Convert back to bytes
+        await edit_progress_message(query, custom_file_name, total_length, downloaded_size_bytes, download_speed_mb)
         await asyncio.sleep(5)
 
     end_time = time.time()
     print("Download completed in", end_time - start_time, "seconds")
-    
