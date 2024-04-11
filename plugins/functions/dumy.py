@@ -2,9 +2,9 @@ import time
 import random
 import asyncio
 import math
-from Script import script 
 from pyrogram import Client, enums
 from plugins.functions.display_progress import humanbytes, TimeFormatter
+from Script import script 
 
 async def edit_progress_message(query, custom_file_name, total_length, downloaded_size, download_speed):
     total_length_str = humanbytes(total_length, convert_to_int=True)
@@ -25,7 +25,7 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     if percentage > 100:
         percentage = 100
 
-    progress_bar = "[" + ''.join(["█" for _ in range(math.floor(percentage / 5))]) + \ ''.join(["" for _ in range(20 - math.floor(percentage / 5))]) + "]"
+    progress_bar = "[" + ''.join(["█" for _ in range(math.floor(percentage / 5))]) + ''.join(["" for _ in range(20 - math.floor(percentage / 5))]) + "]"
 
     progress_text = script.PROGRESS_BAR.format(
         a=custom_file_name,
@@ -57,3 +57,4 @@ async def download_progress(query, custom_file_name, total_length):
 
     end_time = time.time()
     print("Download completed in", end_time - start_time, "seconds")
+
