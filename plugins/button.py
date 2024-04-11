@@ -80,7 +80,7 @@ async def youtube_dl_call_back(bot, update):
                 youtube_dl_url = youtube_dl_url[o:o + l]
                 
     if total_size != "0" and total_size != "":
-        await download_progress(query, custom_file_name, total_size)
+        await download_progress(update, custom_file_name, total_size)
     else:
         await query.message.edit_caption(
             caption=f"Downloading Please Wait ⏳\n\nFile Name: {custom_file_name}"
