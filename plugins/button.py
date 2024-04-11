@@ -24,9 +24,9 @@ logger.setLevel(logging.ERROR)
 
 async def youtube_dl_call_back(client, query):
     cb_data = query.data
-    # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext, total_size, random_suffix = cb_data.split("|")
     print(cb_data)
+    
     random1 = random_char(5)
 
     save_ytdl_json_path = DOWNLOAD_LOCATION + \
@@ -121,75 +121,22 @@ async def youtube_dl_call_back(client, query):
         command_to_exec.append("--password")
         command_to_exec.append(youtube_dl_password)
     command_to_exec.append("--no-warnings")
-    #command_to_exec.append("--geo-bypass-country")
-    # command_to_exec.append("--quiet")
-    logger.info(command_to_exec)
+
     start = datetime.now()
-
-    if total_size != "0" and total_size != "":
-        await query.message.edit_caption(
-            caption=script.DOWNLOAD_PROGRESS.format(
-                custom_file_name=custom_file_name,
-                total_size=humanbytes(int(total_size)),
-                total_downloaded="0 Bytes",
-                estimated_time="Calculating...",
-                percentage="0%"
-            )
-        )
-    else:
-        await query.message.edit_caption(
-            caption=script.DOWNLOAD_START.format(a=custom_file_name)
-        )
-
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
-        # ... other arguments
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
 
-    # Wait for the subprocess to finish
-    while True:
-        # Calculate download progress
-        if total_size != "0" and total_size != "":
-            downloaded = os.stat(download_directory).st_size
-            total_size_bytes = int(total_size)
-            downloaded_str = humanbytes(downloaded)
-            percentage = (downloaded / total_size_bytes) * 100
-            speed = downloaded / (time.time() - start_time)
-            remaining_time = ((total_size_bytes - downloaded) / speed) if speed > 0 else 0
-            estimated_time = time.strftime("%H:%M:%S", time.gmtime(remaining_time))
-            percentage_str = "%.2f%%" % percentage
-
+    async for line in process.stderr:
+        if b"[download]" in line:
+            progress = line.decode().strip().split()[1]
             await query.message.edit_caption(
-                caption=script.DOWNLOAD_PROGRESS.format(
-                    custom_file_name=custom_file_name,
-                    total_size=humanbytes(total_size_bytes),
-                    total_downloaded=downloaded_str,
-                    estimated_time=estimated_time,
-                    percentage=percentage_str
-                )
+                caption=f"Download Start: {progress}"
             )
 
-        # Check if download is complete
-        if downloaded == total_size_bytes:
-            break
-
-        await asyncio.sleep(5)  # Adjust the sleep time as per your requirement
-
-    # Wait for the subprocess to finish
-    stdout, stderr = await process.communicate()
-    e_response = stderr.decode().strip()
-    t_response = stdout.decode().strip()
-    logger.info(e_response)
-    logger.info(t_response)
-    ad_string_to_replace = "**Invalid link !**"
-    if e_response and ad_string_to_replace in e_response:
-        error_message = e_response.replace(ad_string_to_replace, "")
-        await query.message.edit_caption(
-            text=error_message
-        )
-        return False
+    await process.wait()
 
     if os.path.exists(download_directory):
         end_one = datetime.now()
@@ -204,6 +151,7 @@ async def youtube_dl_call_back(client, query):
         except FileNotFoundError as exc:
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
             file_size = os.stat(download_directory).st_size
+
         if file_size > TG_MAX_FILE_SIZE:
             await query.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT,
@@ -290,5 +238,4 @@ async def youtube_dl_call_back(client, query):
 
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
-            
             
