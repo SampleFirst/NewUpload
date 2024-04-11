@@ -1,4 +1,5 @@
 import time
+import random
 from pyrogram import Client
 from plugins.functions.display_progress import humanbytes
 
@@ -35,3 +36,4 @@ async def download_progress(query, custom_file_name, total_length):
 
     end_time = time.time()
     print("Download completed in", end_time - start_time, "seconds")
+    
