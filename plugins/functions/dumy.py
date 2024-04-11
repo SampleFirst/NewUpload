@@ -1,5 +1,6 @@
 import time
 import random
+import asyncio
 from pyrogram import Client
 from plugins.functions.display_progress import humanbytes
 
