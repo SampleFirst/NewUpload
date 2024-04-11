@@ -1,8 +1,9 @@
 import time
 import random
 import asyncio
+import math
 from Script import script 
-from pyrogram import Client
+from pyrogram import Client, enums
 from plugins.functions.display_progress import humanbytes, TimeFormatter
 
 async def edit_progress_message(query, custom_file_name, total_length, downloaded_size, download_speed):
@@ -24,15 +25,20 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     if percentage > 100:
         percentage = 100
 
+    progress_bar = "[" + ''.join(["█" for _ in range(math.floor(percentage / 5))]) + \ ''.join(["" for _ in range(20 - math.floor(percentage / 5))]) + "]"
+
+    progress_text = script.PROGRESS_BAR.format(
+        a=custom_file_name,
+        b=total_length_str,
+        c=downloaded_size_str,
+        d=speed_str,
+        e=estimated_time_str,
+        f=round(percentage, 2)  # Ensure percentage is rounded to 2 decimal places
+    )
+        
     await query.message.edit_caption(
-        script.PROGRESS_BAR.format(
-            a=custom_file_name,
-            b=total_length_str,
-            c=downloaded_size_str,
-            d=speed_str,
-            e=estimated_time_str,
-            f=round(percentage, 2)  # Ensure percentage is rounded to 2 decimal places
-        )
+        caption = f"{progress_bar}\n{progress_text}",
+        parse_mode=enums.ParseMode.MARKDOWN
     )
 
 async def download_progress(query, custom_file_name, total_length):
