@@ -8,11 +8,18 @@ from plugins.functions.display_progress import humanbytes, TimeFormatter
 async def edit_progress_message(query, custom_file_name, total_length, downloaded_size, download_speed):
     total_length_str = humanbytes(total_length, convert_to_int=True)
     downloaded_size_str = humanbytes(downloaded_size)
-    speed_str = humanbytes(download_speed * (1024 * 1024)) + "/s"  # Problem 1 fix
-    remaining_time = (int(total_length) - downloaded_size) / download_speed
-    estimated_time_str = TimeFormatter(remaining_time * 1000)  # Problem 3 fix
+    if downloaded_size >= total_length:  # Prevent size from exceeding total size
+        downloaded_size = total_length
+    speed_str = "0 B/s" if downloaded_size >= total_length else humanbytes(download_speed * (1024 * 1024)) + "/s"  # Set speed to 0 B/s after 100%
+    
+    if downloaded_size >= total_length:
+        estimated_time_str = "0s"  # Show 0s after 100%
+    else:
+        remaining_time = (int(total_length) - downloaded_size) / (download_speed * (1024 * 1024))
+        estimated_time_str = TimeFormatter(remaining_time * 1000)
+    
     percentage = (downloaded_size / int(total_length)) * 100
-    if percentage > 100:  # Problem 2 fix
+    if percentage > 100:
         percentage = 100
 
     caption = (
@@ -26,6 +33,7 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     )
 
     await query.message.edit_caption(caption)
+
 
 async def download_progress(query, custom_file_name, total_length):
     downloaded_size_mb = 0  # Initialize Size in MB
@@ -41,3 +49,4 @@ async def download_progress(query, custom_file_name, total_length):
 
     end_time = time.time()
     print("Download completed in", end_time - start_time, "seconds")
+    
