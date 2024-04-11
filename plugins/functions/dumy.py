@@ -5,15 +5,16 @@ from Script import script
 from pyrogram import Client
 from plugins.functions.display_progress import humanbytes, TimeFormatter
 
-
 async def edit_progress_message(query, custom_file_name, total_length, downloaded_size, download_speed):
     total_length_str = humanbytes(total_length, convert_to_int=True)
     downloaded_size_str = humanbytes(downloaded_size)
+    
     if downloaded_size_str > total_length:
         downloaded_size_str = total_length
         
     if downloaded_size >= total_length:  # Prevent size from exceeding total size
         downloaded_size = total_length
+        
     speed_str = "0 B/s" if downloaded_size >= total_length else humanbytes(download_speed * (1024 * 1024)) + "/s"  # Set speed to 0 B/s after 100%
     
     if downloaded_size >= total_length:
@@ -26,8 +27,16 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     if percentage > 100:
         percentage = 100
 
-    await query.message.edit_caption(script.PROGRESS_BAR.format(a=custom_file_name, b=total_length_str, c=downloaded_size_str, d=speed_str, e=estimated_time_str, f=percentage:.2f)
-
+    await query.message.edit_caption(
+        script.PROGRESS_BAR.format(
+            a=custom_file_name,
+            b=total_length_str,
+            c=downloaded_size_str,
+            d=speed_str,
+            e=estimated_time_str,
+            f=percentage
+        )
+    )
 
 async def download_progress(query, custom_file_name, total_length):
     downloaded_size_mb = 0  # Initialize Size in MB
@@ -43,4 +52,5 @@ async def download_progress(query, custom_file_name, total_length):
 
     end_time = time.time()
     print("Download completed in", end_time - start_time, "seconds")
+    
     
