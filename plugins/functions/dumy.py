@@ -9,7 +9,7 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     total_length_str = humanbytes(total_length, convert_to_int=True)
     downloaded_size_str = humanbytes(downloaded_size)
     
-    if int(downloaded_size_str) > total_length:
+    if downloaded_size_str >= total_length:
         downloaded_size_str = total_length
         
     if downloaded_size >= total_length:  # Prevent size from exceeding total size
