@@ -136,8 +136,9 @@ async def youtube_dl_call_back(client, query):
                 client,
                 query,
                 session,
-                process,
+                url,
                 download_directory,
+                total_size,
                 query.message.chat.id,
                 c_time
             )
@@ -250,12 +251,12 @@ async def youtube_dl_call_back(client, query):
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
             
 
-async def download_coroutine(client, query, session, process, file_name, chat_id, start):
+async def download_coroutine(client, query, session, url, file_name, total_size, chat_id, start):
     downloaded = 0
     display_message = ""
-    async with session.get(process, timeout=PROCESS_MAX_TIMEOUT) as response:
+    async with session.get(url, timeout=PROCESS_MAX_TIMEOUT) as response:
         await query.message.edit_caption(      
-            caption="""Initiating Download\n🔗 Uʀʟ : \n🗂️ Sɪᴢᴇ : {}""".format(humanbytes(total_length)),
+            caption="""Initiating Download\n🔗 Uʀʟ : \n🗂️ Sɪᴢᴇ : {}""".format(humanbytes(total_size, convert_to_int=True)),
             parse_mode=enums.ParseMode.HTML
         )
         with open(file_name, "wb") as f_handle:
@@ -267,15 +268,15 @@ async def download_coroutine(client, query, session, process, file_name, chat_id
                 downloaded += CHUNK_SIZE
                 now = time.time()
                 diff = now - start
-                if round(diff % 5.00) == 0 or downloaded == total_length:
-                    percentage = downloaded * 100 / total_length
+                if round(diff % 5.00) == 0 or downloaded == total_size:
+                    percentage = downloaded * 100 / int(total_size)
                     speed = downloaded / diff
                     elapsed_time = round(diff) * 1000
                     time_to_completion = round(
-                        (total_length - downloaded) / speed) * 1000
+                        (int(total_size) - downloaded) / speed) * 1000
                     estimated_total_time = elapsed_time + time_to_completion
                     try:
-                        current_message = """DᴏᴡɴʟᴏᴀᴅɪɴG\n\n🔗 Uʀʟ : `{}`\n🗂️ Sɪᴢᴇ : {}\n✅ Dᴏɴᴇ : {}\n⏱️ Eᴛᴀ : {}""".format(humanbytes(total_length), humanbytes(downloaded), TimeFormatter(estimated_total_time))
+                        current_message = """DᴏᴡɴʟᴏᴀᴅɪɴG\n\n🔗 Uʀʟ : `{}`\n🗂️ Sɪᴢᴇ : {}\n✅ Dᴏɴᴇ : {}\n⏱️ Eᴛᴀ : {}""".format(humanbytes(total_size, convert_to_int=True), humanbytes(downloaded, convert_to_int=True), TimeFormatter(estimated_total_time))
                         if current_message != display_message:
                             await query.message.edit_caption(
                                 caption=current_message,
@@ -286,3 +287,4 @@ async def download_coroutine(client, query, session, process, file_name, chat_id
                         logger.info(str(e))
                         pass
         return await response.release()
+        
