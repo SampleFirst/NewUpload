@@ -47,7 +47,15 @@ class script(object):
 ┣⪼ ⏱️ : {4}
 ╰━━━━━━━━━━━━━━━━━➣ 
 """
+    PROGRESS_BAR = """File Name: {a}
 
+╭━━━━❰ PROGRESS BAR ❱━➣
+┣⪼ 🗂️ : {c} | {b}
+┣⪼ ⏳️ : {f}%
+┣⪼ 🚀 : {d}
+┣⪼ ⏱️ : {e}
+╰━━━━━━━━━━━━━━━➣ """
+    
     START_BUTTONS = InlineKeyboardMarkup(
         [[
         InlineKeyboardButton('⚙️ Settings', callback_data='opensettings')
