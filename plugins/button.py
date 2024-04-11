@@ -136,7 +136,7 @@ async def youtube_dl_call_back(client, query):
                 client,
                 query,
                 session,
-                url,
+                youtube_dl_url,
                 download_directory,
                 total_size,
                 query.message.chat.id,
