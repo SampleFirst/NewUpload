@@ -9,15 +9,15 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     total_length_str = humanbytes(total_length, convert_to_int=True)
     downloaded_size_str = humanbytes(downloaded_size)
     
-    if downloaded_size_str > total_length:
-        downloaded_size_str = total_length
+    if downloaded_size_str > int(total_length):
+        downloaded_size_str = int(total_length)
         
-    if downloaded_size >= total_length:  # Prevent size from exceeding total size
-        downloaded_size = total_length
+    if downloaded_size >= int(total_length):  # Prevent size from exceeding total size
+        downloaded_size = int(total_length)
         
-    speed_str = "0 B/s" if downloaded_size >= total_length else humanbytes(download_speed * (1024 * 1024)) + "/s"  # Set speed to 0 B/s after 100%
+    speed_str = "0 B/s" if downloaded_size >= int(total_length) else humanbytes(download_speed * (1024 * 1024)) + "/s"  # Set speed to 0 B/s after 100%
     
-    if downloaded_size >= total_length:
+    if downloaded_size >= int(total_length):
         estimated_time_str = "0s"  # Show 0s after 100%
     else:
         remaining_time = (int(total_length) - downloaded_size) / (download_speed * (1024 * 1024))
