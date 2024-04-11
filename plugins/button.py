@@ -128,15 +128,25 @@ async def youtube_dl_call_back(client, query):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-
-    async for line in process.stderr:
-        if b"[download]" in line:
-            progress = line.decode().strip().split()[1]
-            await query.message.edit_caption(
-                caption=f"Download Start: {progress}"
+    
+    async with aiohttp.ClientSession() as session:
+        c_time = time.time()
+        try:
+            await download_coroutine(
+                client,
+                query,
+                session,
+                process,
+                download_directory,
+                query.message.chat.id,
+                c_time
             )
-
-    await process.wait()
+        except TimeoutError:
+            await query.edit_message_text(
+                caption=script.SLOW_URL_DECED,
+                parse_mode=enums.ParseMode.HTML
+            )
+            return False
 
     if os.path.exists(download_directory):
         end_one = datetime.now()
@@ -239,3 +249,40 @@ async def youtube_dl_call_back(client, query):
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
             
+
+async def download_coroutine(client, query, session, process, file_name, chat_id, start):
+    downloaded = 0
+    display_message = ""
+    async with session.get(process, timeout=PROCESS_MAX_TIMEOUT) as response:
+        await query.message.edit_caption(      
+            caption="""Initiating Download\n🔗 Uʀʟ : \n🗂️ Sɪᴢᴇ : {}""".format(humanbytes(total_length)),
+            parse_mode=enums.ParseMode.HTML
+        )
+        with open(file_name, "wb") as f_handle:
+            while True:
+                chunk = await response.content.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                f_handle.write(chunk)
+                downloaded += CHUNK_SIZE
+                now = time.time()
+                diff = now - start
+                if round(diff % 5.00) == 0 or downloaded == total_length:
+                    percentage = downloaded * 100 / total_length
+                    speed = downloaded / diff
+                    elapsed_time = round(diff) * 1000
+                    time_to_completion = round(
+                        (total_length - downloaded) / speed) * 1000
+                    estimated_total_time = elapsed_time + time_to_completion
+                    try:
+                        current_message = """DᴏᴡɴʟᴏᴀᴅɪɴG\n\n🔗 Uʀʟ : `{}`\n🗂️ Sɪᴢᴇ : {}\n✅ Dᴏɴᴇ : {}\n⏱️ Eᴛᴀ : {}""".format(humanbytes(total_length), humanbytes(downloaded), TimeFormatter(estimated_total_time))
+                        if current_message != display_message:
+                            await query.message.edit_caption(
+                                caption=current_message,
+                                parse_mode=enums.ParseMode.HTML
+                            )
+                            display_message = current_message
+                    except Exception as e:
+                        logger.info(str(e))
+                        pass
+        return await response.release()
