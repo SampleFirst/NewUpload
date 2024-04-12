@@ -147,11 +147,10 @@ async def youtube_dl_call_back(bot, update):
     
             # Send progress update to the user
             await update.message.edit_caption(
-                caption=f"Downloading... {downloaded} complete"
+                caption=f"Downloading... {humanbytes(downloaded)} complete"
             )
     except Exception as e:
         logger.exception(e)
-    await process.wait()
     
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
