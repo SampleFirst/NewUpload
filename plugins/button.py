@@ -20,6 +20,7 @@ from plugins.functions.dumy import download_progress
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
+processing_urls = {}
 
 async def youtube_dl_call_back(bot, update):
     cb_data = update.data
@@ -273,6 +274,7 @@ async def youtube_dl_call_back(bot, update):
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
                 
             )
+            processing_urls[user_id] = False 
             
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
