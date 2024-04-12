@@ -24,11 +24,11 @@ AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_chan
 
 # Others
 IS_VERIFY = is_enabled(environ.get('IS_VERIFY', 'True'), True)
-HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', "https://t.me/c/2020858146/4")
-VERIFY2_URL = environ.get('VERIFY2_URL', "clicksfly.com")
-VERIFY2_API = environ.get('VERIFY2_API', "c2150e28189cefefd05f8a9c5c5770cc462033e3")
-SHORTLINK_URL = environ.get('SHORTLINK_URL', "mdisklink.link")
-SHORTLINK_API = environ.get('SHORTLINK_API', "4fa150d44b4bf6579c24b33bbbb786dbfb4fc673")
+HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', "")
+VERIFY2_URL = environ.get('VERIFY2_URL', "")
+VERIFY2_API = environ.get('VERIFY2_API', "")
+SHORTLINK_URL = environ.get('SHORTLINK_URL', "")
+SHORTLINK_API = environ.get('SHORTLINK_API', "")
 
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
 BANNED_USERS = set(int(x) for x in environ.get("BANNED_USERS", "").split())
@@ -47,4 +47,4 @@ DEF_WATER_MARK_FILE = "UploadLinkToFileBot"
 DATABASE_URL = environ.get("DATABASE_URL", "")
 TG_MIN_FILE_SIZE = 2097152000
 BOT_USERNAME = environ.get("BOT_USERNAME", "")
-#PORT = int(environ.get("PORT", "8080"))
+PORT = int(environ.get("PORT", "8080"))
