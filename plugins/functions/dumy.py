@@ -37,7 +37,7 @@ async def edit_progress_message(query, custom_file_name, total_length, downloade
     )
         
     await query.message.edit_caption(
-        caption = f"{progress_bar}\n{progress_text}",
+        caption = f"{progress_bar}\n\n{progress_text}",
         parse_mode=enums.ParseMode.MARKDOWN
     )
 
