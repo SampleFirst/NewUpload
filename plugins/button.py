@@ -33,7 +33,7 @@ async def youtube_dl_call_back(bot, update):
     try:
         with open(save_ytdl_json_path, "r", encoding="utf8") as f:
             response_json = json.load(f)
-    except (FileNotFoundError) as e:
+    except FileNotFoundError as e:
         await update.message.delete()
         return False
     youtube_dl_url = update.message.reply_to_message.text
@@ -140,11 +140,11 @@ async def youtube_dl_call_back(bot, update):
     try:
         # Read stdout asynchronously to get download progress
         while True:
-            chunk = await process.stdout.readline(CHUNK_SIZE)
+            chunk = await process.stdout.readline()
             if not chunk:
                 break
             f_handle.write(chunk)
-            downloaded += CHUNK_SIZE
+            downloaded += len(chunk)
     
             # Send progress update to the user
             await update.message.edit_caption(
@@ -291,4 +291,3 @@ async def youtube_dl_call_back(bot, update):
             
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
-            
