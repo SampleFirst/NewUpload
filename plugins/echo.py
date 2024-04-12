@@ -20,8 +20,6 @@ from plugins.functions.ran_text import random_char
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-ADL_BOT_RQ = {}
-
 @Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
 async def echo(client, message):
     if LOG_CHANNEL:
@@ -53,21 +51,11 @@ async def echo(client, message):
         return
 
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
-        if str(message.from_user.id) in ADL_BOT_RQ:
-            current_time = time.time()
-            previous_time = ADL_BOT_RQ[str(message.from_user.id)]
-            process_max_timeout = round(PROCESS_MAX_TIMEOUT/60)
-            present_time = round(PROCESS_MAX_TIMEOUT - (current_time - previous_time))
-            ADL_BOT_RQ[str(message.from_user.id)] = time.time()
-            if round(current_time - previous_time) < PROCESS_MAX_TIMEOUT:
-                await client.send_message(
-                    chat_id=message.from_user.id,
-                    text="Cannot Process Free users only 1 request per 6 hrs\n**Upgrade** your /plans to Remove Time Gaps and For link Processing",
-                    parse_mode=enums.ParseMode.MARKDOWN
-                )
-                return
-        else:
-            ADL_BOT_RQ[str(message.from_user.id)] = time.time()
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="Upgrade to our plan for use this bot\n\nUse /plan for Show Premium Plan Features."
+        )
+        return 
     else:
         logger.info(message.from_user)
         url = message.text
