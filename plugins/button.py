@@ -138,11 +138,9 @@ async def youtube_dl_call_back(bot, update):
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-        # Add a pre-execution function to set up the progress callback
-        preexec_fn=lambda: signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+        stderr=asyncio.subprocess.PIPE
     )
-
+    
     # Display download progress
     while True:
         output = await process.stdout.readline()
