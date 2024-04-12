@@ -48,7 +48,7 @@ async def echo(client, message):
             chat_id=message.from_user.id,
             text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!",
             reply_markup=InlineKeyboardMarkup(btn),
-            quote=True
+            reply_to_message_id=message.id
         )
         return
 
@@ -56,7 +56,7 @@ async def echo(client, message):
         await client.send_message(
             chat_id=message.from_user.id,
             text="Upgrade to our plan for use this bot\n\n Use /plans for Show Premium Plan Features.",
-            quote=True
+            reply_to_message_id=message.id
         )
         return 
     user_id = message.from_user.id
@@ -64,8 +64,7 @@ async def echo(client, message):
         await client.send_message(
             chat_id=message.chat.id,
             text="You are already processing a URL. Please wait until the current process finishes.",
-            reply_to_message_id=message.id,
-            quote=True
+            reply_to_message_id=message.id
         )
         return
     else:
