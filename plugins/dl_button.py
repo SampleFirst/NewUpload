@@ -18,12 +18,16 @@ from hachoir.parser import createParser
 from PIL import Image
 from pyrogram import enums 
 
+processing_urls = {}
+
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 async def ddl_call_back(bot, update):
     logger.info(update)
     cb_data = update.data
+    user_id = update.from_user.id
+    
     tg_send_type, youtube_dl_format, youtube_dl_ext = cb_data.split("=")
     thumb_image_path = DOWNLOAD_LOCATION + \
         "/" + str(update.from_user.id) + ".jpg"
@@ -187,10 +191,12 @@ async def ddl_call_back(bot, update):
                 pass
             time_taken_for_download = (end_one - start).seconds
             time_taken_for_upload = (end_two - end_one).seconds
+            processing_urls[user_id] = False 
             await update.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload),
                 parse_mode=enums.ParseMode.HTML
             )
+            
     else:
         await update.message.edit_caption(
             caption=script.NO_VOID_FORMAT_FOUND.format("Incorrect Link"),
