@@ -134,38 +134,26 @@ async def youtube_dl_call_back(bot, update):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
+    
+    downloaded = 0
 
-    # Create variables to store download progress
-    total_size = 0
-    current_size = 0
-
-    # Read stdout asynchronously to get download progress
-    while True:
-        line = await process.stdout.readline()
-        if not line:
-            break
-
-        # Update total_size if the line contains download information
-        if line.startswith(b"[download]"):
-            parts = line.split()
-            if len(parts) >= 2 and parts[1] == b"Downloading":
-                total_size = int(parts[3])
-        elif line.startswith(b"[download]"):
-            parts = line.split()
-            if len(parts) >= 2 and parts[1] == b"Download":
-                current_size = int(parts[3])
-        
-        # Calculate progress percentage
-        if total_size > 0:
-            progress = int(current_size / total_size * 100)
+    try:
+        # Read stdout asynchronously to get download progress
+        while True:
+            chunk = await process.stdout.readline(CHUNK_SIZE)
+            if not chunk:
+                break
+            f_handle.write(chunk)
+            downloaded += CHUNK_SIZE
+    
             # Send progress update to the user
             await update.message.edit_caption(
-                caption=f"Downloading... {progress}% complete"
+                caption=f"Downloading... {downloaded} complete"
             )
-
-    # Wait for the subprocess to finish
+    except Exception as e:
+        logger.exception(e)
     await process.wait()
-    # Wait for the subprocess to finish
+    
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
@@ -193,7 +181,6 @@ async def youtube_dl_call_back(bot, update):
             file_size = os.stat(download_directory).st_size
         except FileNotFoundError as exc:
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
-            # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
         if ((file_size > TG_MAX_FILE_SIZE)):
             await update.message.edit_caption(
@@ -304,3 +291,4 @@ async def youtube_dl_call_back(bot, update):
             
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
+            
