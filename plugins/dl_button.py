@@ -61,11 +61,18 @@ async def ddl_call_back(bot, update):
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
     description = script.CUSTOM_CAPTION_UL_FILE
+    
+    if user_id in processing_urls and processing_urls[user_id]:
+        await update.message.edit_caption(
+            caption="You are already processing a URL. Please wait until the current process finishes."
+        )
+        return
+    else:
+        await update.message.edit_caption(
+            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        )
+        processing_urls[user_id] = True 
     start = datetime.now()
-    await update.message.edit_caption(
-        caption=script.DOWNLOAD_START,
-        parse_mode=enums.ParseMode.HTML
-    )
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(update.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
