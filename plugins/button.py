@@ -79,6 +79,10 @@ async def youtube_dl_call_back(bot, update):
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
                 
+    await update.message.edit_caption(
+        caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        
+    )
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
@@ -134,23 +138,6 @@ async def youtube_dl_call_back(bot, update):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-    
-    downloaded = 0
-
-    try:
-        # Read stdout asynchronously to get download progress
-        while True:
-            chunk = await process.stdout.readline()
-            if not chunk:
-                break
-            downloaded += len(chunk)
-    
-            # Send progress update to the user
-            await update.message.edit_caption(
-                caption=f"Downloading... {humanbytes(downloaded)} complete"
-            )
-    except Exception as e:
-        logger.exception(e)
     
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
