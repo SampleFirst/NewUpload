@@ -87,15 +87,17 @@ async def youtube_dl_call_back(bot, update):
         )
         return
     else:
-        await update.message.edit_caption(
-            caption=script.DOWNLOAD_START.format(a=custom_file_name)
-        )
+        if total_size != "0" and total_size != "":
+            await download_progress(update, custom_file_name, total_size)
+        else:
+            await update.message.edit_caption(
+                caption=script.DOWNLOAD_START.format(a=custom_file_name)
+            )
         processing_urls[user_id] = True 
         
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
-        # escape Markdown and special characters
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(update.from_user.id) + f'{random1}'
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
@@ -126,7 +128,6 @@ async def youtube_dl_call_back(bot, update):
             youtube_dl_url,
             "-o", download_directory
         ]
- 
 
     if HTTP_PROXY != "":
         command_to_exec.append("--proxy")
@@ -179,25 +180,8 @@ async def youtube_dl_call_back(bot, update):
         if ((file_size > TG_MAX_FILE_SIZE)):
             await update.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size))
-                
             )
         else:
-            is_w_f = False
-            '''images = await generate_screen_shots(
-                download_directory,
-                tmp_directory_for_each_user,
-                is_w_f,
-                DEF_WATER_MARK_FILE,
-                300,
-                9
-            )
-            logger.info(images)'''
-            await update.message.edit_caption(
-                caption=script.UPLOAD_START.format(custom_file_name)
-                
-            )
-
-            # ref: message from @Sources_codes
             start_time = time.time()
             if (await db.get_upload_as_doc(update.from_user.id)) is False:
                 thumbnail = await get_thumbnail(bot, update)
@@ -280,7 +264,6 @@ async def youtube_dl_call_back(bot, update):
                 pass
             await update.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
-                
             )
             processing_urls[user_id] = False 
             
