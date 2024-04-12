@@ -79,13 +79,6 @@ async def youtube_dl_call_back(bot, update):
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
                 
-    if total_size != "0" and total_size != "":
-        await download_progress(update, custom_file_name, total_size)
-    else:
-        await query.message.edit_caption(
-            caption=f"Downloading Please Wait ⏳\n\nFile Name: {custom_file_name}"
-        )
-        
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
@@ -138,10 +131,40 @@ async def youtube_dl_call_back(bot, update):
     start = datetime.now()
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
-        # stdout must a pipe to be accessible as process.stdout
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
+
+    # Create variables to store download progress
+    total_size = 0
+    current_size = 0
+
+    # Read stdout asynchronously to get download progress
+    while True:
+        line = await process.stdout.readline()
+        if not line:
+            break
+
+        # Update total_size if the line contains download information
+        if line.startswith(b"[download]"):
+            parts = line.split()
+            if len(parts) >= 2 and parts[1] == b"Downloading":
+                total_size = int(parts[3])
+        elif line.startswith(b"[download]"):
+            parts = line.split()
+            if len(parts) >= 2 and parts[1] == b"Download":
+                current_size = int(parts[3])
+        
+        # Calculate progress percentage
+        if total_size > 0:
+            progress = int(current_size / total_size * 100)
+            # Send progress update to the user
+            await update.message.edit_caption(
+                caption=f"Downloading... {progress}% complete"
+            )
+
+    # Wait for the subprocess to finish
+    await process.wait()
     # Wait for the subprocess to finish
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
@@ -152,7 +175,6 @@ async def youtube_dl_call_back(bot, update):
     if e_response and ad_string_to_replace in e_response:
         error_message = e_response.replace(ad_string_to_replace, "")
         await update.message.edit_caption(
-            
             text=error_message
         )
         return False
@@ -175,13 +197,10 @@ async def youtube_dl_call_back(bot, update):
             file_size = os.stat(download_directory).st_size
         if ((file_size > TG_MAX_FILE_SIZE)):
             await update.message.edit_caption(
-                
                 caption=script.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size))
                 
             )
         else:
-
-        
             is_w_f = False
             '''images = await generate_screen_shots(
                 download_directory,
