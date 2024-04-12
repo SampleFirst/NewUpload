@@ -20,8 +20,6 @@ from plugins.functions.ran_text import random_char
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-processing_urls = {}
-
 @Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
 async def echo(client, message):
     if LOG_CHANNEL:
@@ -59,14 +57,6 @@ async def echo(client, message):
             reply_to_message_id=message.id
         )
         return 
-    user_id = message.from_user.id
-    if user_id in processing_urls and processing_urls[user_id]:
-        await client.send_message(
-            chat_id=message.chat.id,
-            text="You are already processing a URL. Please wait until the current process finishes.",
-            reply_to_message_id=message.id
-        )
-        return
     else:
         logger.info(message.from_user)
         url = message.text
@@ -145,7 +135,6 @@ async def echo(client, message):
             reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML
         )
-        processing_urls[user_id] = True
         
         process = await asyncio.create_subprocess_exec(
             *command_to_exec,
