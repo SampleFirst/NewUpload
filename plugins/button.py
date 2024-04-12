@@ -143,7 +143,6 @@ async def youtube_dl_call_back(bot, update):
             chunk = await process.stdout.readline()
             if not chunk:
                 break
-            f_handle.write(chunk)
             downloaded += len(chunk)
     
             # Send progress update to the user
