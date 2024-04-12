@@ -81,10 +81,17 @@ async def youtube_dl_call_back(bot, update):
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
                 
-    await update.message.edit_caption(
-        caption=script.DOWNLOAD_START.format(a=custom_file_name)
+    if user_id in processing_urls and processing_urls[user_id]:
+        await update.message.edit_caption(
+            caption="You are already processing a URL. Please wait until the current process finishes."
+        )
+        return
+    else:
+        await update.message.edit_caption(
+            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        )
+        processing_urls[user_id] = True 
         
-    )
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
