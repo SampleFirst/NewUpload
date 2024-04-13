@@ -81,9 +81,18 @@ async def youtube_dl_call_back(bot, update):
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
                 
+    if user_id in processing_urls and processing_urls[user_id]:
         await update.message.edit_caption(
-            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+            caption="You are already processing a URL. Please wait until the current process finishes."
         )
+        return
+    else:
+        if total_size != "0" and total_size != "":
+            await download_progress(update, custom_file_name, total_size)
+        else:
+            await update.message.edit_caption(
+                caption=script.DOWNLOAD_START.format(a=custom_file_name)
+            )
         processing_urls[user_id] = True 
         
     description = script.CUSTOM_CAPTION_UL_FILE
@@ -133,38 +142,12 @@ async def youtube_dl_call_back(bot, update):
     # command_to_exec.append("--geo-bypass-country")
     # command_to_exec.append("--quiet")
     logger.info(command_to_exec)
-    # Start the download process
     start = datetime.now()
     process = await asyncio.create_subprocess_exec(
         *command_to_exec,
         stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
+        stderr=asyncio.subprocess.PIPE,
     )
-    
-    # Display download progress
-    while True:
-        output = await process.stdout.readline()
-        if process.stdout.at_eof():
-            break
-        # Decode the output and update the progress
-        line = output.decode().strip()
-        if "download" in line:
-            # Extract the current downloaded size from the line here
-            # For example, if line is 'download: 45% of 100MB at 1.05MB/s ETA 00:01'
-            # You would extract '45% of 100MB'
-            downloaded_size = extract_downloaded_size(line)  # Implement this function based on your output format
-            speed = extract_speed(line)  # Implement this function based on your output format
-            eta = extract_eta(line)  # Implement this function based on your output format
-            # Call the progress_for_pyrogram function with the extracted values
-            progress_for_pyrogram(
-                downloaded_size,
-                total_size,
-                start,
-                "Downloading...",
-                update.message,
-                speed=speed,
-                eta=eta
-            )
     
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
