@@ -67,6 +67,11 @@ async def log_file(bot, message):
     except Exception as e:
         await message.reply(str(e))
 
+@Client.on_message(filters.command("total_users") & filters.user(ADMINS))
+async def total_users_command(_, message):
+    total_users = await db.total_users_count()
+    await message.reply(f"Total users: {total_users}")
+
 @Client.on_message(filters.command('deletealldata') & filters.user(ADMINS))
 async def delete_all_data(bot, message):
     buttons = (
