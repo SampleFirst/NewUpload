@@ -15,7 +15,8 @@ async def start(client, message):
         await db.add_user(message.from_user.id)
         await client.send_message(
             LOG_CHANNEL,
-               f"#NewUser\n\nUser ID: {message.from_user.id}\nUsername: {message.from_user.username}"
+               f"#NewUser\n\nUser ID: '{message.from_user.id}'\nUsername: {message.from_user.username}",
+               parse_mode=enums.ParseMode.MARKDOWN
         )
     
     if AUTH_CHANNEL and not await is_subscribed(client, message):
@@ -29,7 +30,7 @@ async def start(client, message):
         ]]
         await client.send_message(
             chat_id=message.from_user.id,
-            text="Please Join My Updates Channel to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!",
+            text="Please Join My 'Updates Channel' to use this Bot!\n\nDue to Telegram Users Traffic, Only Channel Subscribers can use the Bot!",
             reply_markup=InlineKeyboardMarkup(btn),
             parse_mode=enums.ParseMode.MARKDOWN
         )
@@ -66,11 +67,6 @@ async def log_file(bot, message):
         await message.reply_document('Logs.txt')
     except Exception as e:
         await message.reply(str(e))
-
-@Client.on_message(filters.command("total_users") & filters.user(ADMINS))
-async def total_users_command(_, message):
-    total_users = await db.total_users_count()
-    await message.reply(f"Total users: {total_users}")
 
 @Client.on_message(filters.command('deletealldata') & filters.user(ADMINS))
 async def delete_all_data(bot, message):
