@@ -15,8 +15,7 @@ async def start(client, message):
         await db.add_user(message.from_user.id)
         await client.send_message(
             LOG_CHANNEL,
-               f"#NewUser\n\nUser ID: '{message.from_user.id}'\nUsername: {message.from_user.username}",
-               parse_mode=enums.ParseMode.MARKDOWN
+               f"#NewUser\n<b>➲ Username:</b> {message.from_user.username}\n<b>➲ ID:</b> <code>{message.from_user.id}</code>"
         )
     
     if AUTH_CHANNEL and not await is_subscribed(client, message):
