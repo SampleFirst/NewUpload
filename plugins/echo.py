@@ -52,12 +52,19 @@ async def echo(client, message):
         return
 
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
+        btn = [[
+            InlineKeyboardButton("Verify", url=await get_token(client, message.from_user.id, f"https://telegram.me/BraveLinkToFileBot?start=start")),
+            InlineKeyboardButton("How To Verify", url='https://t.me/BraveLinkToFileBot')
+        ]]
         await client.send_message(
             chat_id=message.from_user.id,
-            text="Upgrade to our plan for use this bot\n\n Use /plans for Show Premium Plan Features.",
-            reply_to_message_id=message.id
+            text="<b>You are not verified!\nKindly verify to continue!\nor\nUpgrade to our plan for use this bot\nUse /plans for Show Premium Plan Features.</b>",
+            disable_web_page_preview=True,
+            parse_mode=enums.ParseMode.HTML,
+            reply_markup=InlineKeyboardMarkup(btn)
         )
         return 
+        
     user_id = message.from_user.id
     act = temp.ACTIVE_URL.get(user_id)
     if act == True:
