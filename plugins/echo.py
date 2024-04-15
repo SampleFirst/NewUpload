@@ -67,29 +67,6 @@ async def echo(client, message):
             reply_markup=reply_markup
         )
         return
-    data = message.command[1]
-    if data.split("-", 1)[0] == "verify":
-        user_id = data.split("-", 2)[1]
-        token = data.split("-", 3)[2]
-        if str(message.from_user.id) != str(user_id):
-            return await message.reply_text(
-                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
-            )
-        is_valid = await check_token(client, user_id, token)
-        if is_valid == True:
-            btn = [[
-                InlineKeyboardButton("Get File", callback_data='files')
-            ]]
-            await message.reply_text(
-                text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nNᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ғᴏʀ ᴀʟʟ ᴍᴏᴠɪᴇs ᴛɪʟʟ ᴛʜᴇ ɴᴇxᴛ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ᴡʜɪᴄʜ ɪs ᴀғᴛᴇʀ 12 ʜᴏᴜʀs ғʀᴏᴍ ɴᴏᴡ.</b>",
-                reply_markup=InlineKeyboardMarkup(btn)
-            )
-            await verify_user(client, user_id, token)
-            return
-        else:
-            return await message.reply_text(
-                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>",
-            )
     else:
         logger.info(message.from_user)
         url = message.text
