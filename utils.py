@@ -24,6 +24,7 @@ BANNED = {}
 # temp db for banned 
 class temp(object):
     VERIFY = {}
+    ACTIVE_URL = {}
     
 async def is_subscribed(bot, query=None, userid=None):
     try:
