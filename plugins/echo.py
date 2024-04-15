@@ -58,6 +58,7 @@ async def echo(client, message):
             reply_to_message_id=message.id
         )
         return 
+    user_id = message.from_user.id
     if temp.ACTIVE_URL[user_id] == True:
         await client.send_message(
             chat_id=message.from_user.id,
