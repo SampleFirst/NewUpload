@@ -17,8 +17,7 @@ from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from PIL import Image
 from pyrogram import enums 
-
-processing_urls = {}
+from utils import temp 
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -62,16 +61,10 @@ async def ddl_call_back(bot, update):
                 youtube_dl_url = youtube_dl_url[o:o + l]
     description = script.CUSTOM_CAPTION_UL_FILE
     
-    if user_id in processing_urls and processing_urls[user_id]:
-        await update.message.edit_caption(
-            caption="You are already processing a URL. Please wait until the current process finishes."
-        )
-        return
-    else:
-        await update.message.edit_caption(
-            caption=script.DOWNLOAD_START.format(a=custom_file_name)
-        )
-        processing_urls[user_id] = True 
+    await update.message.edit_caption(
+        caption=script.DOWNLOAD_START.format(a=custom_file_name)
+    )
+        
     start = datetime.now()
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(update.from_user.id)
     if not os.path.isdir(tmp_directory_for_each_user):
@@ -114,6 +107,7 @@ async def ddl_call_back(bot, update):
                 caption=script.RCHD_TG_API_LIMIT,
                 parse_mode=enums.ParseMode.HTML
             )
+            temp.ACTIVE_URL[user_id] = False 
         else:
             start_time = time.time()
             if (await db.get_upload_as_doc(update.from_user.id)) is False:
@@ -198,7 +192,7 @@ async def ddl_call_back(bot, update):
                 pass
             time_taken_for_download = (end_one - start).seconds
             time_taken_for_upload = (end_two - end_one).seconds
-            processing_urls[user_id] = False 
+            temp.ACTIVE_URL[user_id] = False 
             await update.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload),
                 parse_mode=enums.ParseMode.HTML
@@ -209,6 +203,7 @@ async def ddl_call_back(bot, update):
             caption=script.NO_VOID_FORMAT_FOUND.format("Incorrect Link"),
             parse_mode=enums.ParseMode.HTML
         )
+        temp.ACTIVE_URL[user_id] = False 
 
 async def download_coroutine(bot, session, url, file_name, chat_id, message_id, start):
     downloaded = 0
