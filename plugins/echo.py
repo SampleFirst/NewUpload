@@ -59,7 +59,8 @@ async def echo(client, message):
         )
         return 
     user_id = message.from_user.id
-    if user_id in temp.ACTIVE_URL[user_id] == True:
+    act = temp.ACTIVE_URL[user_id]
+    if act == True:
         await client.send_message(
             chat_id=message.from_user.id,
             text="You are already processing a URL. Please wait until the current process finishes."
