@@ -174,6 +174,7 @@ async def youtube_dl_call_back(bot, update):
             await update.message.edit_caption(
                 caption=script.RCHD_TG_API_LIMIT.format(time_taken_for_download, humanbytes(file_size))
             )
+            temp.ACTIVE_URL[user_id] = False 
         else:
             start_time = time.time()
             if (await db.get_upload_as_doc(update.from_user.id)) is False:
