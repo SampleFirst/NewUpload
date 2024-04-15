@@ -16,11 +16,11 @@ from database.database import db
 from PIL import Image
 from plugins.functions.ran_text import random_char
 from plugins.functions.dumy import download_progress
+from utils import temp
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
-processing_urls = {}
 
 async def youtube_dl_call_back(bot, update):
     cb_data = update.data
@@ -81,19 +81,12 @@ async def youtube_dl_call_back(bot, update):
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
                 
-    if user_id in processing_urls and processing_urls[user_id]:
-        await update.message.edit_caption(
-            caption="You are already processing a URL. Please wait until the current process finishes."
-        )
-        return
+    if total_size != "0" and total_size != "":
+        await download_progress(update, custom_file_name, total_size)
     else:
-        if total_size != "0" and total_size != "":
-            await download_progress(update, custom_file_name, total_size)
-        else:
-            await update.message.edit_caption(
-                caption=script.DOWNLOAD_START.format(a=custom_file_name)
-            )
-        processing_urls[user_id] = True 
+        await update.message.edit_caption(
+            caption=script.DOWNLOAD_START.format(a=custom_file_name)
+        )
         
     description = script.CUSTOM_CAPTION_UL_FILE
     if "fulltitle" in response_json:
@@ -265,7 +258,7 @@ async def youtube_dl_call_back(bot, update):
             await update.message.edit_caption(
                 caption=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload)
             )
-            processing_urls[user_id] = False 
+            temp.ACTIVE_URL[user_id] = False 
             
             logger.info("✅ Downloaded in: " + str(time_taken_for_download))
             logger.info("✅ Uploaded in: " + str(time_taken_for_upload))
