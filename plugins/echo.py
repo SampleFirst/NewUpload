@@ -10,6 +10,7 @@ from pyrogram.errors import ChatAdminRequired
 from info import *
 from Script import script
 from utils import *
+from utils import temp
 from plugins.functions.display_progress import humanbytes, TimeFormatter
 from plugins.functions.help_uploadbot import DownLoadFile
 from plugins.functions.display_progress import progress_for_pyrogram
@@ -57,6 +58,12 @@ async def echo(client, message):
             reply_to_message_id=message.id
         )
         return 
+    if temp.ACTIVE_URL[user_id] = True:
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="You are already processing a URL. Please wait until the current process finishes."
+        )
+        return
     else:
         logger.info(message.from_user)
         url = message.text
@@ -135,6 +142,7 @@ async def echo(client, message):
             reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML
         )
+        temp.ACTIVE_URL[user_id] = True
         
         process = await asyncio.create_subprocess_exec(
             *command_to_exec,
