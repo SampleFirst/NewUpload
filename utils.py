@@ -111,11 +111,11 @@ async def check_token(bot, userid, token):
     else:
         return False
 
-async def get_token(bot, userid, link):
+async def get_token(bot, userid, link, text):
     user = await bot.get_users(userid)
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
     TOKENS[user.id] = {token: False}
-    url = f"{link}verify-{user.id}-{token}"
+    url = f"{link}verify-{user.id}-{token}-{text}"
     status = await get_verify_status(user.id)
     date_var = status["date"]
     time_var = status["time"]
