@@ -7,6 +7,8 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from plugins.settings.settings import opensettings
 from plugins.dl_button import ddl_call_back
 from plugins.button import youtube_dl_call_back
+from plugins.token import token_accepted
+from utils import temp
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -113,5 +115,9 @@ async def button(client, query):
         await youtube_dl_call_back(client, query)
     elif "=" in query.data:
         await ddl_call_back(client, query)
+    elif query.data == "verifying":
+        link = temp.TOKEN_ACCEPTED.get(query.from_user.id)
+        if link:
+            awite token_accepted(client, query, link)
     else:
         await query.message.delete()
