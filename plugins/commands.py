@@ -78,8 +78,8 @@ async def start(client, message):
                 reply_markup=InlineKeyboardMarkup(btn)
             )
             await verify_user(client, userid, token)
-            tok, lok = temp.TOKEN_ACCEPTED.get(userid).split("-")
-            if tok == token:
+            lok = temp.TOKEN_ACCEPTED.get(userid)
+            if lok:
                 await token_accepted(client, message, lok)
                 return
         else:
