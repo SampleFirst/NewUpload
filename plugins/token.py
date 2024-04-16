@@ -39,7 +39,7 @@ async def token_accepted(client, message, link):
             youtube_dl_username = url_parts[2]
             youtube_dl_password = url_parts[3]
         else:
-            for entity in message.entities:
+            for entity in link.entities:
                 if entity.type == "text_link":
                     url = entity.url
                 elif entity.type == "url":
@@ -57,7 +57,7 @@ async def token_accepted(client, message, link):
         logger.info(url)
         logger.info(file_name)
     else:
-        for entity in message.entities:
+        for entity in link.entities:
             if entity.type == "text_link":
                 url = entity.url
             elif entity.type == "url":
@@ -91,11 +91,9 @@ async def token_accepted(client, message, link):
         command_to_exec.append(youtube_dl_password)
 
     logger.info(command_to_exec)
-    chk = await client.send_message(
-        chat_id=message.chat.id,
+    await query.message.edit_text(
         text=f'Processing your link ⌛',
         disable_web_page_preview=True,
-        reply_to_message_id=message.id,
         parse_mode=enums.ParseMode.HTML
     )
     temp.ACTIVE_URL[user_id] = True
@@ -114,12 +112,10 @@ async def token_accepted(client, message, link):
         error_message = e_response.replace("please report this issue on https://yt-dl.org/bug . Make sure you are using the latest version; see  https://yt-dl.org/update  on how to message. Be sure to call youtube-dl with the --verbose flag and include its complete output.", "")
         if "This video is only available for registered users." in error_message:
             error_message += script.SET_CUSTOM_USERNAME_PASSWORD
-        await chk.delete()
+        
         await asyncio.sleep(2)
-        await client.send_message(
-            chat_id=message.chat.id,
+        await query.message.edit_text(
             text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
-            reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
@@ -227,13 +223,10 @@ async def token_accepted(client, message, link):
                 )
             ])
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
-        await chk.delete()
-        await client.send_message(
-            chat_id=message.chat.id,
+        await query.message.edit_text(
             text=script.FORMAT_SELECTION + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
             reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=message.id
+            parse_mode=enums.ParseMode.HTML
         )
     else:
         inline_keyboard = []
@@ -248,11 +241,8 @@ async def token_accepted(client, message, link):
             )
         ])
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
-        await chk.delete()
-        await client.send_message(
-            chat_id=message.chat.id,
+        await query.message.edit_text(
             text=script.FORMAT_SELECTION,
             reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML,
-            reply_to_message_id=message.id
+            parse_mode=enums.ParseMode.HTML
         )
