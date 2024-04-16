@@ -55,12 +55,14 @@ async def echo(client, message):
         btn = [[
             InlineKeyboardButton("Verify", url=await get_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start=", message.text))
         ]]
-        await client.send_message(
+        msg = await client.send_message(
             chat_id=message.from_user.id,
             text="<b>You are not verified!\nKindly verify to continue so that you can get access to unlimited movies until  3 hours from now!</b>",
             parse_mode=enums.ParseMode.HTML,
-            reply_markup=InlineKeyboardMarkup(btn)
+            reply_markup=InlineKeyboardMarkup(btn),
+            reply_to_message_id=message.id
         )
+        temp.STORE_ID[user_id] = msg.id
         return
         
     user_id = message.from_user.id
