@@ -39,6 +39,7 @@ async def start(client, message):
         text=script.START_TEXT.format(message.from_user.mention),
         disable_web_page_preview=True
     )
+    return 
     data = message.command[1]
 
     if data.split("-", 1)[0] == "verify":
