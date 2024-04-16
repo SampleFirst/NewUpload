@@ -26,7 +26,7 @@ AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_chan
 IS_VERIFY = is_enabled(environ.get('IS_VERIFY', 'True'), True)
 HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', "")
 VERIFY2_URL = environ.get('VERIFY2_URL', 'clicksfly.com')
-VERIFY2_API = environ.get('VERIFY2_API', 'c2150e28189cefefd05f8a9c5c5770cc462033e3')
+VERIFY2_API = environ.get('VERIFY2_API', '')
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'mdisklink.link')
 SHORTLINK_API = environ.get('SHORTLINK_API', '4fa150d44b4bf6579c24b33bbbb786dbfb4fc673')
 
