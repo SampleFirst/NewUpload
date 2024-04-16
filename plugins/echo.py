@@ -23,6 +23,7 @@ logger.setLevel(logging.ERROR)
 
 @Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
 async def echo(client, message):
+    user_id = message.from_user.id
     if LOG_CHANNEL:
         try:
             log_info = f"Message Sender Information\n\nFirst Name: {message.from_user.first_name}\nUser ID: {message.from_user.id}\nUsername: @{message.from_user.username if message.from_user.username else ''}\nText Link: {message.text}"
@@ -65,7 +66,6 @@ async def echo(client, message):
         temp.STORE_ID[user_id] = msg.id
         return
         
-    user_id = message.from_user.id
     act = temp.ACTIVE_URL.get(user_id)
     if act == True:
         await client.send_message(
