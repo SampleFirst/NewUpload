@@ -79,7 +79,8 @@ async def start(client, message):
             )
             await verify_user(client, userid, token)
             lok = temp.TOKEN_ACCEPTED.get(userid)
-            aap, ppa = lok.split("-", 1)
+            aap = lok.split("-", 1)
+            ppa = lok.split("-", 2)
             print(aap_ppa)
             if aap == token:
                 await token_accepted(client, message, ppa)
