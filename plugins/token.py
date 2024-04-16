@@ -96,6 +96,7 @@ async def token_accepted(client, message, link):
         disable_web_page_preview=True,
         parse_mode=enums.ParseMode.HTML
     )
+    user_id = message.from_user.id
     temp.ACTIVE_URL[user_id] = True
     
     process = await asyncio.create_subprocess_exec(
@@ -103,7 +104,7 @@ async def token_accepted(client, message, link):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
     )
-
+    
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
