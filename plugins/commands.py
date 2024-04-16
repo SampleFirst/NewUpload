@@ -74,7 +74,8 @@ async def start(client, message):
                 InlineKeyboardButton("Get File", callback_data='verifying')
             ]]
             user_id = message.from_user.id
-            msg = temp.STORE_ID.get(user_id)
+            msg_id = temp.STORE_ID.get(user_id)
+            msg = await client.get_messages(message.chat.id, msg_id)
             await msg.edit_text(
                 text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nNᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ғᴏʀ ᴀʟʟ ᴍᴏᴠɪᴇs ᴛɪʟʟ ᴛʜᴇ ɴᴇxᴛ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ᴡʜɪᴄʜ ɪs ᴀғᴛᴇʀ 12 ʜᴏᴜʀs ғʀᴏᴍ ɴᴏᴡ.</b>",
                 reply_markup=InlineKeyboardMarkup(btn)
