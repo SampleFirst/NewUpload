@@ -91,7 +91,7 @@ async def token_accepted(client, message, link):
         command_to_exec.append(youtube_dl_password)
 
     logger.info(command_to_exec)
-    await query.message.edit_text(
+    await message.message.edit(
         text=f'Processing your link ⌛',
         disable_web_page_preview=True,
         parse_mode=enums.ParseMode.HTML
@@ -114,7 +114,7 @@ async def token_accepted(client, message, link):
             error_message += script.SET_CUSTOM_USERNAME_PASSWORD
         
         await asyncio.sleep(2)
-        await query.message.edit_text(
+        await message.message.edit(
             text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
@@ -223,7 +223,7 @@ async def token_accepted(client, message, link):
                 )
             ])
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
-        await query.message.edit_text(
+        await message.message.edit(
             text=script.FORMAT_SELECTION + "\n" + script.SET_CUSTOM_USERNAME_PASSWORD,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
@@ -241,7 +241,7 @@ async def token_accepted(client, message, link):
             )
         ])
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
-        await query.message.edit_text(
+        await message.message.edit(
             text=script.FORMAT_SELECTION,
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
