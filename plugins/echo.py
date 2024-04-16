@@ -17,7 +17,6 @@ from plugins.functions.display_progress import progress_for_pyrogram
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
 from plugins.functions.ran_text import random_char
-from plugins.commands import token_accepted
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
@@ -74,10 +73,8 @@ async def echo(client, message):
         )
         return
     else:
-        if await token_accepted(client, link)
-            url = link
-        else:
-            url = message.text
+        logger.info(message.from_user)
+        url = message.text
         youtube_dl_username = None
         youtube_dl_password = None
         file_name = None
