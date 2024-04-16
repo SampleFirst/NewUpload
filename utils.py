@@ -126,7 +126,7 @@ async def get_token(bot, userid, link):
     last_datetime = tz.localize(last_datetime)  # Make last_datetime timezone-aware
     curr_datetime = datetime.now(tz)  # Current datetime with timezone information   
     diff = curr_datetime - last_datetime
-    if diff.total_seconds() > 10:  # 3 hours in seconds
+    if diff.total_seconds() > 10800:  # 3 hours in seconds
         vr_num = 2 # ziplinker 
     else:
         vr_num = 1 # clickfly
