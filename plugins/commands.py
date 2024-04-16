@@ -34,14 +34,31 @@ async def start(client, message):
             parse_mode=enums.ParseMode.MARKDOWN
         )
         return
+    if len(message.command) != 2:
+        buttons = (
+            [
+                [
+                    InlineKeyboardButton('⚙️ Settings', callback_data='opensettings')
+                ],
+                [
+                    InlineKeyboardButton('❔ Help', callback_data='help'),
+                    InlineKeyboardButton('👨‍🚒 About', callback_data='about')
+                ],
+                [
+                    InlineKeyboardButton('⛔️ Close', callback_data='close')
+                ]
+            ]
+        )
         
-    await message.reply_text(
-        text=script.START_TEXT.format(message.from_user.mention),
-        disable_web_page_preview=True
-    )
-    return 
+        reply_markup = InlineKeyboardMarkup(buttons)
+                
+        await message.reply_text(
+            text=script.START_TEXT.format(message.from_user.mention),
+            disable_web_page_preview=True,
+            reply_markup=reply_markup
+        )
+        return 
     data = message.command[1]
-
     if data.split("-", 1)[0] == "verify":
         userid = data.split("-", 2)[1]
         token = data.split("-", 3)[2]
