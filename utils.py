@@ -26,7 +26,8 @@ class temp(object):
     VERIFY = {}
     ACTIVE_URL = {}
     TOKEN_ACCEPTED = {}
-    
+    STORE_ID = {}
+
 async def is_subscribed(bot, query=None, userid=None):
     try:
         if userid == None and query != None:
