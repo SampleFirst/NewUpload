@@ -118,6 +118,7 @@ async def get_token(bot, userid, link, text):
     TOKENS[user.id] = {token: False}
     temp.TOKEN_ACCEPTED[userid] = f"{token}-{text}"
     url = f"{link}verify-{user.id}-{token}"
+    print(url)
     status = await get_verify_status(user.id)
     date_var = status["date"]
     time_var = status["time"]
