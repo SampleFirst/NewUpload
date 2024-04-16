@@ -34,24 +34,19 @@ async def start(client, message):
             parse_mode=enums.ParseMode.MARKDOWN
         )
         return
-    
-    buttons = (
+    buttons = [
         [
-            [
-                InlineKeyboardButton('⚙️ Settings', callback_data='opensettings')
-            ],
-            [
-                InlineKeyboardButton('❔ Help', callback_data='help'),
-                InlineKeyboardButton('👨‍🚒 About', callback_data='about')
-            ],
-            [
-                InlineKeyboardButton('⛔️ Close', callback_data='close')
-            ]
+            InlineKeyboardButton('⚙️ Settings', callback_data='opensettings')
+        ],
+        [
+            InlineKeyboardButton('❔ Help', callback_data='help'),
+            InlineKeyboardButton('👨‍🚒 About', callback_data='about')
+        ],
+        [
+            InlineKeyboardButton('⛔️ Close', callback_data='close')
         ]
-    )
-    
+    ]
     reply_markup = InlineKeyboardMarkup(buttons)
-            
     await message.reply_text(
         text=script.START_TEXT.format(message.from_user.mention),
         disable_web_page_preview=True,
