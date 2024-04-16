@@ -6,6 +6,7 @@ from database.database import db
 from info import *
 from Script import script 
 from utils import *
+from plugins.token import token_accepted
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,7 @@ async def start(client, message):
     if data.split("-", 1)[0] == "verify":
         userid = data.split("-", 2)[1]
         token = data.split("-", 3)[2]
+        link = data.split("-", 4)[3]
         if str(message.from_user.id) != str(userid):
             return await message.reply_text(
                 text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
@@ -76,6 +78,7 @@ async def start(client, message):
                 reply_markup=InlineKeyboardMarkup(btn)
             )
             await verify_user(client, userid, token)
+            await token_accepted(client, message, link)
             return
         else:
             return await message.reply_text(
