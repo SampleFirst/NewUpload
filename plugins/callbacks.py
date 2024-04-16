@@ -118,6 +118,6 @@ async def button(client, query):
     elif query.data == "verifying":
         link = temp.TOKEN_ACCEPTED.get(query.from_user.id)
         if link:
-            awite token_accepted(client, query, link)
+            await token_accepted(client, query, link)
     else:
         await query.message.delete()
