@@ -13,7 +13,6 @@ from pyrogram import enums
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid, ChatAdminRequired
 from info import *
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -42,7 +41,6 @@ async def is_subscribed(bot, query=None, userid=None):
     else:
         if user.status != enums.ChatMemberStatus.BANNED:
             return True
-
     return False
 
 async def get_verify_short_link(num, link):
@@ -144,7 +142,7 @@ async def verify_short_user(bot, userid):
     short = await get_verify_status(userid)
     short["short"] = short
     temp.SHORT_VERIFY[userid] = short
-    await db.update_short_verification(userid, date_temp, time_temp)
+    await db.update_short_verification(userid, short)
     log_message = f"#ShortLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}"
     await bot.send_message(LOG_CHANNEL, log_message)
 
