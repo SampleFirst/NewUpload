@@ -26,7 +26,7 @@ class Database:
     
     async def get_short_verified(self, id):
         default = {
-            'short': "2"
+            'short': "1"
         }
         user = await self.col.find_one({'id': int(id)})
         if user:
