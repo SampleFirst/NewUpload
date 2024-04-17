@@ -87,6 +87,7 @@ async def start(client, message):
                 text="👆"
             )
             temp.ACTIVE_URL[user_id] = True
+            await verify_short_user(client, userid)
             return
         else:
             return await message.reply_text(
