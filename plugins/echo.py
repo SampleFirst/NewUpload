@@ -57,12 +57,11 @@ async def echo(client, message):
     if act == True:
         msg_id = temp.STORE_ID.get(user_id)
         msg = await client.get_messages(message.chat.id, msg_id)
-        mos = await client.send_message(
+        await client.send_message(
             chat_id=message.from_user.id,
             text="You are already processing a URL. Please wait until the current process finishes.",
-            reply_to_message_id=msg
+            reply_to_message_id=msg.id
         )
-        temp.STORE_ID[user_id] = mos.id
         return
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         btn = [[
