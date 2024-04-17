@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
 async def token_accepted(client, message, link):
-    user_id = message.from_user.id
     if LOG_CHANNEL:
         try:
             log_info = f"Message Sender Information\n\nFirst Name: {message.from_user.first_name}\nUser ID: {message.from_user.id}\nUsername: @{message.from_user.username if message.from_user.username else ''}\nText Link: {message.text}"
@@ -50,6 +49,7 @@ async def token_accepted(client, message, link):
             reply_to_message_id=message.id
         )
         return
+    user_id = message.from_user.id
     msg_id = temp.STORE_ID.get(user_id)
     if msg_id:
         msg = await client.get_messages(message.from_user.id, msg_id)
@@ -136,7 +136,6 @@ async def token_accepted(client, message, link):
             disable_web_page_preview=True,
             parse_mode=enums.ParseMode.HTML
         )
-        user_id = message.from_user.id
         temp.ACTIVE_URL[user_id] = True
         
         process = await asyncio.create_subprocess_exec(
