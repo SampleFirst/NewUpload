@@ -136,7 +136,7 @@ async def get_verify_short(userid):
         temp.SHORT_VERIFY[userid] = short
     return short
 
-async def verify_short_user(bot, userid):
+async def verify_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
     short = await get_verify_status(userid)
