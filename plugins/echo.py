@@ -170,6 +170,7 @@ async def echo(client, message):
                 error_message += script.SET_CUSTOM_USERNAME_PASSWORD
             await chk.delete()
             await asyncio.sleep(2)
+            temp.ACTIVE_URL[user_id] = False
             await client.send_message(
                 chat_id=message.chat.id,
                 text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
@@ -177,7 +178,6 @@ async def echo(client, message):
                 parse_mode=enums.ParseMode.HTML,
                 disable_web_page_preview=True
             )
-            temp.ACTIVE_URL[user_id] = False 
             return False
 
         if t_response:
