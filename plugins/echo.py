@@ -24,6 +24,7 @@ logger.setLevel(logging.ERROR)
 @Client.on_message(filters.private & filters.regex(pattern=".*http.*"))
 async def echo(client, message):
     user_id = message.from_user.id
+    
     if LOG_CHANNEL:
         try:
             log_info = f"Message Sender Information\n\nFirst Name: {message.from_user.first_name}\nUser ID: {message.from_user.id}\nUsername: @{message.from_user.username if message.from_user.username else ''}\nText Link: {message.text}"
@@ -51,6 +52,7 @@ async def echo(client, message):
             reply_to_message_id=message.id
         )
         return
+    temp.TOKEN_ACCEPTED[userid] = message.text
     msg_id = temp.STORE_ID.get(user_id)
     if msg_id:
         msg = await client.get_messages(message.chat.id, msg_id)
@@ -64,7 +66,7 @@ async def echo(client, message):
             return
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         btn = [[
-            InlineKeyboardButton("📢 Verify", url=await get_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start=", message.text))
+            InlineKeyboardButton("📢 Verify", url=await get_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
         ]]
         msg = await client.send_message(
             chat_id=message.from_user.id,
