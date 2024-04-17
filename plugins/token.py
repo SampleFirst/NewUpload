@@ -120,6 +120,7 @@ async def token_accepted(client, message, link):
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
+        temp.ACTIVE_URL[user_id] = False 
         return False
 
     if t_response:
