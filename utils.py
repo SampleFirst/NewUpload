@@ -136,15 +136,22 @@ async def get_verify_short(userid):
         temp.SHORT_VERIFY[userid] = short
     return short
 
+async def send_short_log(bot, userid, short):
+    user = await bot.get_users(int(userid))
+    log_message = f"#ShortLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}"
+    await bot.send_message(LOG_CHANNEL, log_message)
+
+async def update_short_verify_status(bot, userid, token):
+    short = await get_verify_short(userid)
+    short["short"] = short_temp
+    temp.VERIFY[userid] = status
+    await db.update_short_verification(userid, short_temp)
+    await send_short_log(bot, userid, short_temp)
+
 async def verify_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
-    short = await get_verify_short(userid)
-    short["short"] = short
-    temp.SHORT_VERIFY[userid] = short
-    await db.update_short_verification(userid, short)
-    log_message = f"#ShortLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}"
-    await bot.send_message(LOG_CHANNEL, log_message)
+    await update_short_verify_status(bot, user.id, token)
 
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
