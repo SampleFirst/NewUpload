@@ -70,7 +70,8 @@ async def echo(client, message):
     if act == True:
         await client.send_message(
             chat_id=message.from_user.id,
-            text="You are already processing a URL. Please wait until the current process finishes."
+            text="You are already processing a URL. Please wait until the current process finishes.",
+            reply_to_message_id=msg.id
         )
         return
     else:
