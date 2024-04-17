@@ -24,6 +24,7 @@ BANNED = {}
 # temp db for banned 
 class temp(object):
     VERIFY = {}
+    SHORT_VERIFY = {}
     ACTIVE_URL = {}
     TOKEN_ACCEPTED = {}
     STORE_ID = {}
@@ -57,11 +58,9 @@ async def get_verify_short_link(num, link):
     elif int(num) == 4:
         API = VERIFY4_API
         URL = VERIFY4_URL
-    elif int(num) == 5:
+    else:
         API = VERIFY5_API
         URL = VERIFY5_URL
-    else:
-        pass
     https = link.split(":")[0]
     if "http" == https:
         https = "https"
@@ -116,8 +115,8 @@ async def get_token_short(bot, userid, link):
     TOKENS[user.id] = {token: False}
     url = f"{link}verify-{user.id}-{token}"
     await bot.send_message(LOG_CHANNEL, url)
-    status = await get_verify_status(user.id)
-    short_var = status["short"]
+    short = await get_verify_short(user.id)
+    short_var = short["short"]
     if short_var == 1:
         vr_num = 2
     elif short_var == 2:
@@ -127,20 +126,25 @@ async def get_token_short(bot, userid, link):
     elif short_var == 4:
         vr_num = 5
     else:
-        # Handle other cases or raise an error
-        pass
+        vr_num = 1
     
     short_verify_url = await get_verify_short_link(vr_num, url)
     return str(short_verify_url)
 
-
+async def get_verify_short(userid):
+    short = temp.SHORT_VERIFY.get(userid)
+    if not short:
+        short = await db.get_short_verified(userid)
+        temp.SHORT_VERIFY[userid] = short
+    return short
+    
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
         API = SHORTLINK_API
         URL = SHORTLINK_API
     else:
-        API = VERIFY2_API
-        URL = VERIFY2_URL
+        API = VERIFY1_API
+        URL = VERIFY1_URL
     https = link.split(":")[0]
     if "http" == https:
         https = "https"
@@ -215,10 +219,10 @@ async def get_token(bot, userid, link):
     year, month, day = date_var.split("-")
     last_datetime = datetime(year=int(year), month=int(month), day=int(day), hour=int(hour), minute=int(minute), second=int(second))
     tz = pytz.timezone('Asia/Kolkata')
-    last_datetime = tz.localize(last_datetime)  # Make last_datetime timezone-aware
-    curr_datetime = datetime.now(tz)  # Current datetime with timezone information   
+    last_datetime = tz.localize(last_datetime)
+    curr_datetime = datetime.now(tz)
     diff = curr_datetime - last_datetime
-    if diff.total_seconds() > 10800:  # 3 hours in seconds
+    if diff.total_seconds() > 43200:  # 12 hours in seconds
         vr_num = 2 # ziplinker 
     else:
         vr_num = 1 # clickfly
@@ -292,7 +296,7 @@ async def verify_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
     tz = pytz.timezone('Asia/Kolkata')
-    date_var = datetime.now(tz)+timedelta(hours=3)
+    date_var = datetime.now(tz)+timedelta(hours=12)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     await update_verify_status(bot, user.id, token, date_var, temp_time)
