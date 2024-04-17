@@ -72,6 +72,8 @@ async def start(client, message):
         if is_valid == True:
             btn = [[
                 InlineKeyboardButton("✅ Start Now", callback_data='verifying')
+            ],[
+                InlineKeyboardButton("⛔ Cancel", callback_data='can')
             ]]
             user_id = message.from_user.id
             msg_id = temp.STORE_ID.get(user_id)
@@ -84,6 +86,7 @@ async def start(client, message):
                 chat_id=message.from_user.id,
                 text="👆"
             )
+            temp.ACTIVE_URL[user_id] = True
             return
         else:
             return await message.reply_text(
