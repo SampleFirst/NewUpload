@@ -115,12 +115,12 @@ async def token_accepted(client, message, link):
             error_message += script.SET_CUSTOM_USERNAME_PASSWORD
         
         await asyncio.sleep(2)
+        temp.ACTIVE_URL[user_id] = False
         await message.message.edit(
             text=script.NO_VOID_FORMAT_FOUND.format(str(error_message)),
             parse_mode=enums.ParseMode.HTML,
             disable_web_page_preview=True
         )
-        temp.ACTIVE_URL[user_id] = False 
         return False
 
     if t_response:
