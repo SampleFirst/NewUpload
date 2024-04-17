@@ -113,7 +113,7 @@ async def check_token(bot, userid, token):
     else:
         return False
 
-async def get_token(bot, userid, link, text):
+async def get_token(bot, userid, link):
     user = await bot.get_users(userid)
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
     TOKENS[user.id] = {token: False}
