@@ -153,6 +153,7 @@ async def echo(client, message):
             reply_to_message_id=message.id,
             parse_mode=enums.ParseMode.HTML
         )
+        temp.ACTIVE_URL[user_id] = True
         
         process = await asyncio.create_subprocess_exec(
             *command_to_exec,
