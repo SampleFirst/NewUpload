@@ -152,7 +152,6 @@ async def verify_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
     num = await get_verify_short(userid)
-    numx = int(num)
     shortnum = num + 1
     await update_short_verify_status(bot, user.id, token, shortnum)
 
