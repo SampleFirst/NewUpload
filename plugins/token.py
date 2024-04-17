@@ -22,6 +22,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
 async def token_accepted(client, message, link):
+    user_id = message.from_user.id
     if LOG_CHANNEL:
         try:
             log_info = f"Message Sender Information\n\nFirst Name: {message.from_user.first_name}\nUser ID: {message.from_user.id}\nUsername: @{message.from_user.username if message.from_user.username else ''}\nText Link: {message.text}"
