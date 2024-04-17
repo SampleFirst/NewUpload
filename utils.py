@@ -144,7 +144,7 @@ async def send_short_log(bot, userid, short):
 async def update_short_verify_status(bot, userid, token, short_temp):
     short = await get_verify_short(userid)
     short["short"] = short_temp
-    temp.VERIFY[userid] = status
+    temp.VERIFY[userid] = short
     await db.update_short_verification(userid, short_temp)
     await send_short_log(bot, userid, short_temp)
 
