@@ -25,8 +25,17 @@ AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_chan
 # Others
 IS_VERIFY = is_enabled(environ.get('IS_VERIFY', 'True'), True)
 HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', "")
-VERIFY2_URL = environ.get('VERIFY2_URL', 'clicksfly.com')
-VERIFY2_API = environ.get('VERIFY2_API', 'c2150e28189cefefd05f8a9c5c5770cc462033e3')
+VERIFY1_URL = environ.get('VERIFY1_URL', 'clicksfly.com')
+VERIFY1_API = environ.get('VERIFY1_API', 'c2150e28189cefefd05f8a9c5c5770cc462033e3')
+VERIFY2_URL = environ.get('VERIFY2_URL', 'mdisklink.link')
+VERIFY2_API = environ.get('VERIFY2_API', '4fa150d44b4bf6579c24b33bbbb786dbfb4fc673')
+VERIFY3_URL = environ.get('VERIFY3_URL', 'clicksfly.com')
+VERIFY3_API = environ.get('VERIFY3_API', 'c2150e28189cefefd05f8a9c5c5770cc462033e3')
+VERIFY4_URL = environ.get('VERIFY4_URL', 'mdisklink.link')
+VERIFY4_API = environ.get('VERIFY4_API', '4fa150d44b4bf6579c24b33bbbb786dbfb4fc673')
+VERIFY5_URL = environ.get('VERIFY5_URL', 'clicksfly.com')
+VERIFY5_API = environ.get('VERIFY5_API', 'c2150e28189cefefd05f8a9c5c5770cc462033e3')
+
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'mdisklink.link')
 SHORTLINK_API = environ.get('SHORTLINK_API', '4fa150d44b4bf6579c24b33bbbb786dbfb4fc673')
 
