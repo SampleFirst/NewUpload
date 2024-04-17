@@ -80,7 +80,7 @@ async def start(client, message):
                 text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nᴄʟɪᴄᴋ ꜱᴛᴀʀᴛ ɴᴏᴡ ʙᴜᴛᴛᴏɴ!</b>",
                 reply_markup=InlineKeyboardMarkup(btn)
             )
-            client.send_message(
+            await client.send_message(
                 chat_id=message.from_user.id,
                 text="👆"
             )
