@@ -52,6 +52,15 @@ async def echo(client, message):
         )
         return
 
+    act = temp.ACTIVE_URL.get(user_id)
+    if act == True:
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="You are already processing a URL. Please wait until the current process finishes.",
+            reply_to_message_id=msg.id
+        )
+        return
+        
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         btn = [[
             InlineKeyboardButton("📢 Verify", url=await get_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start=", message.text))
@@ -64,15 +73,6 @@ async def echo(client, message):
             reply_to_message_id=message.id
         )
         temp.STORE_ID[user_id] = msg.id
-        return
-        
-    act = temp.ACTIVE_URL.get(user_id)
-    if act == True:
-        await client.send_message(
-            chat_id=message.from_user.id,
-            text="You are already processing a URL. Please wait until the current process finishes.",
-            reply_to_message_id=msg.id
-        )
         return
     else:
         logger.info(message.from_user)
