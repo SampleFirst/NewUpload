@@ -50,17 +50,16 @@ async def token_accepted(client, message, link):
         )
         return
     user_id = message.from_user.id
-    msg_id = temp.STORE_ID.get(user_id)
-    if msg_id:
+    act = temp.ACTIVE_URL.get(user_id)
+    if act == True:
+        msg_id = temp.STORE_ID.get(user_id)
         msg = await client.get_messages(message.from_user.id, msg_id)
-        act = temp.ACTIVE_URL.get(user_id)
-        if act == True:
-            await client.send_message(
-                chat_id=message.from_user.id,
-                text="You are already processing a URL. Please wait until the current process finishes.",
-                reply_to_message_id=msg
-            )
-            return
+        await client.send_message(
+            chat_id=message.from_user.id,
+            text="You are already processing a URL. Please wait until the current process finishes.",
+            reply_to_message_id=msg
+        )
+        return
     else:
         url = link
         youtube_dl_username = None
