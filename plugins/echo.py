@@ -53,7 +53,7 @@ async def echo(client, message):
         return
     msg_id = temp.STORE_ID.get(user_id)
     if msg_id:
-        msg = await client.get_messages(query.message.chat.id, msg_id)
+        msg = await client.get_messages(message.chat.id, msg_id)
         act = temp.ACTIVE_URL.get(user_id)
         if act == True:
             await client.send_message(
