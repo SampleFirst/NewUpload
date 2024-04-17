@@ -134,7 +134,6 @@ async def token_accepted(client, message, link):
             disable_web_page_preview=True,
             parse_mode=enums.ParseMode.HTML
         )
-        temp.ACTIVE_URL[user_id] = True
         
         process = await asyncio.create_subprocess_exec(
             *command_to_exec,
