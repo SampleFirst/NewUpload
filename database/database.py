@@ -22,7 +22,7 @@ class Database:
         status = {
             'short': str(short)
         }
-        await self.col.update_one({'id': int(id)}, {'$set': {'verification_short_status': status}})
+        await self.col.update_one({'id': int(id)}, {'$set': {'short_status': status}})
     
     async def get_short_verified(self, id):
         default = {
@@ -30,7 +30,7 @@ class Database:
         }
         user = await self.col.find_one({'id': int(id)})
         if user:
-            return user.get("verification_short_status", default)
+            return user.get("short_status", default)
         return default
 
     async def update_verification(self, id, date, time):
