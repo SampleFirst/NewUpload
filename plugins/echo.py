@@ -64,7 +64,7 @@ async def echo(client, message):
         return
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         btn = [[
-            InlineKeyboardButton("📢 Verify", url=await get_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
+            InlineKeyboardButton("📢 Verify", url=await get_token_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
         ]]
         msg = await client.send_message(
             chat_id=message.from_user.id,
