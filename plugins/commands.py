@@ -71,14 +71,18 @@ async def start(client, message):
         is_valid = await check_token(client, userid, token)
         if is_valid == True:
             btn = [[
-                InlineKeyboardButton("Get File", callback_data='verifying')
+                InlineKeyboardButton("✅ Start Now", callback_data='verifying')
             ]]
             user_id = message.from_user.id
             msg_id = temp.STORE_ID.get(user_id)
             msg = await client.get_messages(message.chat.id, msg_id)
             await msg.edit_text(
-                text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nNᴏᴡ ʏᴏᴜ ʜᴀᴠᴇ ᴜɴʟɪᴍɪᴛᴇᴅ ᴀᴄᴄᴇss ғᴏʀ ᴀʟʟ ᴍᴏᴠɪᴇs ᴛɪʟʟ ᴛʜᴇ ɴᴇxᴛ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ᴡʜɪᴄʜ ɪs ᴀғᴛᴇʀ 12 ʜᴏᴜʀs ғʀᴏᴍ ɴᴏᴡ.</b>",
+                text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nᴄʟɪᴄᴋ ꜱᴛᴀʀᴛ ɴᴏᴡ ʙᴜᴛᴛᴏɴ!</b>",
                 reply_markup=InlineKeyboardMarkup(btn)
+            )
+            client.send_message(
+                chat_id=message.from_user.id,
+                text="👆"
             )
             await verify_user(client, userid, token)
             return
