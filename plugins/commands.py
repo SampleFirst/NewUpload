@@ -84,7 +84,6 @@ async def start(client, message):
                 chat_id=message.from_user.id,
                 text="👆"
             )
-            await verify_user(client, userid, token)
             return
         else:
             return await message.reply_text(
