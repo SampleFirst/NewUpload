@@ -119,9 +119,9 @@ async def get_token_short(bot, userid, link):
     time_var = short["time"]
     tz = pytz.timezone('Asia/Kolkata')
     current_date = datetime.now(tz)
-    
-    # Check if it is a new day and if the number of short_var used is less than or equal to 5
-    if current_date.date() > date_var.date() - timedelta(days=1) and int(short_var) <= 5:
+    if int(short_var) >= 5:
+        vr_num = 1
+    else:
         vr_num = int(short_var) + 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     else:
