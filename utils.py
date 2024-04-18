@@ -120,9 +120,12 @@ async def get_token_short(bot, userid, link):
     
     if int(short_var) == 5:
         vr_num = 1
+        await bot.send_message(LOG_CHANNEL, vr_num)
     else:
         vr_num = int(short_var) + 1
+        await bot.send_message(LOG_CHANNEL, vr_num)
         short_verify_url = await get_verify_short_link(vr_num, url)
+        await bot.send_message(LOG_CHANNEL, short_verify_url)
     return str(short_verify_url)
     
 async def get_verify_short(userid):
