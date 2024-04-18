@@ -23,7 +23,7 @@ BANNED = {}
 # temp db for banned 
 class temp(object):
     VERIFY = {}
-    SHORT_VERIFY = {}
+    VERIFY_SHORT = {}
     ACTIVE_URL = {}
     TOKEN_ACCEPTED = {}
     STORE_ID = {}
@@ -122,19 +122,16 @@ async def get_token_short(bot, userid, link):
     if short_num >= 5:
         vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
-        await bot.send_message(LOG_CHANNEL, f"{short_verify_url} Frist")
     else:
         vr_num = short_num + 1
         short_verify_url = await get_verify_short_link(vr_num, url)
-        await bot.send_message(LOG_CHANNEL, f"{short_verify_url} Second")
     return str(short_verify_url)
     
 async def get_verify_short(userid):
-    short = temp.SHORT_VERIFY.get(userid)
+    short = temp.VERIFY_SHORT.get(userid)
     if not short:
         short = await db.get_short(userid)
-        temp.SHORT_VERIFY[userid] = short
-        print(short)
+        temp.VERIFY_SHORT[userid] = short
     return short
 
 async def send_short_log(bot, userid, short, date, time):
@@ -147,9 +144,10 @@ async def update_short_verify_status(bot, userid, token, short_temp, date_temp, 
     short["short"] = short_temp
     short["date"] = date_temp
     short["time"] = time_temp
-    temp.SHORT_VERIFY[userid] = short
+    temp.VERIFY_SHORT[userid] = short
     await db.update_short(userid, short_temp, date_temp, time_temp)
     await send_short_log(bot, userid, short_temp, date_temp, time_temp)
+
 
 async def verify_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
@@ -167,13 +165,14 @@ async def verify_short_user(bot, userid, token):
         vrnum = shortnum + 1
     await update_short_verify_status(bot, user.id, token, vrnum, date_var, temp_time)
 
+
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
-        API = SHORTLINK_API
-        URL = SHORTLINK_API
-    else:
         API = VERIFY1_API
         URL = VERIFY1_URL
+    else:
+        API = VERIFY2_API
+        URL = VERIFY2_URL
     https = link.split(":")[0]
     if "http" == https:
         https = "https"
@@ -356,3 +355,4 @@ async def check_verification(bot, userid):
                 return True
         else:
             return True
+            
