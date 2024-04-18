@@ -138,11 +138,11 @@ async def send_short_log(bot, userid, short, date, time):
     log_message = f"#ShortLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}\nDate: {date}\nTime: {time}"
     await bot.send_message(LOG_CHANNEL, log_message)
 
-async def update_short_verify_status(bot, userid, token, short_temp):
+async def update_short_verify_status(bot, userid, token, short_temp, date_temp, time_temp):
     status = await get_verify_short(userid)
+    status["short"] = short_temp
     status["date"] = date_temp
     status["time"] = time_temp
-    status["short"] = short_temp
     temp.SHORT_VERIFY[userid] = short
     await db.update_short_verification(userid, short_temp, date_temp, time_temp)
     await send_short_log(bot, userid, short_temp, date_temp, time_temp)
