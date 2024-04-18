@@ -115,16 +115,11 @@ async def get_token_short(bot, userid, link):
     await bot.send_message(LOG_CHANNEL, url)
     short = await get_verify_short(user.id)
     short_var = short["short"]
-    if short_var == 1:
-        vr_num = 2
-    elif short_var == 2:
-        vr_num = 3
-    elif short_var == 3:
-        vr_num = 4
-    elif short_var == 4:
-        vr_num = 5
-    else:
+    
+    if short_var == 5:
         vr_num = 1
+    else:
+        vr_num = short_var + 1
     
     short_verify_url = await get_verify_short_link(vr_num, url)
     return str(short_verify_url)
