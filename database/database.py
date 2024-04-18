@@ -18,7 +18,7 @@ class Database:
             caption=None,
         )
 
-    async def update_short_verification(self, id, short, date, time):
+    async def update_short(self, id, short, date, time):
         short = {
             'short': str(short),
             'date': str(date),
@@ -26,9 +26,9 @@ class Database:
         }
         await self.col.update_one({'id': int(id)}, {'$set': {'short_status': short}})
     
-    async def get_short_verified(self, id):
+    async def get_short(self, id):
         default = {
-            'short': "1",
+            'short': "5",
             'date': "1999-12-31",
             'time': "23:59:59"
         }
