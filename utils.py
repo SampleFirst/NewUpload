@@ -115,15 +115,19 @@ async def get_token_short(bot, userid, link):
     await bot.send_message(LOG_CHANNEL, url)
     short = await get_verify_short(user.id)
     short_var = short["short"]
+    date_var = short["date"]
+    time_var = short["time"]
+    tz = pytz.timezone('Asia/Kolkata')
+    current_date = datetime.now(tz)
     
-    if short_var >= str(5):
-        vr_num = 1
+    # Check if it is a new day and if the number of short_var used is less than or equal to 5
+    if current_date.date() > date_var.date() - timedelta(days=1) and int(short_var) <= 5:
+        vr_num = int(short_var) + 1
+        short_verify_url = await get_verify_short_link(vr_num, url)
     else:
-        vr_num = short_var + str(1)
-    
-    short_verify_url = await get_verify_short_link(vr_num, url)
+        short_verify_url = await send_message(vr_num)
     return str(short_verify_url)
-
+    
 async def get_verify_short(userid):
     short = temp.SHORT_VERIFY.get(userid)
     if not short:
@@ -131,25 +135,33 @@ async def get_verify_short(userid):
         temp.SHORT_VERIFY[userid] = short
     return short
 
-async def send_short_log(bot, userid, short):
+async def send_short_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
-    log_message = f"#ShortLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}"
+    log_message = f"#ShortLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}\nDate: {date}\nTime: {time}"
     await bot.send_message(LOG_CHANNEL, log_message)
 
 async def update_short_verify_status(bot, userid, token, short_temp):
-    short = await get_verify_short(userid)
-    short["short"] = short_temp
+    status = await get_verify_short(userid)
+    status["date"] = date_temp
+    status["time"] = time_temp
+    status["short"] = short_temp
     temp.SHORT_VERIFY[userid] = short
-    await db.update_short_verification(userid, short_temp)
-    await send_short_log(bot, userid, short_temp)
+    await db.update_short_verification(userid, short_temp, date_temp, time_temp)
+    await send_short_log(bot, userid, short_temp, date_temp, time_temp)
+
 
 async def verify_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
     TOKENS[user.id] = {token: True}
     short = await get_verify_short(user.id)
+    tz = pytz.timezone('Asia/Kolkata')
+    date_var = datetime.now(tz)
+    temp_time = date_var.strftime("%H:%M:%S")
+    date_var, time_var = str(date_var).split(" ")
     short_var = short["short"]
-    shortnum = short_var + str(1)
-    await update_short_verify_status(bot, user.id, token, shortnum)
+    shortnum = int(short_var) + 1
+    await update_short_verify_status(bot, user.id, token, shortnum, date_var, temp_time)
+
 
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
