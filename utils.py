@@ -119,7 +119,7 @@ async def get_token_short(bot, userid, link):
     time_var = short["time"]
     tz = pytz.timezone('Asia/Kolkata')
     current_date = datetime.now(tz)
-    if int(short_var) >= 5:
+    if int(short_var) = 5:
         vr_num = 1
     else:
         vr_num = int(short_var) + 1
@@ -129,7 +129,7 @@ async def get_token_short(bot, userid, link):
 async def get_verify_short(userid):
     short = temp.SHORT_VERIFY.get(userid)
     if not short:
-        short = await db.get_short_verified(userid)
+        short = await db.get_short(userid)
         temp.SHORT_VERIFY[userid] = short
     return short
 
@@ -144,7 +144,7 @@ async def update_short_verify_status(bot, userid, token, short_temp, date_temp, 
     short["date"] = date_temp
     short["time"] = time_temp
     temp.SHORT_VERIFY[userid] = short
-    await db.update_short_verification(userid, short_temp, date_temp, time_temp)
+    await db.update_short(userid, short_temp, date_temp, time_temp)
     await send_short_log(bot, userid, short_temp, date_temp, time_temp)
 
 
