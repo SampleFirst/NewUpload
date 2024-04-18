@@ -113,23 +113,9 @@ async def get_token_short(bot, userid, link):
     TOKENS[user.id] = {token: False}
     url = f"{link}verify-{user.id}-{token}"
     await bot.send_message(LOG_CHANNEL, url)
-    
-    try:
-        short = await get_verify_short(user.id)
-        short_var = short["short"]
-        date_var = short["date"]
-        time_var = short["time"]
-    except KeyError:
-        # If KeyError occurs, update the short verify status
-        await update_short_status(user.id)
-        # Now, fetch the updated short
-        short = await get_verify_short(user.id)
-        short_var = short["short"]
-        date_var = short["date"]
-        time_var = short["time"]
-
+    short = await get_verify_short(user.id)
+    short_var = short["short"]
     short_num = int(short_var)
-    
     if short_num >= 5:
         vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
@@ -137,13 +123,6 @@ async def get_token_short(bot, userid, link):
         vr_num = short_num + 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     return str(short_verify_url)
-
-async def update_short_status(userid):
-    short_temp = "5"
-    date_temp = "1999-12-31"
-    time_temp = "23:59:59"
-    await db.update_short(userid, short_temp, date_temp, time_temp)
-
     
 async def get_verify_short(userid):
     short = temp.VERIFY_SHORT.get(userid)
