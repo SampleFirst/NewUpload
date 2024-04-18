@@ -20,13 +20,17 @@ class Database:
 
     async def update_short_verification(self, id, short):
         status = {
-            'short': str(short)
+            'short': str(short),
+            'date': str(date),
+            'time': str(time)
         }
         await self.col.update_one({'id': int(id)}, {'$set': {'short_status': status}})
     
     async def get_short_verified(self, id):
         default = {
-            'short': "1"
+            'short': "1",
+            'date': "1999-12-31",
+            'time': "23:59:59"
         }
         user = await self.col.find_one({'id': int(id)})
         if user:
