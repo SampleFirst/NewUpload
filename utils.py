@@ -122,9 +122,11 @@ async def get_token_short(bot, userid, link):
     if short_num >= 5:
         vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
+        await bot.send_message(LOG_CHANNEL, f"{short_verify_url} Frist")
     else:
         vr_num = short_num + 1
         short_verify_url = await get_verify_short_link(vr_num, url)
+        await bot.send_message(LOG_CHANNEL, f"{short_verify_url} Second")
     return str(short_verify_url)
     
 async def get_verify_short(userid):
@@ -132,6 +134,7 @@ async def get_verify_short(userid):
     if not short:
         short = await db.get_short(userid)
         temp.SHORT_VERIFY[userid] = short
+        print(short)
     return short
 
 async def send_short_log(bot, userid, short, date, time):
