@@ -118,7 +118,7 @@ async def get_token_short(bot, userid, link):
     date_var = short["date"]
     time_var = short["time"]
     
-    if int(short_var) == 5:
+    if int(short_var) >= 5:
         vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     else:
