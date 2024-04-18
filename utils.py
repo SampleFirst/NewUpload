@@ -119,7 +119,7 @@ async def get_token_short(bot, userid, link):
     time_var = short["time"]
     tz = pytz.timezone('Asia/Kolkata')
     current_date = datetime.now(tz)
-    if int(short_var) = 5:
+    if int(short_var) == 5:
         vr_num = 1
     else:
         vr_num = int(short_var) + 1
