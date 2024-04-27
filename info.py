@@ -25,20 +25,20 @@ AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_chan
 # Others
 IS_VERIFY = is_enabled(environ.get('IS_VERIFY', 'True'), True)
 HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', "")
-VERIFY1_URL = environ.get('VERIFY1_URL', 'ziplinker.net') #2nd p
-VERIFY1_API = environ.get('VERIFY1_API', '043e5c34cfe525875918d3ef4b98567f080453f7') # ref from 1st p
+VERIFY1_URL = environ.get('VERIFY1_URL', 'omnifly.in.net') #2nd p
+VERIFY1_API = environ.get('VERIFY1_API', '579a68527328d450fea22397f9b8890c2e198cab') # ref from 1st p
 
 VERIFY2_URL = environ.get('VERIFY2_URL', 'omnifly.in.net') # 2nd g
 VERIFY2_API = environ.get('VERIFY2_API', '579a68527328d450fea22397f9b8890c2e198cab') # ref from 1st g
 
-VERIFY3_URL = environ.get('VERIFY3_URL', 'ziplinker.net') # 3rd p
-VERIFY3_API = environ.get('VERIFY3_API', '4b6d569c445fa717c3096e485f203288686fba1d') # ref from 2nd p
+VERIFY3_URL = environ.get('VERIFY3_URL', 'omnifly.in.net') # 3rd p
+VERIFY3_API = environ.get('VERIFY3_API', '7df51c1977b273b081a943eb2d4511e9227e1d66') # ref from 2nd p
 
 VERIFY4_URL = environ.get('VERIFY4_URL', 'omnifly.in.net') # 3rd g
 VERIFY4_API = environ.get('VERIFY4_API', '7df51c1977b273b081a943eb2d4511e9227e1d66') # ref form 2nd g
 
-VERIFY5_URL = environ.get('VERIFY5_URL', 'ziplinker.net') # 4th p
-VERIFY5_API = environ.get('VERIFY5_API', '0d2e001687e2a100f98cb027866a13d5214bd6c0') # ref from 3rd p
+VERIFY5_URL = environ.get('VERIFY5_URL', 'omnifly.in.net') # 4th p
+VERIFY5_API = environ.get('VERIFY5_API', '7df51c1977b273b081a943eb2d4511e9227e1d66') # ref from 3rd p
 
 
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
