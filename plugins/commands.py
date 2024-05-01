@@ -119,7 +119,7 @@ async def start(client, message):
                 if short_num == 5:
                     await client.send_message(
                         chat_id=PREMIUM_CHAT,
-                        text=f"/add24 {user_id}"
+                        text=f"/add24 {userid} | {token}"
                     )
                     return
         else:
