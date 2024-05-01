@@ -75,8 +75,7 @@ async def start(client, message):
             ],[
                 InlineKeyboardButton("⛔ Cancel", callback_data='can')
             ]]
-            user_id = message.from_user.id
-            msg_id = temp.STORE_ID.get(user_id)
+            msg_id = temp.STORE_ID.get(userid)
             msg = await client.get_messages(message.chat.id, msg_id)
             await msg.edit_text(
                 text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nᴄʟɪᴄᴋ ꜱᴛᴀʀᴛ ɴᴏᴡ ʙᴜᴛᴛᴏɴ!</b>",
@@ -86,7 +85,7 @@ async def start(client, message):
                 chat_id=message.from_user.id,
                 text="👆"
             )
-            temp.ACTIVE_URL[user_id] = True
+            temp.ACTIVE_URL[userid] = True
             await verify_short_user(client, userid, token)
             return
         else:
@@ -100,7 +99,7 @@ async def start(client, message):
             return await message.reply_text(
                 text="<b>Invalid link or expired link!</b>"
             )
-        short = await get_verify_short(user_id)
+        short = await get_verify_short(userid)
         short_var = short["short"]
         short_num = int(short_var)
         is_valid = await check_token(client, userid, token)
@@ -111,8 +110,7 @@ async def start(client, message):
                     btn = [[
                         InlineKeyboardButton("📢 Special Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
                     ]]
-                    user_id = message.from_user.id
-                    msg_id = temp.STORE_ID.get(user_id)
+                    msg_id = temp.STORE_ID.get(userid)
                     msg = await client.get_messages(message.chat.id, msg_id)
                     await msg.edit_text(
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
