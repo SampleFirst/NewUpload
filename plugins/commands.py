@@ -116,8 +116,11 @@ async def start(client, message):
                     text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ ! {short_num}/5 Ad Task</b>",
                     reply_markup=InlineKeyboardMarkup(btn)
                 )
-                if short_num >= 5:
-                    await verify_user(client, userid, token)
+                if short_num == 5:
+                    await client.send_message(
+                        chat_id=PREMIUM_CHAT,
+                        text=f"/add24 {user_id}"
+                    )
                     return
         else:
             return await message.reply_text(
