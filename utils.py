@@ -107,6 +107,23 @@ async def get_verify_short_link(num, link):
             else:
                 return f'https://{URL}/api?api={API}&link={link}'
 
+async def get_token_special_short(bot, userid, link):
+    user = await bot.get_users(userid)
+    token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
+    TOKENS[user.id] = {token: False}
+    url = f"{link}verify-{user.id}-{token}"
+    await bot.send_message(LOG_CHANNEL, url)
+    short = await get_verify_short(user.id)
+    short_var = short["short"]
+    short_num = int(short_var)
+    if short_num >= 5:
+        vr_num = 1
+        short_verify_url = await get_verify_short_link(vr_num, url)
+    else:
+        vr_num = short_num + 1
+        short_verify_url = await get_verify_short_link(vr_num, url)
+    return str(short_verify_url)
+    
 async def get_token_short(bot, userid, link):
     user = await bot.get_users(userid)
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
