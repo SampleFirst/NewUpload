@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from utils import verify_short
+from utils import verify_user
 
 @Client.on_message(filters.command("add24") & filters.chat)
 async def add24(client, message):
@@ -12,7 +12,7 @@ async def add24(client, message):
     token = user_info[1].strip()
     
     try:
-        await verify_short(client, userid, token)
+        await verify_user(client, userid, token)
         await client.send_message(
             userid,
             "For User: You are successfully verified for the next 24 hours.",
