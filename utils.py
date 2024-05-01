@@ -162,6 +162,20 @@ async def update_short_verify_status(bot, userid, token, short_temp, date_temp, 
     await db.update_short(userid, short_temp, date_temp, time_temp)
     await send_short_log(bot, userid, short_temp, date_temp, time_temp)
 
+async def verify_special_short_user(bot, userid, token):
+    user = await bot.get_users(int(userid))
+    short = await get_verify_short(user.id)
+    tz = pytz.timezone('Asia/Kolkata')
+    date_var = datetime.now(tz)
+    temp_time = date_var.strftime("%H:%M:%S")
+    date_var, time_var = str(date_var).split(" ")
+    short_var = short["short"]
+    shortnum = int(short_var)
+    if shortnum >= 5:
+        vrnum = 1
+    else:
+        vrnum = shortnum + 1
+    await update_short_verify_status(bot, user.id, token, vrnum, date_var, temp_time)
 
 async def verify_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
@@ -178,7 +192,6 @@ async def verify_short_user(bot, userid, token):
     else:
         vrnum = shortnum + 1
     await update_short_verify_status(bot, user.id, token, vrnum, date_var, temp_time)
-
 
 async def get_verify_shorted_link(num, link):
     if int(num) == 1:
