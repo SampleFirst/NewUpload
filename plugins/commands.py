@@ -109,12 +109,16 @@ async def start(client, message):
                 user_id = message.from_user.id
                 msg_id = temp.STORE_ID.get(user_id)
                 msg = await client.get_messages(message.chat.id, msg_id)
+                short = await get_verify_short(user.id)
+                short_var = short["short"]
+                short_num = int(short_var)
                 await msg.edit_text(
-                    text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nᴄʟɪᴄᴋ ꜱᴛᴀʀᴛ ɴᴏᴡ ʙᴜᴛᴛᴏɴ!</b>",
+                    text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ ! {short_num}/5 Ad Task</b>",
                     reply_markup=InlineKeyboardMarkup(btn)
                 )
-                await verify_short_user(client, userid, token)
-                return
+                if short_num >= 5:
+                    await verify_short_user(client, userid, token)
+                    return
         else:
             return await message.reply_text(
                 text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
