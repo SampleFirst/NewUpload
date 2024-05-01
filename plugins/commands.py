@@ -93,6 +93,32 @@ async def start(client, message):
             return await message.reply_text(
                 text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
             )
+    elif data.split("-", 1)[0] == "sverify":
+        userid = data.split("-", 2)[1]
+        token = data.split("-", 3)[2]
+        if str(message.from_user.id) != str(userid):
+            return await message.reply_text(
+                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
+            )
+        is_valid = await check_token(client, userid, token)
+        if is_valid == True:
+            if IS_VERIFY and not await check_verification(client, message.from_user.id):
+                btn = [[
+                    InlineKeyboardButton("📢 Verify", url=await get_token_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
+                ]]
+                user_id = message.from_user.id
+                msg_id = temp.STORE_ID.get(user_id)
+                msg = await client.get_messages(message.chat.id, msg_id)
+                await msg.edit_text(
+                    text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nᴄʟɪᴄᴋ ꜱᴛᴀʀᴛ ɴᴏᴡ ʙᴜᴛᴛᴏɴ!</b>",
+                    reply_markup=InlineKeyboardMarkup(btn)
+                )
+                await verify_short_user(client, userid, token)
+                return
+        else:
+            return await message.reply_text(
+                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
+            )
 
     
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
