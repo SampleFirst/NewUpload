@@ -111,7 +111,7 @@ async def get_token_special_short(bot, userid, link):
     user = await bot.get_users(userid)
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
     TOKENS[user.id] = {token: False}
-    url = f"{link}verify-{user.id}-{token}"
+    url = f"{link}sverify-{user.id}-{token}"
     await bot.send_message(LOG_CHANNEL, url)
     short = await get_verify_short(user.id)
     short_var = short["short"]
