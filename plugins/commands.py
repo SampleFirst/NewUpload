@@ -117,7 +117,7 @@ async def start(client, message):
                     reply_markup=InlineKeyboardMarkup(btn)
                 )
                 if short_num >= 5:
-                    await verify_short_user(client, userid, token)
+                    await verify_user(client, userid, token)
                     return
         else:
             return await message.reply_text(
