@@ -7,7 +7,7 @@ from info import *
 from Script import script 
 from utils import *
 from plugins.token import token_accepted
-from utils import temp, get_token_special_short
+from utils import temp
 
 logger = logging.getLogger(__name__)
 
