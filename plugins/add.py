@@ -1,7 +1,8 @@
 from pyrogram import Client, filters
 from utils import verify_user
+from info import PREMIUM_CHAT
 
-@Client.on_message(filters.command("add24") & filters.chat)
+@Client.on_message(filters.command("add24") & filters.chat("PREMIUM_CHAT"))
 async def add24(client, message):
     if len(message.command) != 2:
         await message.reply_text("Invalid command format. Please use /add24 {userid} | {token}")
