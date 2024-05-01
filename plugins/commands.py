@@ -110,7 +110,8 @@ async def start(client, message):
                     btn = [[
                         InlineKeyboardButton("📢 Special Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
                     ]]
-                    msg_id = temp.STORE_ID.get(userid)
+                    user_id = message.from_user.id
+                    msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
                     await msg.edit_text(
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
