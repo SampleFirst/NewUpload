@@ -109,7 +109,7 @@ async def start(client, message):
                 user_id = message.from_user.id
                 msg_id = temp.STORE_ID.get(user_id)
                 msg = await client.get_messages(message.chat.id, msg_id)
-                short = await get_verify_short(user.id)
+                short = await get_verify_short(user_id)
                 short_var = short["short"]
                 short_num = int(short_var)
                 await msg.edit_text(
