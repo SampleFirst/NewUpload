@@ -102,10 +102,10 @@ async def start(client, message):
         short = await get_verify_short(userid)
         short_var = short["short"]
         short_num = int(short_var)
+        
         is_valid = await check_token(client, userid, token)
         if is_valid == True:
             if short_num != 5:
-                print("This is not equal to 5")
                 if IS_VERIFY and not await check_verification(client, message.from_user.id):
                     btn = [[
                         InlineKeyboardButton("📢 Special Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
@@ -126,6 +126,7 @@ async def start(client, message):
                 await msg.edit_text(
                     text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
                 )
+                await verify_short_user(client, userid, token)
                 return
         else:
             return await message.reply_text(
