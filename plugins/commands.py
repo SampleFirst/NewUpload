@@ -7,7 +7,7 @@ from info import *
 from Script import script 
 from utils import *
 from plugins.token import token_accepted
-from utils import temp 
+from utils import temp, get_token_special_short
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +104,7 @@ async def start(client, message):
         if is_valid == True:
             if IS_VERIFY and not await check_verification(client, message.from_user.id):
                 btn = [[
-                    InlineKeyboardButton("📢 Verify", url=await get_token_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
+                    InlineKeyboardButton("📢 Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
                 ]]
                 user_id = message.from_user.id
                 msg_id = temp.STORE_ID.get(user_id)
