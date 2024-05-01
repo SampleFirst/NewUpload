@@ -112,22 +112,23 @@ async def start(client, message):
                 short = await get_verify_short(user_id)
                 short_var = short["short"]
                 short_num = int(short_var)
-                await msg.edit_text(
-                    text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ ! {short_num}/5 Ad Task</b>",
-                    reply_markup=InlineKeyboardMarkup(btn)
-                )
                 if short_num == 5:
                     await client.send_message(
                         chat_id=PREMIUM_CHAT,
                         text=f"/add24 {userid} | {token}"
                     )
                     return
+                await msg.edit_text(
+                    text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ ! {short_num}/5 Ad Task</b>",
+                    reply_markup=InlineKeyboardMarkup(btn)
+                )
+                await verify_short_user(client, userid, token)
+                return
         else:
             return await message.reply_text(
                 text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
             )
 
-    
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
     """Send log file"""
