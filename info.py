@@ -42,6 +42,7 @@ VERIFY5_API = environ.get('VERIFY5_API', '7df51c1977b273b081a943eb2d4511e9227e1d
 
 
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
+PREMIUM_CHAT = int(environ.get('PREMIUM_CHAT', 0))
 BANNED_USERS = set(int(x) for x in environ.get("BANNED_USERS", "").split())
 DOWNLOAD_LOCATION = "./DOWNLOADS"
 UPDATE_CHANNEL = environ.get("UPDATE_CHANNEL", "")
