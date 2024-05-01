@@ -98,36 +98,40 @@ async def start(client, message):
         token = data.split("-", 3)[2]
         if str(message.from_user.id) != str(userid):
             return await message.reply_text(
-                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
+                text="<b>Invalid link or expired link!</b>"
             )
+        short = await get_verify_short(user_id)
+        short_var = short["short"]
+        short_num = int(short_var)
         is_valid = await check_token(client, userid, token)
         if is_valid == True:
-            if IS_VERIFY and not await check_verification(client, message.from_user.id):
-                btn = [[
-                    InlineKeyboardButton("📢 Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
-                ]]
-                user_id = message.from_user.id
-                msg_id = temp.STORE_ID.get(user_id)
-                msg = await client.get_messages(message.chat.id, msg_id)
-                short = await get_verify_short(user_id)
-                short_var = short["short"]
-                short_num = int(short_var)
-                await msg.edit_text(
-                    text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ ! {short_num}/5 Ad Task</b>",
-                    reply_markup=InlineKeyboardMarkup(btn)
-                )
-                await verify_special_short_user(client, userid, token)
-                if short_num == 5:
-                    await client.send_message(
-                        chat_id=PREMIUM_CHAT,
-                        text=f"/add24 {userid} | {token}"
+            if short_num != 5:
+                print("This is not equal to 5")
+                if IS_VERIFY and not await check_verification(client, message.from_user.id):
+                    btn = [[
+                        InlineKeyboardButton("📢 Special Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
+                    ]]
+                    user_id = message.from_user.id
+                    msg_id = temp.STORE_ID.get(user_id)
+                    msg = await client.get_messages(message.chat.id, msg_id)
+                    await msg.edit_text(
+                        text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
+                        reply_markup=InlineKeyboardMarkup(btn)
                     )
-                    return
+                    await verify_special_short_user(client, userid, token)
+            else:
+                await client.send_message(
+                    chat_id=PREMIUM_CHAT,
+                    text=f"/add24 {userid} | {token}"
+                )
+                await msg.edit_text(
+                    text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
+                )
+                return
         else:
             return await message.reply_text(
-                text="<b>Iɴᴠᴀʟɪᴅ ʟɪɴᴋ ᴏʀ Exᴘɪʀᴇᴅ ʟɪɴᴋ !</b>"
+                text="<b>Invalid link or expired link!</b>"
             )
-
     
 @Client.on_message(filters.command('logs') & filters.user(ADMINS))
 async def log_file(bot, message):
