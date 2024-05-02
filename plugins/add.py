@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils import check_token, verify_user
+from utils import check_special_token, verify_user
 from info import ADMINS
 
 
@@ -14,7 +14,7 @@ async def addpre(client, message):
         user_token = message.command[1].split('-')
         userid = int(user_token[0])
         token = user_token[1]
-        is_valid = await check_token(client, userid, token)
+        is_valid = await check_special_token(client, userid, token)
         if is_valid == True:
             await verify_user(client, userid, token)
             await client.send_message(
