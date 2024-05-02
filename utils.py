@@ -266,9 +266,9 @@ async def check_token(bot, userid, token):
 async def check_special_token(bot, userid, token):
     user = await bot.get_users(userid)
     if user.id in SPECIAL_TOKENS.keys():
-        TKN = SPECIAL_TOKENS[user.id]
-        if token in TKN.keys():
-            is_used = TKN[token]
+        STKN = SPECIAL_TOKENS[user.id]
+        if token in STKN.keys():
+            is_used = STKN[token]
             if is_used == True:
                 return False
             else:
