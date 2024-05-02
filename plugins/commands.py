@@ -100,9 +100,9 @@ async def start(client, message):
             return await message.reply_text(
                 text="<b>Invalid link or expired link!</b>"
             )
-        await verify_special_short_user(client, userid, token)
         is_valid = await check_special_token(client, userid, token)
         if is_valid == True:
+            await verify_special_short_user(client, userid, token)
             if IS_VERIFY and not await check_verification(client, message.from_user.id):
                 user_id = message.from_user.id
                 short = await get_verify_short(user_id)
