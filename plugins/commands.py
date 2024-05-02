@@ -120,15 +120,10 @@ async def start(client, message):
                 else:
                     msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
-                    await copy_message(
-                        chat_id=PREMIUM_CHAT,
-                        text=f"/add {userid}|{token}",
-                        parse_mode=enums.ParseMode.MARKDOWN
-                    )
                     await client.send_message(
                         chat_id=PREMIUM_CHAT,
-                        text=f"/search avatar",
-                        parse_mode=enums.ParseMode.MARKDOWN
+                        text=f"/add24 {userid}",
+                        anonymous=True
                     )
                     await msg.edit_text(
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
