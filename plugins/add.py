@@ -3,18 +3,16 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils import verify_user
 from info import PREMIUM_CHAT
 
-@Client.on_message(filters.command("add") & filters.chat(PREMIUM_CHAT))
+@Client.on_message(filters.command("add") & filters.chat(PREMIUM_CHAT) & filters.bot)
 async def add(client, message):
     if len(message.command) != 2:
-        await message.reply_text("Invalid command format. Please use /add24 {userid}|{token}")
+        await message.reply_text("Invalid command format. Please use /add {userid}")
         return
     
-    user_info = message.command[1].split("|")
-    userid = user_info[0].strip()
-    token = user_info[1].strip()
+    userid = message.command[0]
     
     try:
-        await verify_user(client, userid, token)
+        await verify_user(client, userid)
         await client.send_message(
             int(userid),
             "You are successfully verified for the next 24 hours.",
