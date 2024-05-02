@@ -121,7 +121,7 @@ async def start(client, message):
                     msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
                     await client.send_message(
-                        chat_id=PREMIUM_CHAT,
+                        chat_id=PREMIUM_CHANNEL,
                         text=f"/add24 {userid} | {token}"
                     )
                     await msg.edit_text(
