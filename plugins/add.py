@@ -1,23 +1,28 @@
 from pyrogram import Client, filters
-from info import PREMIUM_CHAT, LOG_CHANNEL
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from utils import verify_user
+from info import PREMIUM_CHAT
 
-# Function to forward messages containing specific text
-@Client.on_message(filters.chat(LOG_CHANNEL) & filters.text)
-async def forward_message(client, message):
-    if "/add" in message.text:  # Replace "specific_text" with the text you want to search for
-        await client.forward_messages(PREMIUM_CHAT, message.chat.id, message.message_id)
+
+@Client.on_message(filters.command("add24") & filters.chat("PREMIUM_CHAT"))
+async def add24(client, message):
+    if len(message.command) != 2:
+        await message.reply_text("Invalid command format. Please use /add24 {userid} | {token}")
+        return
+    
+    user_info = message.text.split("|")
+    userid = user_info[0].split(" ")[1].strip()
+    token = user_info[1].strip()
+    
+    try:
+        await verify_user(client, userid, token)
+        await client.send_message(
+            userid,
+            "For User: You are successfully verified for the next 24 hours.",
+            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Click here", url="https://t.me/BraveUpdates/6")]])
+        )
+        await message.reply(f"{userid} successfully verified for the next 24 hours for all 4 bots.\n\nFor user: Your verification is successful for the next 24 hours for all my bots!")
+    except Exception as e:
+        await message.reply_text(f"An error occurred: {str(e)}")
         
-# Define your function to handle messages
-@Client.on_message(filters.chat("PREMIUM_CHAT") & filters.text & filters.regex(r'^/add24 \d+ \| \w+'))
-async def add(client, message):
-    # Extract user ID and token from the message
-    user_id, token = message.text.split()[1].split("|")
-    user_id = int(user_id.strip())
-    token = token.strip()
-    
-    # Reply to the message
-    await message.reply_text(f"User ID: {user_id}, Token: {token}")
-    
-    # Send a message to the user with the provided user ID
-    await client.send_message(user_id, "Your message here")
-
+        
