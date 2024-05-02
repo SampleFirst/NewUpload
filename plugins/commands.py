@@ -122,11 +122,7 @@ async def start(client, message):
                     msg = await client.get_messages(message.chat.id, msg_id)
                     await client.send_message(
                         chat_id=PREMIUM_CHANNEL,
-                        text=f"/add24 {userid} | {token}"
-                    )
-                    await client.send_message(
-                        chat_id=PREMIUM_CHANNEL,
-                        text=f"/search avatar"
+                        text=f"/addpre {userid}-{token}"
                     )
                     await msg.edit_text(
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
