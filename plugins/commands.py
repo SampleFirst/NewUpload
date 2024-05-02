@@ -75,7 +75,8 @@ async def start(client, message):
             ],[
                 InlineKeyboardButton("⛔ Cancel", callback_data='can')
             ]]
-            msg_id = temp.STORE_ID.get(userid)
+            user_id = message.from_user.id
+            msg_id = temp.STORE_ID.get(user_id)
             msg = await client.get_messages(message.chat.id, msg_id)
             await msg.edit_text(
                 text=f"<b>Hᴇʏ {message.from_user.mention}, Yᴏᴜ ᴀʀᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴠᴇʀɪғɪᴇᴅ !\nᴄʟɪᴄᴋ ꜱᴛᴀʀᴛ ɴᴏᴡ ʙᴜᴛᴛᴏɴ!</b>",
@@ -99,7 +100,7 @@ async def start(client, message):
             return await message.reply_text(
                 text="<b>Invalid link or expired link!</b>"
             )
-        is_valid = await check_token(client, userid, token)
+        is_valid = await check_special_token(client, userid, token)
         if is_valid == True:
             if IS_VERIFY and not await check_verification(client, message.from_user.id):
                 user_id = message.from_user.id
