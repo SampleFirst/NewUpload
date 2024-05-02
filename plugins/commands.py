@@ -118,6 +118,8 @@ async def start(client, message):
                     )
                     await verify_special_short_user(client, userid, token)
                 else:
+                    msg_id = temp.STORE_ID.get(user_id)
+                    msg = await client.get_messages(message.chat.id, msg_id)
                     await client.send_message(
                         chat_id=PREMIUM_CHAT,
                         text=f"/add24 {userid} | {token}"
