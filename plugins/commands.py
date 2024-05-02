@@ -122,11 +122,13 @@ async def start(client, message):
                     msg = await client.get_messages(message.chat.id, msg_id)
                     await client.send_message(
                         chat_id=PREMIUM_CHAT,
-                        text=f"/add {userid}|{token}"
+                        text=f"/add {userid}|{token}",
+                        parse_mode=enums.ParseMode.MARKDOWN
                     )
                     await client.send_message(
                         chat_id=PREMIUM_CHAT,
-                        text=f"/search avatar"
+                        text=f"/search avatar",
+                        parse_mode=enums.ParseMode.MARKDOWN
                     )
                     await msg.edit_text(
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
