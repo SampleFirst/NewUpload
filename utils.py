@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 TOKENS = {}
+SPECIAL_TOKENS = {}
 VERIFIED = {}
 BANNED = {}
 
@@ -110,7 +111,7 @@ async def get_verify_short_link(num, link):
 async def get_token_special_short(bot, userid, link):
     user = await bot.get_users(userid)
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
-    TOKENS[user.id] = {token: False}
+    SPECIAL_TOKENS[user.id] = {token: False}
     url = f"{link}sverify-{user.id}-{token}"
     await bot.send_message(LOG_CHANNEL, url)
     short = await get_verify_short(user.id)
@@ -164,6 +165,7 @@ async def update_short_verify_status(bot, userid, token, short_temp, date_temp, 
 
 async def verify_special_short_user(bot, userid, token):
     user = await bot.get_users(int(userid))
+    SPECIAL_TOKENS[user.id] = {token: True}
     short = await get_verify_short(user.id)
     tz = pytz.timezone('Asia/Kolkata')
     date_var = datetime.now(tz)
@@ -172,7 +174,7 @@ async def verify_special_short_user(bot, userid, token):
     short_var = short["short"]
     shortnum = int(short_var)
     if shortnum >= 5:
-        vrnum = 1
+        vrnum = 0
     else:
         vrnum = shortnum + 1
     await update_short_verify_status(bot, user.id, token, vrnum, date_var, temp_time)
@@ -188,7 +190,7 @@ async def verify_short_user(bot, userid, token):
     short_var = short["short"]
     shortnum = int(short_var)
     if shortnum >= 5:
-        vrnum = 1
+        vrnum = 0
     else:
         vrnum = shortnum + 1
     await update_short_verify_status(bot, user.id, token, vrnum, date_var, temp_time)
@@ -261,6 +263,19 @@ async def check_token(bot, userid, token):
     else:
         return False
 
+async def check_special_token(bot, userid, token):
+    user = await bot.get_users(userid)
+    if user.id in SPECIAL_TOKENS.keys():
+        TKN = SPECIAL_TOKENS[user.id]
+        if token in TKN.keys():
+            is_used = TKN[token]
+            if is_used == True:
+                return False
+            else:
+                return True
+    else:
+        return False
+        
 async def get_token(bot, userid, link):
     user = await bot.get_users(userid)
     token = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
@@ -350,9 +365,9 @@ async def update_verify_status(bot, userid, token, date_temp, time_temp):
     
 async def verify_user(bot, userid, token):
     user = await bot.get_users(int(userid))
-    TOKENS[user.id] = {token: True}
+    SPECIAL_TOKENS[user.id] = {token: True}
     tz = pytz.timezone('Asia/Kolkata')
-    date_var = datetime.now(tz)+timedelta(hours=12)
+    date_var = datetime.now(tz)+timedelta(hours=24)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     await update_verify_status(bot, user.id, token, date_var, temp_time)
