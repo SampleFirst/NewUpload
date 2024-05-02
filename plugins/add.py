@@ -1,6 +1,12 @@
 from pyrogram import Client, filters
-from info import PREMIUM_CHAT
+from info import PREMIUM_CHAT, LOG_CHANNEL
 
+# Function to forward messages containing specific text
+@Client.on_message(filters.chat(LOG_CHANNEL) & filters.text)
+async def forward_message(client, message):
+    if "/add" in message.text:  # Replace "specific_text" with the text you want to search for
+        await client.forward_messages(PREMIUM_CHAT, message.chat.id, message.message_id)
+        
 # Define your function to handle messages
 @Client.on_message(filters.chat("PREMIUM_CHAT") & filters.text & filters.regex(r'^/add24 \d+ \| \w+'))
 async def add(client, message):
