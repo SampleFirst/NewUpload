@@ -127,7 +127,6 @@ async def start(client, message):
                     await msg.edit_text(
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
                     )
-                    await verify_short_user(client, userid, token)
                     return
         else:
             return await message.reply_text(
