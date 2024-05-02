@@ -120,7 +120,7 @@ async def start(client, message):
                 else:
                     msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
-                    await client.send_message(
+                    await copy_message(
                         chat_id=PREMIUM_CHAT,
                         text=f"/add {userid}|{token}",
                         parse_mode=enums.ParseMode.MARKDOWN
