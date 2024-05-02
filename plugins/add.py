@@ -3,8 +3,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils import verify_user
 from info import PREMIUM_CHAT
 
-@Client.on_message(filters.command("add24") & filters.chat(PREMIUM_CHAT))
-async def add24(client, message):
+@Client.on_message(filters.command("add") & filters.chat(PREMIUM_CHAT))
+async def add(client, message):
     if len(message.command) != 2:
         await message.reply_text("Invalid command format. Please use /add24 {userid}|{token}")
         return
