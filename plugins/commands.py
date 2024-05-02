@@ -100,6 +100,7 @@ async def start(client, message):
             return await message.reply_text(
                 text="<b>Invalid link or expired link!</b>"
             )
+        await verify_special_short_user(client, userid, token)
         is_valid = await check_special_token(client, userid, token)
         if is_valid == True:
             if IS_VERIFY and not await check_verification(client, message.from_user.id):
@@ -117,7 +118,6 @@ async def start(client, message):
                         text=f"<b>Hey {message.from_user.mention}, You are successfully verified! {short_num}/5 Ad Task</b>",
                         reply_markup=InlineKeyboardMarkup(btn)
                     )
-                    await verify_special_short_user(client, userid, token)
                 else:
                     msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
