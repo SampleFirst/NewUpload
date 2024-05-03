@@ -18,7 +18,7 @@ class Database:
             caption=None,
         )
 
-    async def update_verification(self, id, date, time):
+    async def update_verification(self, id, short, date, time):
         status = {
             'short': str(short),
             'date': str(date),
