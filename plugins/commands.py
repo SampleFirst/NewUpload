@@ -102,8 +102,8 @@ async def start(client, message):
             )
         is_valid = await check_special_token(client, userid, token)
         if is_valid == True:
-            await verify_special_short_user(client, userid, token)
             if IS_VERIFY and not await check_verification(client, message.from_user.id):
+                await verify_special_short_user(client, userid, token)
                 user_id = message.from_user.id
                 short = await get_verify_short(user_id)
                 short_var = short["short"]
