@@ -87,7 +87,7 @@ async def start(client, message):
                 text="👆"
             )
             temp.ACTIVE_URL[userid] = True
-            await verify_short_user(client, userid, token)
+            await verify_user(client, userid, token)
             return
         else:
             return await message.reply_text(
@@ -104,13 +104,13 @@ async def start(client, message):
         if is_valid == True:
             if IS_VERIFY and not await check_verification(client, message.from_user.id):
                 user_id = message.from_user.id
-                short = await get_verify_short(user_id)
+                short = await get_verify_status(user_id)
                 short_var = short["short"]
                 short_num = int(short_var)
                 if short_num != 5:
-                    await verify_special_short_user(client, userid, token)
+                    await verify_special_user(client, userid, token)
                     btn = [[
-                        InlineKeyboardButton("📢 Special Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
+                        InlineKeyboardButton("📢 Special Verify", url=await get_special_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
                     ]]
                     msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
