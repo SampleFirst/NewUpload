@@ -108,10 +108,10 @@ async def start(client, message):
                 short_var = short["short"]
                 short_num = int(short_var)
                 if short_num != 5:
+                    await verify_special_short_user(client, userid, token)
                     btn = [[
                         InlineKeyboardButton("📢 Special Verify", url=await get_token_special_short(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
                     ]]
-                    await verify_special_short_user(client, userid, token)
                     msg_id = temp.STORE_ID.get(user_id)
                     msg = await client.get_messages(message.chat.id, msg_id)
                     await msg.edit_text(
