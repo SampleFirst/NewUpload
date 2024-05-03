@@ -18,27 +18,9 @@ class Database:
             caption=None,
         )
 
-    async def update_short(self, id, short, date, time):
-        short = {
-            'short': str(short),
-            'date': str(date),
-            'time': str(time)
-        }
-        await self.col.update_one({'id': int(id)}, {'$set': {'short_status': short}})
-    
-    async def get_short(self, id):
-        default = {
-            'short': "5",
-            'date': "1999-12-31",
-            'time': "23:59:59"
-        }
-        user = await self.col.find_one({'id': int(id)})
-        if user:
-            return user.get("short_status", default)
-        return default
-
     async def update_verification(self, id, date, time):
         status = {
+            'short': str(short),
             'date': str(date),
             'time': str(time)
         }
@@ -46,6 +28,7 @@ class Database:
     
     async def get_verified(self, id):
         default = {
+            'short': "5",
             'date': "1999-12-31",
             'time': "23:59:59"
         }
