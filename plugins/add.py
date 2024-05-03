@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils import check_special_token, verify_special_short_user
+from utils import check_special_token, verify_user
 from info import ADMINS
 
 
@@ -16,7 +16,7 @@ async def addpre(client, message):
         token = user_token[1]
         is_valid = await check_special_token(client, userid, token)
         if is_valid == True:
-            await verify_special_short_user(client, userid, token)
+            await verify_user(client, userid, token)
             await client.send_message(
                 userid,
                 "For User: You are successfully verified for the next 24 hours.",
