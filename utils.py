@@ -92,7 +92,7 @@ async def send_special_verify_log(bot, userid, short, date, time):
     log_message = f"#SpecialLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}\nDate: {date}\nTime: {time}"
     await bot.send_message(LOG_CHANNEL, log_message)
 
-async def send_verify_log(bot, userid, userid, short, date, time):
+async def send_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
     log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short}\nDate: {date}\nTime: {time}"
     await bot.send_message(LOG_CHANNEL, log_message)
