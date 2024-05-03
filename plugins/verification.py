@@ -6,7 +6,10 @@ from info import ADMINS
 async def update_users(client, message):
     async for user in await db.get_all_users():  # Added await here
         user_id = user.get("id")
-        default_verification_status = await db.get_verified(user_id)
-        await db.update_verification(user_id, **default_verification_status)
+        short_temp = "5"
+        date_temp = "1999-12-31"
+        time_temp = "23:59:59"
+        await db.update_verification(user_id, short_temp, date_temp, time_temp)
     
     await message.reply_text("All users updated with default verification status.")
+    
