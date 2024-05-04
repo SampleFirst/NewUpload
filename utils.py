@@ -243,11 +243,11 @@ async def get_special_token(bot, userid, link): #get_token_special_short
     short = await get_verify_status(user.id)
     short_var = short["short"]
     short_num = int(short_var)
-    if short_num >= 5:
-        vr_num = 1
+    if short_num != 5:
+        vr_num = short_num + 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     else:
-        vr_num = short_num + 1
+        vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     return str(short_verify_url)
     
@@ -260,11 +260,11 @@ async def get_token(bot, userid, link): #get_token_short
     short = await get_verify_status(user.id)
     short_var = short["short"]
     short_num = int(short_var)
-    if short_num >= 5:
-        vr_num = 1
+    if short_num != 5:
+        vr_num = short_num + 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     else:
-        vr_num = short_num + 1
+        vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     return str(short_verify_url)
     
