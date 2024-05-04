@@ -126,7 +126,7 @@ async def verify_special_user(bot, userid, token): #verify_special_frist_short_u
     date_var = (datetime.now(tz) + timedelta(hours=24)) if shortnum == 5 else datetime.now(tz)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
-    await update_verify_status(bot, user.id, vrnum, date_var, temp_time)
+    await update_verify_status(bot, user.id, shortnum, date_var, temp_time)
     
 async def verify_user(bot, userid, token): #verify_short_user
     user = await bot.get_users(int(userid))
@@ -141,8 +141,8 @@ async def verify_user(bot, userid, token): #verify_short_user
     if shortnum != 5:
         vrnum = shortnum + 1
     else:
-        vrnum = 0
-    await update_special_verify_status(bot, user.id, vrnum, date_var, temp_time)
+        vrnum = 1
+    await update_special_verify_status(bot, user.id, shortnum, date_var, temp_time)
 
 async def check_special_token(bot, userid, token):
     user = await bot.get_users(userid)
