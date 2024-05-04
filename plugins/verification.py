@@ -6,7 +6,7 @@ from info import ADMINS
 async def update_users(client, message):
     async for user in await db.get_all_users():  # Added await here
         user_id = user.get("id")
-        short_temp = "5"
+        short_temp = "0"
         date_temp = "1999-12-31"
         time_temp = "23:59:59"
         await db.update_verification(user_id, short_temp, date_temp, time_temp)
