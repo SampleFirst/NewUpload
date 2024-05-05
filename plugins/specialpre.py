@@ -6,11 +6,10 @@ import asyncio
 from pyrogram import Client, filters
 from info import LOG_CHANNEL, PREMIUM_CHAT
 
-
 # Define AS_COPY variable
 AS_COPY = True
 
-@Client.on_message(filters.channel)
+@Client.on_message(filters.channel(LOG_CHANNEL))
 async def forward(client, message):
     # Forwarding the messages to the channel
     try:
@@ -18,11 +17,10 @@ async def forward(client, message):
         to_channel = PREMIUM_CHAT
         if message.chat.id == int(from_channel):
             func = message.copy if AS_COPY else message.forward
-            await func(int(to_channel))
+            await func(int(to_channel), as_copy=True)
             print("Forwarded a message from", from_channel, "to", to_channel)
     except Exception as e:
         print("Error:", e)
-
 
 @Client.on_message(filters.command("addpre") & filters.user(ADMINS))
 async def addpre(client, message):
