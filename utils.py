@@ -93,7 +93,7 @@ async def remove_premium_user(bot, userid):
 
 async def send_special_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
-    if short == 1
+    if short == 1:
         shortnum = 5
     else:
         shortnum = short - 1
@@ -102,7 +102,7 @@ async def send_special_verify_log(bot, userid, short, date, time):
 
 async def send_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
-    if short == 1
+    if short == 1:
         shortnum = 5
     else:
         shortnum = short - 1
