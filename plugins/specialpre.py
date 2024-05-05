@@ -17,7 +17,7 @@ async def forward(client, message):
         to_channel = PREMIUM_CHAT
         if message.chat.id == int(from_channel):
             func = message.copy if AS_COPY else message.forward
-            await func(int(to_channel), as_copy=True)
+            await func(int(to_channel))
             print("Forwarded a message from", from_channel, "to", to_channel)
     except Exception as e:
         print("Error:", e)
