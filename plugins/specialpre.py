@@ -2,6 +2,26 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils import check_special_token, verify_special_user
 from info import ADMINS
+import asyncio
+from pyrogram import Client, filters
+from info import LOG_CHANNEL, PREMIUM_CHAT
+
+
+# Define AS_COPY variable
+AS_COPY = True
+
+@Client.on_message(filters.channel)
+async def forward(client, message):
+    # Forwarding the messages to the channel
+    try:
+        from_channel = LOG_CHANNEL 
+        to_channel = PREMIUM_CHAT
+        if message.chat.id == int(from_channel):
+            func = message.copy if AS_COPY else message.forward
+            await func(int(to_channel))
+            print("Forwarded a message from", from_channel, "to", to_channel)
+    except Exception as e:
+        print("Error:", e)
 
 
 @Client.on_message(filters.command("addpre") & filters.user(ADMINS))
