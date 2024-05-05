@@ -93,12 +93,20 @@ async def remove_premium_user(bot, userid):
 
 async def send_special_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
-    log_message = f"#SpecialLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short - 1}\nDate: {date}\nTime: {time}"
+    if short == 1
+        shortnum = 5
+    else:
+        shortnum = short - 1
+    log_message = f"#SpecialLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {shortnum}\nDate: {date}\nTime: {time}"
     await bot.send_message(LOG_CHANNEL, log_message)
 
 async def send_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
-    log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {short - 1}\nDate: {date}\nTime: {time}"
+    if short == 1
+        shortnum = 5
+    else:
+        shortnum = short - 1
+    log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {shortnum}\nDate: {date}\nTime: {time}"
     await bot.send_message(LOG_CHANNEL, log_message)
 
 async def update_special_verify_status(bot, userid, short_temp, date_temp, time_temp):
