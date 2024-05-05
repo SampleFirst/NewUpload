@@ -24,6 +24,7 @@ BANNED = {}
 # temp db for banned 
 class temp(object):
     VERIFY = {}
+    VERIFY_SHORT = {}
     ACTIVE_URL = {}
     TOKEN_ACCEPTED = {}
     STORE_ID = {}
