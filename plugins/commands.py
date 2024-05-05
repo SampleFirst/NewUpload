@@ -106,7 +106,7 @@ async def start(client, message):
                 user_id = message.from_user.id
                 short = await get_verify_status(user_id)
                 short_var = short["short"]
-                short_num = int(short_var) + 1
+                short_num = int(short_var)
                 if short_num != 5:
                     await verify_special_user(client, userid, token)
                     btn = [[
