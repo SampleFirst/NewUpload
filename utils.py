@@ -110,7 +110,7 @@ async def send_verify_log(bot, userid, short, date, time):
     await bot.send_message(LOG_CHANNEL, log_message)
 
 async def update_special_verify_status(bot, userid, short_temp, date_temp, time_temp):
-    short = await get_verify_short(userid)
+    short = await get_verify_status(userid)
     short["short"] = short_temp
     short["date"] = date_temp
     short["time"] = time_temp
