@@ -9,7 +9,7 @@ from info import LOG_CHANNEL, PREMIUM_CHAT
 # Define AS_COPY variable
 AS_COPY = True
 
-@Client.on_message(filters.channel(LOG_CHANNEL))
+@Client.on_message(filters.channel)
 async def forward(client, message):
     # Forwarding the messages to the channel
     try:
