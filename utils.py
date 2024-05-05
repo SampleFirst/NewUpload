@@ -43,49 +43,53 @@ async def is_subscribed(bot, query=None, userid=None):
             return True
     return False
 
-async def send_premium_log(bot, userid, date_temp, time_temp):
+async def send_premium_log(bot, userid, shortnum, date_temp, time_temp):
     user = await bot.get_users(int(userid))
-    log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}"
+    log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortnum: {shortnum}\nDate: {date_temp}\nTime: {time_temp}"
     await bot.send_message(LOG_CHANNEL, log_message)
     await bot.send_message(user.id, text=f"Hey {user.mention}, Congratulations 🎉,\n\nYou are Now My Premium Users for new 30 Days! Check Your Plan /myplan")
 
-async def update_premium_status(bot, userid, date_temp, time_temp):
+async def update_premium_status(bot, userid, short_temp, date_temp, time_temp):
     status = await get_verify_status(userid)
+    status["short"] = short_temp
     status["date"] = date_temp
     status["time"] = time_temp
     temp.VERIFY[userid] = status
-    await db.update_verification(userid, date_temp, time_temp)
-    await send_premium_log(bot, userid, date_temp, time_temp)
+    await db.update_verification(userid, short_temp, date_temp, time_temp)
+    await send_premium_log(bot, userid, short_temp, date_temp, time_temp)
     
 async def premium_user(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
+    short_var = 1
     date_var = datetime.now(tz)+timedelta(days=30)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
-    await update_premium_status(bot, user.id, date_var, temp_time)
+    await update_premium_status(bot, user.id, short_var, date_var, temp_time)
 
-async def send_remove_premium_log(bot, userid, date_temp, time_temp):
+async def send_remove_premium_log(bot, userid, shortnum, date_temp, time_temp):
     user = await bot.get_users(int(userid))
-    log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nDate: {date_temp}\nTime: {time_temp}"
+    log_message = f"#PremiumUser:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortnum: {shortnum}\nDate: {date_temp}\nTime: {time_temp}"
     await bot.send_message(LOG_CHANNEL, log_message)
     await bot.send_message(user.id, text=f"Hey {user.mention}, I Apologise 🤐,\n\nYou are Now Not a Premium User! Check Your Plan /myplan")
 
-async def remove_premium_status(bot, userid, date_temp, time_temp):
+async def remove_premium_status(bot, userid, short_temp, date_temp, time_temp):
     status = await get_verify_status(userid)
+    status["short"] = short_temp
     status["date"] = date_temp
     status["time"] = time_temp
     temp.VERIFY[userid] = status
-    await db.update_verification(userid, date_temp, time_temp)
-    await send_remove_premium_log(bot, userid, date_temp, time_temp)
+    await db.update_verification(userid, short_temp, date_temp, time_temp)
+    await send_remove_premium_log(bot, userid, short_temp, date_temp, time_temp)
     
 async def remove_premium_user(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
+    short_var = 1
     date_var = datetime.now(tz)-timedelta(hours=25)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
-    await remove_premium_status(bot, user.id, date_var, temp_time)
+    await remove_premium_status(bot, user.id, short_var, date_var, temp_time)
 
 async def send_special_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
