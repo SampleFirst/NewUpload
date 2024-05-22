@@ -95,7 +95,7 @@ async def remove_premium_user(bot, userid):
 async def send_special_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
     if short == 1:
-        shortnum = 5
+        shortnum = 4
     else:
         shortnum = short - 1
     log_message = f"#SpecialLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {shortnum}\nDate: {date}\nTime: {time}"
@@ -104,7 +104,7 @@ async def send_special_verify_log(bot, userid, short, date, time):
 async def send_verify_log(bot, userid, short, date, time):
     user = await bot.get_users(int(userid))
     if short == 1:
-        shortnum = 5
+        shortnum = 4
     else:
         shortnum = short - 1
     log_message = f"#VerificationLog:\nUser ID: {user.id}\nUser Name: {user.mention}\nShortNum: {shortnum}\nDate: {date}\nTime: {time}"
@@ -135,7 +135,7 @@ async def verify_special_user(bot, userid, token): #verify_special_frist_short_u
     short = await get_verify_status(user.id)
     short_var = short["short"]
     shortnum = int(short_var)
-    if shortnum == 5:
+    if shortnum == 4:
         vrnum = 1
         date_var = datetime.now(tz)+timedelta(hours=24)
         temp_time = date_var.strftime("%H:%M:%S")
@@ -157,7 +157,7 @@ async def verify_user(bot, userid, token): #verify_short_user
     date_var, time_var = str(date_var).split(" ")
     short_var = short["short"]
     shortnum = int(short_var)
-    if shortnum == 5:
+    if shortnum == 4:
         vrnum = 1
     else:
         vrnum = shortnum + 1
@@ -199,12 +199,9 @@ async def get_verify_short_link(num, link):
     elif int(num) == 3:
         API = VERIFY3_API
         URL = VERIFY3_URL
-    elif int(num) == 4:
+    else:
         API = VERIFY4_API
         URL = VERIFY4_URL
-    else:
-        API = VERIFY5_API
-        URL = VERIFY5_URL
     https = link.split(":")[0]
     if "http" == https:
         https = "https"
@@ -262,7 +259,7 @@ async def get_special_token(bot, userid, link): #get_token_special_short
     short = await get_verify_status(user.id)
     short_var = short["short"]
     short_num = int(short_var)
-    if short_num == 5:
+    if short_num == 4:
         vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     else:
@@ -279,7 +276,7 @@ async def get_token(bot, userid, link): #get_token_short
     short = await get_verify_status(user.id)
     short_var = short["short"]
     short_num = int(short_var)
-    if short_num == 5:
+    if short_num == 4:
         vr_num = 1
         short_verify_url = await get_verify_short_link(vr_num, url)
     else:
