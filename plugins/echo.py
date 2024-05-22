@@ -66,9 +66,6 @@ async def echo(client, message):
         btn = [
             [
                 InlineKeyboardButton("📢 Verify", url=await get_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
-            ],
-            [
-                InlineKeyboardButton("📢 Special Verify", url=await get_special_token(client, message.from_user.id, "https://telegram.dog/BraveLinkToFileBot?start="))
             ]
         ]
         msg = await client.send_message(
