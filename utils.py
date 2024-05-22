@@ -230,6 +230,25 @@ async def get_verify_status(userid):
         temp.VERIFY[userid] = status
     return status
 
+async def reached_daily_video(bot, userid):
+    user = await bot.get_users(int(userid))
+    tz = pytz.timezone('Asia/Kolkata')
+    today = date.today()
+    
+    status = await get_verify_status(user.id)
+    date_var = status["date"]
+    
+    years, month, day = date_var.split('-')
+    comp_date = date(int(years), int(month), int(day))
+    
+    if comp_date<today:
+        return False
+    else:
+        if comp_date == today:
+            return False
+        else:
+            return True
+            
 
 async def check_verification(bot, userid):
     user = await bot.get_users(int(userid))
