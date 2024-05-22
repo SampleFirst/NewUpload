@@ -39,16 +39,22 @@ VERIFY4_API = environ.get('VERIFY4_API', 'd45daa443ecff47b5a4ebae3c803ee3da53a96
 
 
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', 0))
+PREMIUM_CHANNEL = int(environ.get('PREMIUM_CHANNEL', 0))
+PREMIUM_CHAT = int(environ.get('PREMIUM_CHAT', 0))
+BANNED_USERS = set(int(x) for x in environ.get("BANNED_USERS", "").split())
 DOWNLOAD_LOCATION = "./DOWNLOADS"
+UPDATE_CHANNEL = environ.get("UPDATE_CHANNEL", "")
 MAX_FILE_SIZE = 50000000
 TG_MAX_FILE_SIZE = 2097152000
 FREE_USER_MAX_FILE_SIZE = 50000000
 CHUNK_SIZE = int(environ.get("CHUNK_SIZE", 128))
 DEF_THUMB_NAIL_VID_S = environ.get("DEF_THUMB_NAIL_VID_S", "https://placehold.it/90x90")
 HTTP_PROXY = environ.get("HTTP_PROXY", "")
+OUO_IO_API_KEY = ""
 MAX_MESSAGE_LENGTH = 4096
 PROCESS_MAX_TIMEOUT = 3700
 DEF_WATER_MARK_FILE = "UploadLinkToFileBot"
 DATABASE_URL = environ.get("DATABASE_URL", "")
 TG_MIN_FILE_SIZE = 2097152000
+BOT_USERNAME = environ.get("BOT_USERNAME", "")
 PORT = int(environ.get("PORT", "8080"))
