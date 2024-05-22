@@ -62,6 +62,17 @@ async def echo(client, message):
             reply_to_message_id=msg_id
         )
         return
+    short = await get_verify_status(message.from_user.id)
+    short_var = short["short"]
+    short_num = int(short_var)
+    if short_num == 4:
+        reached = await reached_daily_video(client, message.from_user.id)
+        if reached == True:
+            await client.send_message(
+            chat_id=message.from_user.id,
+            text="You've reached the daily Download limit",
+            reply_to_message_id=message.id
+        )
     if IS_VERIFY and not await check_verification(client, message.from_user.id):
         btn = [
             [
