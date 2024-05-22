@@ -116,7 +116,7 @@ async def verify_user(bot, userid, token):
     TOKENS[user.id] = {token: True}
     short = await get_verify_status(user.id)
     tz = pytz.timezone('Asia/Kolkata')
-    date_var = datetime.now(tz)-timedelta(hours=25)
+    date_var = datetime.now(tz)-timedelta(hours=1)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     short_var = short["short"]
