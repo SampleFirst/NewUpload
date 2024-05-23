@@ -116,7 +116,7 @@ async def verify_user(bot, userid, token):
     TOKENS[user.id] = {token: True}
     short = await get_verify_status(user.id)
     tz = pytz.timezone('Asia/Kolkata')
-    date_var = datetime.now(tz)-timedelta(hours=1)
+    date_var = datetime.now(tz)-timedelta(hours=25)
     temp_time = date_var.strftime("%H:%M:%S")
     date_var, time_var = str(date_var).split(" ")
     short_var = short["short"]
@@ -233,7 +233,7 @@ async def get_verify_status(userid):
 async def reached_daily_video(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
-    today = (datetime.now(tz) - timedelta(hours=24)).date()  # Convert to date
+    today = date.today()
     now = datetime.now(tz)
     curr_time = now.strftime("%H:%M:%S")
     hour1, minute1, second1 = curr_time.split(":")
