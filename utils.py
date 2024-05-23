@@ -121,10 +121,12 @@ async def verify_user(bot, userid, token):
     date_var, time_var = str(date_var).split(" ")
     short_var = short["short"]
     shortnum = int(short_var)
-    if shortnum == 4:
+    if shortnum > 4:
         vrnum = 1
-    else:
+    elif shortnum < 4:
         vrnum = shortnum + 1
+    else:
+        vrnum = 1
     await update_verify_status(bot, user.id, vrnum, date_var, temp_time)
 
 
