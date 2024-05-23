@@ -233,7 +233,7 @@ async def get_verify_status(userid):
 async def reached_daily_video(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
-    today = date.today()
+    today = datetime.now(tz)-timedelta(hours=24)
     
     status = await get_verify_status(user.id)
     date_var = status["date"]
