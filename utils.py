@@ -233,23 +233,31 @@ async def get_verify_status(userid):
 async def reached_daily_video(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
-    today = datetime.now(tz)-timedelta(hours=24)
-    
+    today = (datetime.now(tz) - timedelta(hours=24)).date()  # Convert to date
+    now = datetime.now(tz)
+    curr_time = now.strftime("%H:%M:%S")
+    hour1, minute1, second1 = curr_time.split(":")
+    curr_time = time(int(hour1), int(minute1), int(second1))
     status = await get_verify_status(user.id)
     date_var = status["date"]
-    
+    time_var = status["time"]
     years, month, day = date_var.split('-')
     comp_date = date(int(years), int(month), int(day))
-    
+    hour, minute, second = time_var.split(":")
+    comp_time = time(int(hour), int(minute), int(second))
     if comp_date<today:
         return False
     else:
         if comp_date == today:
-            return False
+            if comp_time<curr_time:
+                return False
+            else:
+                return True
         else:
             return True
             
 
+            
 async def check_verification(bot, userid):
     user = await bot.get_users(int(userid))
     tz = pytz.timezone('Asia/Kolkata')
