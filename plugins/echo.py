@@ -67,7 +67,7 @@ async def echo(client, message):
     short_num = int(short_var)
     if short_num == 4:
         reached = await reached_daily_video(client, message.from_user.id)
-        if reached == True:
+        if reached == False:
             await client.send_message(
             chat_id=message.from_user.id,
             text="You've reached the daily Download limit",
